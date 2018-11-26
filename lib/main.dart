@@ -132,40 +132,32 @@ class MainScreen extends StatelessWidget {
     return new Scaffold(
         appBar: new AppBar(backgroundColor: Colors.brown),
         body: new Container(
-        color: Colors.black38,
+        color: Colors.white,
         child: new ListView(
             padding: const EdgeInsets.all(10.0),
             children: <Widget>[
-              Padding(
-                  padding: EdgeInsets.all(5.0),
-                  child:RaisedButton(
-                    onPressed: () { Navigator.of(context).pushNamed('/sync');},
-                    color: Colors.orange,
-                    padding: EdgeInsets.all(10.0),
-                    child: Row(children: <Widget>[Icon(Icons.import_export),Text("Выполнить синхронизацию")],),
-                  ),
-              ),
-              Padding(
-                  padding: EdgeInsets.all(5.0),
-                  child: OutlineButton(
-                    onPressed: () { Navigator.of(context).pushNamed('/route');},
-                    color: Colors.orange,
-                    padding: EdgeInsets.all(10.0),
-                    child: Row(children: <Widget>[Icon(Icons.list),Text("Маршрут")],),
-                ),
-              ),
-              OutlineButton(
-                onPressed: () { Navigator.of(context).pushNamed('/settings');},
-                color: Colors.orange,
-                padding: EdgeInsets.all(5.0),
-                child: Row(children: <Widget>[Icon(Icons.settings),Text("Настройки")],),),
+              button(Icons.import_export,'Выполнить синхронизацию',context,'/sync'),
+              button(Icons.list,'Маршрут',context,'/route'),
+              button(Icons.settings,'Настройки',context,'/settings'),
             ],
         )
 
       )
     );
   }
-
+  Widget button(IconData iconData, String title, BuildContext context, String navlink){
+    return Padding(
+      padding: EdgeInsets.all(5.0),
+      child:RaisedButton(
+        onPressed: () { Navigator.of(context).pushNamed(navlink);},
+        color: Colors.orangeAccent,
+        padding: EdgeInsets.all(10.0),
+        shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0)),
+        splashColor: Colors.limeAccent,
+        child: Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[Icon(iconData),Text(title)],),
+      ),
+    );
+  }
 }
 
 class SyncScreen extends StatelessWidget {
