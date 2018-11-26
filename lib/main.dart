@@ -134,24 +134,30 @@ class MainScreen extends StatelessWidget {
         body: new Container(
         color: Colors.black38,
         child: new ListView(
-            padding: const EdgeInsets.all(16.0),
+            padding: const EdgeInsets.all(10.0),
             children: <Widget>[
-              OutlineButton(
-                  onPressed: () { Navigator.of(context).pushNamed('/sync');},
-                  color: Colors.orange,
-                  padding: EdgeInsets.all(16.0),
-                  child: Row(children: <Widget>[Icon(Icons.import_export),Text("Выполнить синхронизацию")],),
+              Padding(
+                  padding: EdgeInsets.all(5.0),
+                  child:RaisedButton(
+                    onPressed: () { Navigator.of(context).pushNamed('/sync');},
+                    color: Colors.orange,
+                    padding: EdgeInsets.all(10.0),
+                    child: Row(children: <Widget>[Icon(Icons.import_export),Text("Выполнить синхронизацию")],),
+                  ),
+              ),
+              Padding(
+                  padding: EdgeInsets.all(5.0),
+                  child: OutlineButton(
+                    onPressed: () { Navigator.of(context).pushNamed('/route');},
+                    color: Colors.orange,
+                    padding: EdgeInsets.all(10.0),
+                    child: Row(children: <Widget>[Icon(Icons.list),Text("Маршрут")],),
                 ),
-              OutlineButton(
-                  onPressed: () { Navigator.of(context).pushNamed('/route');},
-                  color: Colors.orange,
-                  padding: EdgeInsets.all(16.0),
-                  child: Row(children: <Widget>[Icon(Icons.list),Text("Маршрут")],),
-                ),
+              ),
               OutlineButton(
                 onPressed: () { Navigator.of(context).pushNamed('/settings');},
                 color: Colors.orange,
-                padding: EdgeInsets.all(16.0),
+                padding: EdgeInsets.all(5.0),
                 child: Row(children: <Widget>[Icon(Icons.settings),Text("Настройки")],),),
             ],
         )
