@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+
 import 'package:sqflite/sqflite.dart';
-import 'settings.dart';
+import 'package:mobivik/screens/settings.dart';
+import 'package:mobivik/screens/synchronization.dart';
 
 void main() {
   runApp(
       new MaterialApp(
+        title: 'Mobivik',
         home: new MainScreen(),
         routes: <String, WidgetBuilder> {
           '/logout': (BuildContext context) => new LoginScreen(),
@@ -16,6 +19,8 @@ void main() {
       )
   );
 }
+
+
 
 class LoginScreen extends StatelessWidget {
 
@@ -127,23 +132,7 @@ class MainScreen extends StatelessWidget {
   }
 }
 
-class SyncScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return new Scaffold(
-        appBar: new AppBar(title: new Text("Синхронизация"),),
-        body: new Container(
 
-            color: Colors.deepPurple,
-            child: new RaisedButton(onPressed:(){ Navigator.of(context).pushNamed('/screen3'); }),
-
-            )
-        );
-     }
-  void syncButton(){
-
-  }
-}
 
 class RouteScreen extends StatelessWidget {
   @override

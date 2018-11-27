@@ -2,24 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-// SettingsScreen
+/*// SettingsScreen
 class SettingsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Retrieve Text Input',
+
       home: SettingsForm(),
     );
   }
 
-}
+}*/
 
-class SettingsForm extends StatefulWidget {
+class SettingsScreen extends StatefulWidget {
   @override
-  _SettingsFormState createState() => _SettingsFormState();
+  _SettingsScreenState createState() => _SettingsScreenState();
 }
 
-class _SettingsFormState extends State<SettingsForm> {
+class _SettingsScreenState extends State<SettingsScreen> {
   // Create a text controller. We will use it to retrieve the current value
   // of the TextField!
   final controllerServerAddress = TextEditingController();
