@@ -61,26 +61,128 @@ class LoginScreen extends StatelessWidget {
   }
 }
 
-class SettingsScreen extends StatelessWidget {
 
-  TextField serverInputField;
-  
+// SettingsScreen
+class SettingsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Retrieve Text Input',
+      home: SettingsForm(),
+    );
+  }
 
+}
+
+class SettingsForm extends StatefulWidget {
+  @override
+  _SettingsFormState createState() => _SettingsFormState();
+}
+
+class _SettingsFormState extends State<SettingsForm> {
+  // Create a text controller. We will use it to retrieve the current value
+  // of the TextField!
+  final controllerServerAddress = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+
+    // controllerServerAddress.addListener(_printServerAddress);
+    getSharedPrefs();
+
+  }
+
+  Future<Null> getSharedPrefs() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var _name = prefs.getString("serverAddress");
+    setState(() {
+      controllerServerAddress.text = _name;
+    });
+  }
+
+  @override
+  void dispose() {
+    // Clean up the controller when the Widget is removed from the Widget tree
+    // This also removes the _printLatestValue listener
+    controllerServerAddress.dispose();
+    super.dispose();
+  }
+
+  _printServerAddress() async{
+    print("Second text field: ${controllerServerAddress.text}");
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    controllerServerAddress.text = prefs.getString("serverAddress");
+  }
+
+  void saveData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString("serverAddress", controllerServerAddress.text);
+    print("saveData: ${controllerServerAddress.text}");
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Настройки'),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: <Widget>[
+            TextField(
+              onChanged: (text) {
+                print("First text field: $text");
+              },
+            ),
+            TextField(
+              controller: controllerServerAddress,
+            ),
+
+            RaisedButton(
+              onPressed: saveData,
+              child: Text('Сохранить'),
+            ),
+            RaisedButton(
+              onPressed: (){Navigator.pop(context);},
+              child: Text('Cancel'),
+            ),
+          ],
+
+        ),
+
+      ),
+
+    );
+  }
+}
+// \SettingsScreen
+
+/*class SettingsScreen extends StatelessWidget {
+
+  TextEditingController _controller;
+  String serverAddress;
+
+  @override
+  Widget build(BuildContext context) {
     return new Scaffold(
       appBar: new AppBar(title: new Text("Settings"),),
       body: new Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
-           serverInputField = new TextField(
-                                            decoration: InputDecoration(
-                                                labelText: 'Server address:'
-                                            ),
+          Padding(
+           padding: EdgeInsets.all(10.0), 
+           child: new TextField(
+              decoration: InputDecoration(labelText: 'Server address:' ),
+              onChanged: (String str) {serverAddress = str;},
+              controller: _controller,
+           ),
           ),
-          // ignore: argument_type_not_assignable
-          RaisedButton(onPressed: saveData,
-
+          RaisedButton(
+            onPressed: saveData,
+            child: Text('Сохранить'),
           ),
         ],
 
@@ -89,11 +191,18 @@ class SettingsScreen extends StatelessWidget {
 
   }
 
-  void saveData() {
-    print(serverInputField.toString());
+  @override
+  initState() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    _controller = new TextEditingController(text: prefs.getString("name"));
+  }
+
+  void saveData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString("serverAddress", serverAddress);
     
   }
-}
+}*/
 
 class Screen3 extends StatelessWidget {
 
@@ -136,7 +245,7 @@ class MainScreen extends StatelessWidget {
         child: new ListView(
             padding: const EdgeInsets.all(10.0),
             children: <Widget>[
-              button(Icons.import_export,'Выполнить синхронизацию',context,'/sync'),
+              button(Icons.import_export,'Синхронизация',context,'/sync'),
               button(Icons.list,'Маршрут',context,'/route'),
               button(Icons.settings,'Настройки',context,'/settings'),
             ],
@@ -166,6 +275,7 @@ class SyncScreen extends StatelessWidget {
     return new Scaffold(
         appBar: new AppBar(title: new Text("Синхронизация"),),
         body: new Container(
+
             color: Colors.deepPurple,
             child: new RaisedButton(onPressed:(){ Navigator.of(context).pushNamed('/screen3'); }),
 
