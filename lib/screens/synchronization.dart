@@ -21,7 +21,7 @@ class SyncScreen extends StatelessWidget {
 
           children: [
             RaisedButton(
-              onPressed:(){fetchPost; result = "onPressed";},
+              onPressed: fetchPost,
               child: const Text('Синхронизировать'),
               ),
 /*            FutureBuilder<Post>(
@@ -37,7 +37,7 @@ class SyncScreen extends StatelessWidget {
                 return CircularProgressIndicator();
               },
             ),*/
-            Text("result=$result"),
+
           ]
         )
     );
@@ -45,7 +45,7 @@ class SyncScreen extends StatelessWidget {
 
   Future<Null> fetchPost() async {
 
-    result = "Начато";
+
 
     var url = "https://jsonplaceholder.typicode.com/posts/1";
     http.post(url, body: {"name": "doodle", "color": "blue"})
