@@ -9,6 +9,7 @@ void main() {
   runApp(
       new MaterialApp(
         title: 'Mobivik',
+        theme: ThemeData(primarySwatch: Colors.blue,),
         home: new MainScreen(),
         routes: <String, WidgetBuilder> {
           '/logout': (BuildContext context) => new LoginScreen(),
