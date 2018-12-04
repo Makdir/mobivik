@@ -18,7 +18,6 @@ class SyncScreen extends StatelessWidget {
         appBar: new AppBar(title: new Text("Синхронизация"),),
         body: new Column(
 
-
           children: [
             RaisedButton(
               onPressed: fetchPost,
@@ -47,14 +46,14 @@ class SyncScreen extends StatelessWidget {
 
 
 
-    var url = "https://jsonplaceholder.typicode.com/posts/1";
-    http.post(url, body: {"name": "doodle", "color": "blue"})
+    var url = "http://10.0.2.2:8080/test";
+    http.get(url, headers: {"agent-code": "600", "color": "blue"})
         .then((response) {
       print("Response status: ${response.statusCode}");
       print("Response body: ${response.body}");
     });
 
-    http.read("https://jsonplaceholder.typicode.com/posts/1").then(print);
+    //http.read("https://jsonplaceholder.typicode.com/posts/1").then(print);
   }
 
 }
