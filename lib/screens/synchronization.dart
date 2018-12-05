@@ -46,7 +46,7 @@ class SyncScreen extends StatelessWidget {
 
 
 
-    var url = "http://10.0.2.2:8080/test";
+    var url = "http://10.0.2.2:8080/fromserver";
     http.get(url, headers: {"agent-code": "600", "color": "blue"})
         .then((response) {
       print("Response status: ${response.statusCode}");
