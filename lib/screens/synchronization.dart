@@ -44,17 +44,27 @@ class SyncScreen extends StatelessWidget {
 
   Future<Null> fetchPost() async {
 
-
-
     var url = "http://10.0.2.2:8080/fromserver";
     http.get(url, headers: {"agent-code": "600", "color": "blue"})
         .then((response) {
-      print("Response status: ${response.statusCode}");
-      print("Response body: ${response.body}");
+      var responseStatusCode = response.statusCode;
+      print("Response status: ${responseStatusCode}");
+      if(responseStatusCode==200) {
+        var body = response.body;
+        print("Response body: ${body}");
+        parseResponseBody(body);
+      }
+
     });
 
     //http.read("https://jsonplaceholder.typicode.com/posts/1").then(print);
   }
+
+  void parseResponseBody(String body) {
+
+  }
+
+
 
 }
 

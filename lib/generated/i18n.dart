@@ -18,10 +18,51 @@ class S implements WidgetsLocalizations {
 
   @override
   TextDirection get textDirection => TextDirection.ltr;
+  String get route_listform_title => "Route";
+}
+
+class ru extends S {
+  const ru();
+
+  @override
+  TextDirection get textDirection => TextDirection.ltr;
+
+  @override
+  String get route_listform_title => "Маршрут";
+}
+
+class uk extends S {
+  const uk();
+
+  @override
+  TextDirection get textDirection => TextDirection.ltr;
+
+  @override
+  String get route_listform_title => "Маршрут";
 }
 
 class en extends S {
   const en();
+}
+
+class pl extends S {
+  const pl();
+
+  @override
+  TextDirection get textDirection => TextDirection.ltr;
+
+  @override
+  String get route_listform_title => "Trasa";
+}
+
+class es extends S {
+  const es();
+
+  @override
+  TextDirection get textDirection => TextDirection.ltr;
+
+  @override
+  String get route_listform_title => "Ruta";
 }
 
 class GeneratedLocalizationsDelegate extends LocalizationsDelegate<S> {
@@ -29,7 +70,11 @@ class GeneratedLocalizationsDelegate extends LocalizationsDelegate<S> {
 
   List<Locale> get supportedLocales {
     return const <Locale>[
+      Locale("ru", ""),
+      Locale("uk", ""),
       Locale("en", ""),
+      Locale("pl", ""),
+      Locale("es", ""),
     ];
   }
 
@@ -70,8 +115,16 @@ class GeneratedLocalizationsDelegate extends LocalizationsDelegate<S> {
     final String lang = getLang(locale);
     if (lang != null) {
       switch (lang) {
+        case "ru":
+          return SynchronousFuture<S>(const ru());
+        case "uk":
+          return SynchronousFuture<S>(const uk());
         case "en":
           return SynchronousFuture<S>(const en());
+        case "pl":
+          return SynchronousFuture<S>(const pl());
+        case "es":
+          return SynchronousFuture<S>(const es());
         default:
         // NO-OP.
       }
