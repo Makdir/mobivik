@@ -1,8 +1,10 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:path_provider/path_provider.dart';
 
 class SyncScreen extends StatelessWidget {
 //  final Future<Post> post;
@@ -56,16 +58,30 @@ class SyncScreen extends StatelessWidget {
       }
 
     });
-
-    //http.read("https://jsonplaceholder.typicode.com/posts/1").then(print);
   }
 
   void parseResponseBody(String body) {
+    //File file = writeFile(body);
 
   }
 
+  Future<String> get _localPath async {
+    final directory = await getApplicationDocumentsDirectory();
+print(directory);
+    return directory.path;
+  }
 
+  Future<File> get _localFile async {
+    final path = await _localPath;
+    return File('$path/inputdata.mv');
+  }
 
+  Future<File> writeFile(String counter) async {
+    final file = await _localFile;
+
+    // Write the file
+    return file.writeAsString('$counter');
+  }
 }
 
 

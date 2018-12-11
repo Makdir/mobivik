@@ -60,17 +60,6 @@ class MainScreen extends StatelessWidget {
 
 
 
-class RouteScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return new Scaffold(
-        appBar: new AppBar(title: new Text("Маршрут"),),
-        body: new Container(         )
-    );
-  }
-
-}
-
 class LoginScreen extends StatelessWidget {
 
   @override
