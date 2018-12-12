@@ -43,6 +43,12 @@ class uk extends S {
 
 class en extends S {
   const en();
+
+  @override
+  TextDirection get textDirection => TextDirection.ltr;
+
+  @override
+  String get route_listform_title => "Route";
 }
 
 class pl extends S {
