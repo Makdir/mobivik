@@ -69,8 +69,9 @@ class SyncScreen extends StatelessWidget {
 
   void parseResponseBody(String body) {
     //File file = writeFile(body);
-    var jsonBody = jsonDecode(body);
+    Map jsonBody = jsonDecode(body);
     print(jsonBody);
+    print(jsonBody["outlets"]);
     if(body.isEmpty) return;
     createDB().then((database){
 
