@@ -53,6 +53,7 @@ class SyncScreen extends StatelessWidget {
     String serverAddress = prefs.getString("serverAddress").trim();
 
     var url = serverAddress+"/fromserver"; //"http://10.0.2.2:8080/fromserver";
+    print(url);
     http.get(url, headers: {"agent-code": "600", "color": "blue"})
         .then((response) {
       var responseStatusCode = response.statusCode;
@@ -69,6 +70,7 @@ class SyncScreen extends StatelessWidget {
   void parseResponseBody(String body) {
     //File file = writeFile(body);
     var jsonBody = jsonDecode(body);
+    print(jsonBody);
     if(body.isEmpty) return;
     createDB().then((database){
 
