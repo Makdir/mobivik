@@ -4,7 +4,10 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sqflite/sqflite.dart';
 
 class SyncScreen extends StatelessWidget {
 //  final Future<Post> post;
@@ -46,7 +49,10 @@ class SyncScreen extends StatelessWidget {
 
   Future<Null> fetchPost() async {
 
-    var url = "http://10.0.2.2:8080/fromserver";
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String serverAddress = prefs.getString("serverAddress").trim();
+
+    var url = serverAddress+"/fromserver"; //"http://10.0.2.2:8080/fromserver";
     http.get(url, headers: {"agent-code": "600", "color": "blue"})
         .then((response) {
       var responseStatusCode = response.statusCode;
@@ -62,26 +68,49 @@ class SyncScreen extends StatelessWidget {
 
   void parseResponseBody(String body) {
     //File file = writeFile(body);
+    var jsonBody = jsonDecode(body);
+    if(body.isEmpty) return;
+    createDB().then((database){
+
+    });
+
 
   }
 
-  Future<String> get _localPath async {
-    final directory = await getApplicationDocumentsDirectory();
-print(directory);
-    return directory.path;
+  Future createDB() async {
+    var databasesPath = await getDatabasesPath();
+    String path = join(databasesPath, 'mobivik.db');
+
+    Database database = await openDatabase(path, version: 1,
+        onCreate: (Database db, int version) async {
+          // When creating the db, create the table
+          await db.execute('CREATE TABLE Route (id INTEGER PRIMARY KEY, name TEXT, debt INTEGER, num REAL)');
+        });
+
+    return database;
   }
 
-  Future<File> get _localFile async {
-    final path = await _localPath;
-    return File('$path/inputdata.mv');
-  }
 
-  Future<File> writeFile(String counter) async {
-    final file = await _localFile;
 
-    // Write the file
-    return file.writeAsString('$counter');
-  }
+
+//  Future<String> get _localPath async {
+//    final directory = await getApplicationDocumentsDirectory();
+//print(directory);
+//    return directory.path;
+//  }
+//
+//  Future<File> get _localFile async {
+//    final path = await _localPath;
+//    return File('$path/inputdata.mv');
+//  }
+//
+//  Future<File> writeFile(String counter) async {
+//    final file = await _localFile;
+//
+//    // Write the file
+//    return file.writeAsString('$counter');
+//  }
+
 }
 
 
