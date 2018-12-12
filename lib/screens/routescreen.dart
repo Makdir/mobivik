@@ -4,24 +4,30 @@ import 'package:flutter/material.dart';
 class RouteScreen extends StatelessWidget {
 
   // Create list
-  List<Widget> myItems = new List();
+  List<String> myItems = ["1","2","Third","4"];
 
 
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
-      appBar: new AppBar(title: new Text("Маршрут"),),
+      appBar: new AppBar(title: new Text("Маршрут"),actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.import_export),
+            tooltip: 'Air it',
+            onPressed: (){Navigator.of(context).pushNamed("/sync");},
+      ),],),
       body: ListView.builder(
-        // Let the ListView know how many items it needs to build
+        padding: EdgeInsets.all(8.0),
+        //itemExtent: 20.0,
         itemCount: myItems.length,
-        // Provide a builder function. This is where the magic happens! We'll
-        // convert each item into a Widget based on the type of item it is.
-        itemBuilder: (context, index) {
-          final item = myItems[index];
-
-
+        itemBuilder: (BuildContext context, int index) {
+          return ListTile(
+              leading: Icon(Icons.photo_album),
+              title:Text(myItems[index]),
+              onTap: (){Navigator.of(context).pushNamed("/sync");},
+          );
         },
-      ),
+      )
     );
   }
 

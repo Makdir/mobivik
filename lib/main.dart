@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 
 import 'package:sqflite/sqflite.dart';
+
 import 'package:mobivik/screens/settings.dart';
 import 'package:mobivik/screens/synchronization.dart';
+import 'package:mobivik/screens/routescreen.dart';
 
 void main() {
   runApp(
