@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:mobivik/dbhelper.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -70,28 +71,21 @@ class SyncScreen extends StatelessWidget {
   void parseResponseBody(String body) {
     //File file = writeFile(body);
     Map jsonBody = jsonDecode(body);
-    print(jsonBody);
-    print(jsonBody["outlets"]);
+
+    //print(jsonBody["outlets"]);
     if(body.isEmpty) return;
-    createDB().then((database){
 
-    });
+    var dbHelper = DatabaseHelper();
+    List<Map> outlets = jsonBody["outlets"];
+    for (var i = 0; i < 2; i++) {
+      dbHelper.saveRoute(outlets[i]);
+    }
+
 
 
   }
 
-  Future createDB() async {
-    var databasesPath = await getDatabasesPath();
-    String path = join(databasesPath, 'mobivik.db');
 
-    Database database = await openDatabase(path, version: 1,
-        onCreate: (Database db, int version) async {
-          // When creating the db, create the table
-          await db.execute('CREATE TABLE Route (id INTEGER PRIMARY KEY, name TEXT, debt INTEGER, num REAL)');
-        });
-
-    return database;
-  }
 
 
 
