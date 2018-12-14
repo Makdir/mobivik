@@ -84,9 +84,13 @@ class SyncScreen extends StatelessWidget {
 
     dbHelper.deleteTable("Route");
     for (var i = 0; i < outlets.length; i++) {
+      var outlet = Map();
+      outlet["id"] =outlets[i]["id"];
+      outlet["outletname"]=outlets[i]["outletname"];
+      outlet["address"]=outlets[i]["address"];
 
-      print(outlets[i].runtimeType);
-      dbHelper.saveRoute(outlets[i]);
+      print(outlet);
+      dbHelper.saveRoute(outlet);
     }
 
   }
