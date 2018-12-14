@@ -30,6 +30,12 @@ class DatabaseHelper {
         "CREATE TABLE Route(id INTEGER PRIMARY KEY, outletname TEXT, address TEXT)");
   }
 
+  Future<int> deleteTable(String tableName) async {
+    var database = await db;
+    int res = await database.delete(tableName);
+    return res;
+  }
+
   Future<int> saveRoute(Map outlet) async {
     var dbClient = await db;
     int res = await dbClient.insert("Route", outlet);
@@ -38,7 +44,7 @@ class DatabaseHelper {
 
   Future<List<Map>> getRoute() async {
     var dbClient = await db;
-    List<Map> list = await dbClient.rawQuery('SELECT * FROM User');
+    List<Map> list = await dbClient.rawQuery('SELECT * FROM Route');
     List<Map> outlets = new List();
     for (int i = 0; i < list.length; i++) {
       var outlet = Map();
@@ -64,6 +70,8 @@ class DatabaseHelper {
         where: "id = ?", whereArgs: <int>[outlet["id"]]);
     return res > 0 ? true : false;
   }
+
+
 }
 
 

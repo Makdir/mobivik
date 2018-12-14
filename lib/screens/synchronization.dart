@@ -69,22 +69,25 @@ class SyncScreen extends StatelessWidget {
   }
 
   void parseResponseBody(String body) {
+
+    if(body.isEmpty) return;
     //File file = writeFile(body);
     Map<String,dynamic> jsonBody = jsonDecode(body);
-
+    print(jsonBody);
     print(jsonBody["outlets"]);
-    if(body.isEmpty) return;
 
-    var dbHelper = DatabaseHelper();
+    var dbHelper = new DatabaseHelper();
+    print('dbHelper=$dbHelper');
     //List<Map<String,dynamic>>
-    var outlets = jsonDecode(jsonBody["outlets"]);
+    var outlets = jsonBody["outlets"];
     print(outlets);
 
+    dbHelper.deleteTable("Route");
     for (var i = 0; i < outlets.length; i++) {
+
+      print(outlets[i].runtimeType);
       dbHelper.saveRoute(outlets[i]);
     }
-
-
 
   }
 
