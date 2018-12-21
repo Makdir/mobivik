@@ -20,7 +20,9 @@ class DatabaseHelper {
   initDb() async {
     var databasesPath = await getDatabasesPath();
     String path = join(databasesPath, 'mobivik.db');
+    print('path=$path');
     var theDb = await openDatabase(path, version: 1, onCreate: _onCreate);
+    print('theDb=$theDb');
     return theDb;
   }
 

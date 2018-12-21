@@ -1,19 +1,19 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-
+import 'package:simple_permissions/simple_permissions.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:mobivik/dbhelper.dart';
+import 'package:mobivik/helpers/filedbhelper.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:sqflite/sqflite.dart';
+
 
 class SyncScreen extends StatelessWidget {
 //  final Future<Post> post;
 //  SyncScreen({Key key, this.post}) : super(key: key);
-
+  Permission permission;
   String result;
 
   @override
@@ -68,7 +68,7 @@ class SyncScreen extends StatelessWidget {
     });
   }
 
-  void parseResponseBody(String body) {
+  Future parseResponseBody(String body) async{
 
     if(body.isEmpty) return;
     //File file = writeFile(body);
@@ -76,48 +76,24 @@ class SyncScreen extends StatelessWidget {
     print(jsonBody);
     print(jsonBody["outlets"]);
 
-    var dbHelper = new DatabaseHelper();
-    print('dbHelper=$dbHelper');
-    //List<Map<String,dynamic>>
+
+    bool res = await SimplePermissions.checkPermission(Permission.WriteExternalStorage);
+    print('res = $res');
+    var permissionStatus;
+    if(res==false){permissionStatus = SimplePermissions.requestPermission(Permission.WriteExternalStorage);};
+
+    print('permissionStatus = $permissionStatus');
+
+    FileDBHelper fileDBHelper = new FileDBHelper();
+    fileDBHelper.saveStringToFile(body, 'originput.mv');
     var outlets = jsonBody["outlets"];
     print(outlets);
-
-    dbHelper.deleteTable("Route");
-    for (var i = 0; i < outlets.length; i++) {
-      var outlet = Map();
-      outlet["id"] =outlets[i]["id"];
-      outlet["outletname"]=outlets[i]["outletname"];
-      outlet["address"]=outlets[i]["address"];
-
-      print(outlet);
-      dbHelper.saveRoute(outlet);
-    }
+    fileDBHelper.saveStringToFile(outlets, 'route.mv');
 
   }
 
-
-
-
-
-
-//  Future<String> get _localPath async {
-//    final directory = await getApplicationDocumentsDirectory();
-//print(directory);
-//    return directory.path;
-//  }
-//
-//  Future<File> get _localFile async {
-//    final path = await _localPath;
-//    return File('$path/inputdata.mv');
-//  }
-//
-//  Future<File> writeFile(String counter) async {
-//    final file = await _localFile;
-//
-//    // Write the file
-//    return file.writeAsString('$counter');
-//  }
-
 }
+
+
 
 

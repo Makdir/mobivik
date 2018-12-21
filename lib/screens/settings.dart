@@ -2,18 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-/*// SettingsScreen
-class SettingsScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-
-      home: SettingsForm(),
-    );
-  }
-
-}*/
-
 class SettingsScreen extends StatefulWidget {
   @override
   _SettingsScreenState createState() => _SettingsScreenState();
@@ -23,6 +11,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   // Create a text controller. We will use it to retrieve the current value
   // of the TextField!
   final controllerServerAddress = TextEditingController();
+  final controllerApplicationDataPath = TextEditingController();
 
   @override
   void initState() {
@@ -36,8 +25,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Future<Null> getSavedSettings() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var serverAddress = prefs.getString("serverAddress");
+    var applicationDataPath = prefs.getString("applicationDataPath");
+
     setState(() {
       controllerServerAddress.text = serverAddress;
+      controllerApplicationDataPath.text = applicationDataPath;
     });
   }
 
@@ -51,8 +43,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   void saveData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString("serverAddress", controllerServerAddress.text);
-    print("saveData: ${controllerServerAddress.text}");
+    prefs.setString("serverAddress",       controllerServerAddress.text);
+    prefs.setString("applicationDataPath", controllerApplicationDataPath.text);
+    //print("saveData: ${controllerServerAddress.text}");
   }
 
   @override
@@ -65,14 +58,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: <Widget>[
-            TextField(
-              onChanged: (text) {
-                print("First text field: $text");
-              },
-            ),
+
             TextField(
               decoration: InputDecoration(labelText: 'Server address:' ),
               controller: controllerServerAddress,
+            ),
+            TextField(
+              decoration: InputDecoration(labelText: 'Application data path:' ),
+              controller: controllerApplicationDataPath,
             ),
             Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children:[

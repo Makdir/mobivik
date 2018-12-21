@@ -12,17 +12,18 @@ class S implements WidgetsLocalizations {
   const S();
 
   static const GeneratedLocalizationsDelegate delegate =
-      GeneratedLocalizationsDelegate();
+    GeneratedLocalizationsDelegate();
 
   static S of(BuildContext context) => Localizations.of<S>(context, S);
 
   @override
   TextDirection get textDirection => TextDirection.ltr;
+
   String get route_listform_title => "Route";
 }
 
-class ru extends S {
-  const ru();
+class $ru extends S {
+  const $ru();
 
   @override
   TextDirection get textDirection => TextDirection.ltr;
@@ -31,8 +32,8 @@ class ru extends S {
   String get route_listform_title => "Маршрут";
 }
 
-class uk extends S {
-  const uk();
+class $uk extends S {
+  const $uk();
 
   @override
   TextDirection get textDirection => TextDirection.ltr;
@@ -41,12 +42,12 @@ class uk extends S {
   String get route_listform_title => "Маршрут";
 }
 
-class en extends S {
-  const en();
+class $en extends S {
+  const $en();
 }
 
-class pl extends S {
-  const pl();
+class $pl extends S {
+  const $pl();
 
   @override
   TextDirection get textDirection => TextDirection.ltr;
@@ -55,8 +56,8 @@ class pl extends S {
   String get route_listform_title => "Trasa";
 }
 
-class es extends S {
-  const es();
+class $es extends S {
+  const $es();
 
   @override
   TextDirection get textDirection => TextDirection.ltr;
@@ -116,17 +117,17 @@ class GeneratedLocalizationsDelegate extends LocalizationsDelegate<S> {
     if (lang != null) {
       switch (lang) {
         case "ru":
-          return SynchronousFuture<S>(const ru());
+          return SynchronousFuture<S>(const $ru());
         case "uk":
-          return SynchronousFuture<S>(const uk());
+          return SynchronousFuture<S>(const $uk());
         case "en":
-          return SynchronousFuture<S>(const en());
+          return SynchronousFuture<S>(const $en());
         case "pl":
-          return SynchronousFuture<S>(const pl());
+          return SynchronousFuture<S>(const $pl());
         case "es":
-          return SynchronousFuture<S>(const es());
+          return SynchronousFuture<S>(const $es());
         default:
-        // NO-OP.
+          // NO-OP.
       }
     }
     return SynchronousFuture<S>(const S());
@@ -134,14 +135,14 @@ class GeneratedLocalizationsDelegate extends LocalizationsDelegate<S> {
 
   @override
   bool isSupported(Locale locale) =>
-      locale != null && supportedLocales.contains(locale);
+    locale != null && supportedLocales.contains(locale);
 
   @override
   bool shouldReload(GeneratedLocalizationsDelegate old) => false;
 }
 
 String getLang(Locale l) => l == null
-    ? null
-    : l.countryCode != null && l.countryCode.isEmpty
-        ? l.languageCode
-        : l.toString();
+  ? null
+  : l.countryCode != null && l.countryCode.isEmpty
+    ? l.languageCode
+    : l.toString();
