@@ -72,10 +72,10 @@ class SyncScreen extends StatelessWidget {
 
     if(body.isEmpty) return;
     //File file = writeFile(body);
-    Map<String,dynamic> jsonBody = jsonDecode(body);
+    Map<String,dynamic> jsonBody = json.decode(body);
     print(jsonBody);
     print(jsonBody["outlets"]);
-
+    print(jsonBody["outlets"].runtimeType);
 
     bool res = await SimplePermissions.checkPermission(Permission.WriteExternalStorage);
     print('res = $res');
