@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'package:mobivik/helpers/dbhelper.dart';
 import 'package:simple_permissions/simple_permissions.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -86,9 +87,25 @@ class SyncScreen extends StatelessWidget {
 
     FileDBHelper fileDBHelper = new FileDBHelper();
     fileDBHelper.saveStringToFile(body, 'originput.mv');
-    var outlets = jsonBody["outlets"];
+    List outlets = jsonBody["outlets"];
     print(outlets);
     fileDBHelper.saveStringToFile(outlets, 'route.mv');
+
+    // SQLite
+    DatabaseHelper dbHelper = DatabaseHelper();
+    int outletsNumber = outlets.length;
+    Map outlet = Map();
+    for(int i=0; i<outletsNumber; i++){
+      print("$i)   ${outlets[i]}");
+      outlet['id'] = int.parse(outlets[i]['id']);
+      assert(outlet['id'] is int);
+      outlet['outletname'] = outlets[i]['outletname'];
+      outlet['address'] = outlets[i]['address'];
+      outlet['debt'] = outlets[i]['debt'];
+
+      print("outlet= ${outlet}");
+      dbHelper.saveRoute(outlet);
+    }
 
   }
 

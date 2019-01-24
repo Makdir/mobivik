@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:simple_permissions/simple_permissions.dart';
 import 'package:path_provider/path_provider.dart';
@@ -13,8 +14,19 @@ class FileDBHelper {
     return file.writeAsString('$data');
   }
 
-  Future saveRoute(Map outlet){
+  List getRoute() {
+    List<Map> result;
+    _localPath.then((path){
+      final file = new File(path + "/route.mv");
+      //print('file='+file.toString());
+      String fileContent = file.readAsStringSync();
+      print('fileContent='+fileContent);
+      print('fileContent.split(new RegExp(r"{*}")='+fileContent.split(new RegExp(r"{*}")).toString());
+//      result = fileContent.split(new RegExp(r"{*}"));
+//      print('result='+result.toString());
+    });
 
+    return result;
   }
 
   Future<String> get _localPath async {
