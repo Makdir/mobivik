@@ -1,10 +1,35 @@
 
 import 'package:flutter/material.dart';
 import 'package:mobivik/helpers/filedbhelper.dart';
+import 'package:mobivik/screens/outlet.dart';
 
-class RouteScreen extends StatelessWidget {
+class RouteScreen extends StatefulWidget {
+  @override
+  _RouteScreenState createState() {
+    return _RouteScreenState();
+  }
 
-  List route = FileDBHelper().getRoute();
+}
+
+class _RouteScreenState extends State {
+
+  List route;
+
+  @override
+  void initState() {
+    super.initState();
+    getData();
+  }
+
+  Future<Null> getData() async{
+
+    List routeList = await FileDBHelper().getRoute();
+    //List<dynamic> jsonData = json.decode(textData);
+
+    setState(() {
+      route.addAll(routeList);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -15,18 +40,23 @@ class RouteScreen extends StatelessWidget {
             tooltip: 'Air it',
             onPressed: (){Navigator.of(context).pushNamed("/sync");},
       ),],),
-//      body: ListView.builder(
-//        padding: EdgeInsets.all(8.0),
-//        //itemExtent: 20.0,
-//        itemCount: route.length,
-//        itemBuilder: (BuildContext context, int index) {
-//          return ListTile(
-//              leading: Icon(Icons.photo_album),
-//              title:Text(route[index]),
-//              onTap: (){Navigator.of(context).pushNamed("/sync");},
-//          );
-//        },
-//      )
+        body:ListView.builder(
+
+          padding: EdgeInsets.all(8.0),
+
+          //itemExtent: 20.0,
+          itemCount: route.length,
+          itemBuilder: (BuildContext context, int index) {
+            return ListTile(
+              trailing: Icon(Icons.arrow_forward_ios),
+              title:Text(route[index]["outletname"]),
+              onTap: (){
+                Navigator.push(context, MaterialPageRoute(builder: (context) => OutletScreen(outlet: route[index]),
+                ),
+                );},
+            );
+          },
+        )
     );
   }
 

@@ -84,27 +84,29 @@ class SyncScreen extends StatelessWidget {
     if(res==false){permissionStatus = SimplePermissions.requestPermission(Permission.WriteExternalStorage);};
 
     print('permissionStatus = $permissionStatus');
-
-    FileDBHelper fileDBHelper = new FileDBHelper();
-    fileDBHelper.saveStringToFile(body, 'originput.mv');
     List outlets = jsonBody["outlets"];
+
+/*    FileDBHelper fileDBHelper = new FileDBHelper();
+    fileDBHelper.saveStringToFile(body, 'originput.mv');
+
     print(outlets);
-    fileDBHelper.saveStringToFile(outlets, 'route.mv');
+    fileDBHelper.saveStringToFile(outlets, 'route.mv');*/
 
     // SQLite
     DatabaseHelper dbHelper = DatabaseHelper();
     int outletsNumber = outlets.length;
-    Map outlet = Map();
+    Map<String, dynamic> outlet = Map();
     for(int i=0; i<outletsNumber; i++){
       print("$i)   ${outlets[i]}");
-      outlet['id'] = int.parse(outlets[i]['id']);
-      assert(outlet['id'] is int);
+      print("i type is ${outlets[i]['id'].runtimeType}");
+      outlet['id'] = outlets[i]['id'];
+      //assert(outlet['id'] is int);
       outlet['outletname'] = outlets[i]['outletname'];
       outlet['address'] = outlets[i]['address'];
-      outlet['debt'] = outlets[i]['debt'];
+      //outlet['debt'] = outlets[i]['debt'];
 
       print("outlet= ${outlet}");
-      dbHelper.saveRoute(outlet);
+      await dbHelper.saveRoute(outlet);
     }
 
   }

@@ -29,7 +29,7 @@ class DatabaseHelper {
   void _onCreate(Database db, int version) async {
     // When creating the db, create the table
     await db.execute(
-        "CREATE TABLE Route(id INTEGER PRIMARY KEY, outletname TEXT, address TEXT, debt TEXT)");
+        "CREATE TABLE Route(id INTEGER PRIMARY KEY, outletname TEXT, address TEXT)");
   }
 
   Future<int> deleteTable(String tableName) async {
