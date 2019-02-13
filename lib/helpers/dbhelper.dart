@@ -4,77 +4,92 @@ import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 
-class DatabaseHelper {
-  static final DatabaseHelper _instance = new DatabaseHelper.internal();
-  factory DatabaseHelper() => _instance;
-  static Database _db;
+final String tableRoute = 'route';
+final String columnId = '_id';
+final String columnOutletName = 'outletname';
+final String columnAddress = 'address';
+final String columnDone = 'done';
 
-  Future<Database> get db async {
-    if (_db != null) return _db;
-    _db = await initDb();
-    return _db;
-  }
+class Outlet {
+  int id;
+  String outletname;
+  String address;
+  bool done;
 
-  DatabaseHelper.internal();
-
-  initDb() async {
-    var databasesPath = await getDatabasesPath();
-    String path = join(databasesPath, 'mobivik.db');
-    print('path=$path');
-    var theDb = await openDatabase(path, version: 1, onCreate: _onCreate);
-    print('theDb=$theDb');
-    return theDb;
-  }
-
-  void _onCreate(Database db, int version) async {
-    // When creating the db, create the table
-    await db.execute(
-        "CREATE TABLE Route(id INTEGER PRIMARY KEY, outletname TEXT, address TEXT)");
-  }
-
-  Future<int> deleteTable(String tableName) async {
-    var database = await db;
-    int res = await database.delete(tableName);
-    return res;
-  }
-
-  Future<int> saveRoute(Map outlet) async {
-    var dbClient = await db;
-    int res = await dbClient.insert("Route", outlet);
-    return res;
-  }
-
-  Future<List<Map>> getRoute() async {
-    var dbClient = await db;
-    List<Map> list = await dbClient.rawQuery('SELECT * FROM Route');
-    List<Map> outlets = new List();
-    for (int i = 0; i < list.length; i++) {
-      var outlet = Map();
-      outlet["id"] =list[i]["id"];
-      outlet["outletname"]=list[i]["outletname"];
-      outlet["address"]=list[i]["address"];
-      //user.setUserId(list[i]["id"]);
-      outlets.add(outlet);
+  Map<String, dynamic> toMap() {
+    var map = <String, dynamic>{
+      columnOutletName: outletname,
+      columnAddress: address,
+      columnDone: done == true ? 1 : 0
+    };
+    if (id != null) {
+      map[columnId] = id;
     }
-    print(outlets.length);
-    return outlets;
+    return map;
   }
 
-  Future<int> deleteUsers(String id) async {
-    var dbClient = await db;
-    int res = await dbClient.rawDelete('DELETE FROM User WHERE id = ?', [id]);
-    return res;
+  Outlet();
+
+  Outlet.fromMap(Map<String, dynamic> map) {
+    id = map[columnId];
+    outletname = map[columnOutletName];
+    address = map[columnAddress];
+    done = map[columnDone] == 1;
   }
-
-  Future<bool> update(Map outlet) async {
-    var dbClient = await db;
-    int res =   await dbClient.update("Route", outlet,
-        where: "id = ?", whereArgs: <int>[outlet["id"]]);
-    return res > 0 ? true : false;
-  }
-
-
 }
 
+class DatabaseProvider {
+  Database db;
+
+
+
+
+  Future open() async {
+
+    var databasesPath = await getDatabasesPath();
+    String path = join(databasesPath, 'mobivik.db');
+
+    print("path=$path");
+
+    db = await openDatabase(path, version: 1,
+        onCreate: (Database db, int version) async {
+          await db.execute('''
+            create table $tableRoute ( 
+              $columnId integer primary key autoincrement, 
+              $columnOutletName text,
+              $columnAddress text,
+              $columnDone integer not null)
+            '''
+          );
+        });
+  }
+
+  Future<Outlet> insertOutlet(Outlet outlet) async {
+    outlet.id = await db.insert(tableRoute, outlet.toMap());
+    return outlet;
+  }
+
+  Future<Outlet> getOutlet(int id) async {
+    List<Map> maps = await db.query(tableRoute,
+        columns: [columnId, columnDone, columnOutletName, columnAddress],
+        where: '$columnId = ?',
+        whereArgs: [id]);
+    if (maps.length > 0) {
+      return Outlet.fromMap(maps.first);
+    }
+    return null;
+  }
+
+  Future<int> deleteRoute(int id) async {
+    return await db.delete(tableRoute, where: '$columnId = ?', whereArgs: [id]);
+  }
+
+  Future<int> updateOutlet(Outlet outlet) async {
+    return await db.update(tableRoute, outlet.toMap(),
+        where: '$columnId = ?', whereArgs: [outlet.id]);
+  }
+
+  Future close() async => db.close();
+}
 
 

@@ -93,7 +93,9 @@ class SyncScreen extends StatelessWidget {
     fileDBHelper.saveStringToFile(outlets, 'route.mv');*/
 
     // SQLite
-    DatabaseHelper dbHelper = DatabaseHelper();
+    DatabaseProvider dbProvider = DatabaseProvider();
+    await dbProvider.open();
+
     int outletsNumber = outlets.length;
     Map<String, dynamic> outlet = Map();
     for(int i=0; i<outletsNumber; i++){
@@ -106,8 +108,11 @@ class SyncScreen extends StatelessWidget {
       //outlet['debt'] = outlets[i]['debt'];
 
       print("outlet= ${outlet}");
-      await dbHelper.saveRoute(outlet);
+
+      int updateResult = await dbProvider.updateOutlet(Outlet.fromMap(outlet));
+      print("updateResult=$updateResult");
     }
+    dbProvider.close();
 
   }
 
