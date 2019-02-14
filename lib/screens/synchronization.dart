@@ -111,6 +111,9 @@ class SyncScreen extends StatelessWidget {
 
       int updateResult = await dbProvider.updateOutlet(Outlet.fromMap(outlet));
       print("updateResult=$updateResult");
+      if(updateResult == 0){
+        dbProvider.insertOutlet(Outlet.fromMap(outlet));
+      };
     }
     dbProvider.close();
 

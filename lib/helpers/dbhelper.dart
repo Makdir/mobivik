@@ -47,7 +47,7 @@ class DatabaseProvider {
   Future open() async {
 
     var databasesPath = await getDatabasesPath();
-    String path = join(databasesPath, 'mobivik.db');
+    String path = join(databasesPath, 'mobiviker.db');
 
     print("path=$path");
 
