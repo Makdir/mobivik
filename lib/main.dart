@@ -1,15 +1,13 @@
-import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-
-import 'package:sqflite/sqflite.dart';
-
+import 'package:flutter/material.dart';
+import 'package:mobivik/screens/routescreen.dart';
 import 'package:mobivik/screens/settings.dart';
 import 'package:mobivik/screens/synchronization.dart';
-import 'package:mobivik/screens/routescreen.dart';
 
 void main() {
   runApp(
       new MaterialApp(
+
         title: 'Mobivik',
         theme: ThemeData(primarySwatch: Colors.blue,),
         home: new MainScreen(),
@@ -29,14 +27,14 @@ class MainScreen extends StatelessWidget {
     return new Scaffold(
         appBar: new AppBar(backgroundColor: Colors.brown),
         body: new Container(
-        color: Colors.white,
-        child: new ListView(
-            padding: const EdgeInsets.all(10.0),
-            children: <Widget>[
-              button(Icons.import_export,'Синхронизация',context,'/sync'),
-              button(Icons.list,'Маршрут',context,'/route'),
-              button(Icons.settings,'Настройки',context,'/settings'),
-            ],
+          color: Colors.white,
+          child: new ListView(
+              padding: const EdgeInsets.all(10.0),
+              children: <Widget>[
+                button(Icons.import_export,'Синхронизация',context,'/sync'),
+                button(Icons.list,'Маршрут',context,'/route'),
+                button(Icons.settings,'Настройки',context,'/settings'),
+              ],
         )
 
       )
