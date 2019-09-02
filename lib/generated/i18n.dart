@@ -11,6 +11,8 @@ import 'package:flutter/material.dart';
 class S implements WidgetsLocalizations {
   const S();
 
+  static S current;
+
   static const GeneratedLocalizationsDelegate delegate =
     GeneratedLocalizationsDelegate();
 
@@ -101,20 +103,26 @@ class GeneratedLocalizationsDelegate extends LocalizationsDelegate<S> {
     if (lang != null) {
       switch (lang) {
         case "ru":
-          return SynchronousFuture<S>(const $ru());
+          S.current = const $ru();
+          return SynchronousFuture<S>(S.current);
         case "uk":
-          return SynchronousFuture<S>(const $uk());
+          S.current = const $uk();
+          return SynchronousFuture<S>(S.current);
         case "en":
-          return SynchronousFuture<S>(const $en());
+          S.current = const $en();
+          return SynchronousFuture<S>(S.current);
         case "pl":
-          return SynchronousFuture<S>(const $pl());
+          S.current = const $pl();
+          return SynchronousFuture<S>(S.current);
         case "es":
-          return SynchronousFuture<S>(const $es());
+          S.current = const $es();
+          return SynchronousFuture<S>(S.current);
         default:
           // NO-OP.
       }
     }
-    return SynchronousFuture<S>(const S());
+    S.current = const S();
+    return SynchronousFuture<S>(S.current);
   }
 
   @override
