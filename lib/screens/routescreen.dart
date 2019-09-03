@@ -26,7 +26,7 @@ class _RouteScreenState extends State {
 
     List<Client> routeList = await RouteDAO().getRoute();
     //List<dynamic> jsonData = json.decode(textData);
-    print("routeList = $routeList");
+
     setState(() {
       route.addAll(routeList);
     });
@@ -51,6 +51,7 @@ class _RouteScreenState extends State {
             return ListTile(
               trailing: Icon(Icons.arrow_forward_ios),
               title:Text(route[index].name),
+              subtitle: Text(route[index].address),
               onTap: (){
                 Navigator.push(context, MaterialPageRoute(builder: (context) => OutletScreen(outlet: route[index]),
                 ),

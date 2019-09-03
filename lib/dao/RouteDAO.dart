@@ -17,15 +17,11 @@ class RouteDAO {
       String fileContent = await file.readAsString();
       final parsedJson = json.decode(fileContent);
 
-      print("parsedJson = $parsedJson");
       for(Map client in parsedJson){
         result.add(Client.fromJson(client));
       }
 
-
-      //result = parsedJson.map((i)=>Client.fromJson(i)).toList();
-      print("1result = $result");
-    } catch (e){print("exception = $e");}
+    } catch (e){print("Еxception in route loading = $e");}
 
     //List<Client> result = Client.fromJson(jsonResponse);
     return result;
