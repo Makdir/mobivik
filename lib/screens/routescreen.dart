@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
-import 'package:mobivik/helpers/filedbhelper.dart';
+import 'package:mobivik/dao/RouteDAO.dart';
+import 'package:mobivik/models/Client.dart';
 import 'package:mobivik/screens/outlet.dart';
 
 class RouteScreen extends StatefulWidget {
@@ -13,7 +14,7 @@ class RouteScreen extends StatefulWidget {
 
 class _RouteScreenState extends State {
 
-  List route;
+  List<Client> route = List();
 
   @override
   void initState() {
@@ -21,11 +22,11 @@ class _RouteScreenState extends State {
     getData();
   }
 
-  Future<Null> getData() async{
+  Future getData() async{
 
-    List routeList = await FileDBHelper().getRoute();
+    List<Client> routeList = await RouteDAO().getRoute();
     //List<dynamic> jsonData = json.decode(textData);
-
+    print("routeList = $routeList");
     setState(() {
       route.addAll(routeList);
     });
@@ -49,7 +50,7 @@ class _RouteScreenState extends State {
           itemBuilder: (BuildContext context, int index) {
             return ListTile(
               trailing: Icon(Icons.arrow_forward_ios),
-              title:Text(route[index]["outletname"]),
+              title:Text(route[index].name),
               onTap: (){
                 Navigator.push(context, MaterialPageRoute(builder: (context) => OutletScreen(outlet: route[index]),
                 ),
