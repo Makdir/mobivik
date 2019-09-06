@@ -24,7 +24,7 @@ class _RouteScreenState extends State {
 
   Future getData() async{
 
-    List<Client> routeList = await RouteDAO().getRoute();
+    List<Client> routeList = await RouteDAO().getItems();
     //List<dynamic> jsonData = json.decode(textData);
 
     setState(() {
@@ -35,12 +35,7 @@ class _RouteScreenState extends State {
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
-      appBar: new AppBar(title: new Text("Маршрут"),actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.import_export),
-            tooltip: 'Air it',
-            onPressed: (){Navigator.of(context).pushNamed("/sync");},
-      ),],),
+      appBar: new AppBar(title: new Text("Маршрут")),
         body:ListView.builder(
 
           padding: EdgeInsets.all(8.0),

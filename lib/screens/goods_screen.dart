@@ -1,12 +1,47 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/material.dart';
 import 'package:mobivik/models/Client.dart';
 import 'package:path_provider/path_provider.dart';
 
+class GoodsScreen extends StatefulWidget {
+  @override
+  _GoodsScreenState createState() {
+    return _GoodsScreenState();
+  }
 
-class RouteDAO {
+}
 
+class _GoodsScreenState extends State {
+  List<Client> goods = List();
+
+  @override
+  void initState() {
+    super.initState();
+    getData();
+  }
+
+  Future getData() async{
+
+    List<Client> routeList = await GoodsDAO().getItems();
+    //List<dynamic> jsonData = json.decode(textData);
+
+    setState(() {
+      goods.addAll(routeList);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return new Scaffold(
+        appBar: new AppBar(title: new Text("Товары")),
+        body:ListView.builder()
+    );
+}
+}
+
+class GoodsDAO {
   Future<List> getItems() async {
     List<Client> result = List<Client>();
     String path = await _localPath;
@@ -33,7 +68,4 @@ class RouteDAO {
 
     return tempPath;
   }
-
-
 }
-
