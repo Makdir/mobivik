@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:koukicons/engineering.dart';
 import 'package:mobivik/screens/goods_screen.dart';
 import 'package:mobivik/screens/routescreen.dart';
 import 'package:mobivik/screens/settings.dart';
@@ -10,7 +11,7 @@ void main() {
       new MaterialApp(
 
         title: 'Mobivik',
-        theme: ThemeData(primarySwatch: Colors.amber[200],),
+        theme: ThemeData(colorScheme: ColorScheme.dark(primary: Colors.amber)),// Colors.black87,),
         home: new MainScreen(),
         routes: <String, WidgetBuilder> {
           //'/logout': (BuildContext context) => new LoginScreen(),
@@ -31,7 +32,7 @@ class MainScreen extends StatelessWidget {
     return new Scaffold(
         appBar: new AppBar(title: const Text(""), actions: <Widget>[
             IconButton(
-              icon: Icon(Icons.settings_applications),
+              icon: KoukiconsEngineering(),//Icon(Icons.settings_applications),
               onPressed: () {
                 Navigator.of(context).pushNamed("/settings");
               },
@@ -62,8 +63,8 @@ class MainScreen extends StatelessWidget {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.only(
                           bottomLeft: Radius.circular(3.0),
-                          bottomRight: Radius.circular(6.0),
-                          topLeft: Radius.circular(6.0),
+                          bottomRight: Radius.circular(21.0),
+                          topLeft: Radius.circular(21.0),
                           topRight: Radius.circular(3.0)),
         ),
         splashColor: Colors.limeAccent,

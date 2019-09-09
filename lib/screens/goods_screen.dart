@@ -1,9 +1,6 @@
-import 'dart:convert';
-import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:mobivik/models/Client.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:mobivik/dao/GoodsDAO.dart';
+import 'package:mobivik/models/Goods.dart';
 
 class GoodsScreen extends StatefulWidget {
   @override
@@ -14,7 +11,7 @@ class GoodsScreen extends StatefulWidget {
 }
 
 class _GoodsScreenState extends State {
-  List<Client> goods = List();
+  List<Goods> goods = List();
 
   @override
   void initState() {
@@ -24,48 +21,43 @@ class _GoodsScreenState extends State {
 
   Future getData() async{
 
-    List<Client> routeList = await GoodsDAO().getItems();
+    List<Goods> goodsList = await GoodsDAO().getItems();
     //List<dynamic> jsonData = json.decode(textData);
 
     setState(() {
-      goods.addAll(routeList);
+      goods.addAll(goodsList);
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
-        appBar: new AppBar(title: new Text("Товары")),
-        body:ListView.builder()
+        appBar: new AppBar(title: new Text("Каталог товаров")),
+        body:SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: SizedBox(
+            width: 1000.0,
+            child: ListView.builder(
+
+              padding: EdgeInsets.all(8.0),
+
+              //itemExtent: 20.0,
+              itemCount: goods.length,
+              itemBuilder: (BuildContext context, int index) {
+                return ListTile(
+                  trailing: Icon(Icons.arrow_forward_ios),
+                  title:Row(children: [Text(goods[index].name), Text(goods[index].unit), Text(goods[index].brand),Text(goods[index].price.toString()),Text(goods[index].balance.toString()),]),
+                  subtitle: Text(goods[index].brand),
+                  onTap: (){
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => GoodsScreen(),
+                    ),
+                    );},
+                );
+              },
+            ),
+          ),
+        )
     );
-}
-}
-
-class GoodsDAO {
-  Future<List> getItems() async {
-    List<Client> result = List<Client>();
-    String path = await _localPath;
-    print("path = $path");
-
-    try {
-      final file = new File(path + Platform.pathSeparator + "route.mv");
-      String fileContent = await file.readAsString();
-      final parsedJson = json.decode(fileContent);
-
-      for(Map client in parsedJson){
-        result.add(Client.fromJson(client));
-      }
-
-    } catch (e){print("Еxception in route loading = $e");}
-
-    //List<Client> result = Client.fromJson(jsonResponse);
-    return result;
-  }
-
-  Future<String> get _localPath async {
-    Directory tempDir = await getTemporaryDirectory();
-    String tempPath = tempDir.path;
-
-    return tempPath;
   }
 }
+

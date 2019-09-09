@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:mobivik/dao/RouteDAO.dart';
 import 'package:mobivik/models/Client.dart';
-import 'package:mobivik/screens/outlet.dart';
+import 'package:mobivik/screens/outlet_screen.dart';
 
 class RouteScreen extends StatefulWidget {
   @override
