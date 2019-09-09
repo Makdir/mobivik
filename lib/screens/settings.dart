@@ -11,7 +11,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   // Create a text controller. We will use it to retrieve the current value
   // of the TextField!
   final controllerServerAddress = TextEditingController();
-  final controllerApplicationDataPath = TextEditingController();
+  final controllerAgentCode = TextEditingController();
 
   @override
   void initState() {
@@ -25,11 +25,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Future<Null> getSavedSettings() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var serverAddress = prefs.getString("serverAddress");
-    var applicationDataPath = prefs.getString("applicationDataPath");
+    var agentCode = prefs.getString("agentCode");
 
     setState(() {
       controllerServerAddress.text = serverAddress;
-      controllerApplicationDataPath.text = applicationDataPath;
+      controllerAgentCode.text = agentCode;
     });
   }
 
@@ -44,7 +44,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   void saveData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString("serverAddress",       controllerServerAddress.text);
-    prefs.setString("applicationDataPath", controllerApplicationDataPath.text);
+    prefs.setString("applicationDataPath", controllerAgentCode.text);
     //print("saveData: ${controllerServerAddress.text}");
   }
 
@@ -64,8 +64,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
               controller: controllerServerAddress,
             ),
             TextField(
-              decoration: InputDecoration(labelText: 'Application data path:' ),
-              controller: controllerApplicationDataPath,
+              decoration: InputDecoration(labelText: 'Agent code:' ),
+              controller: controllerAgentCode,
             ),
             Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children:[

@@ -46,8 +46,8 @@ class _GoodsScreenState extends State {
               itemBuilder: (BuildContext context, int index) {
                 return ListTile(
                   trailing: Icon(Icons.arrow_forward_ios),
-                  title:Row(children: [Text(goods[index].name), Text(goods[index].unit), Text(goods[index].brand),Text(goods[index].price.toString()),Text(goods[index].balance.toString()),]),
-                  subtitle: Text(goods[index].brand),
+                  title:GoodsListRow(index),
+                  subtitle: Text("Остаток: ${goods[index].balance.toString()}"),
                   onTap: (){
                     Navigator.push(context, MaterialPageRoute(builder: (context) => GoodsScreen(),
                     ),
@@ -59,5 +59,14 @@ class _GoodsScreenState extends State {
         )
     );
   }
+
+  Row GoodsListRow(int index) => Row(
+      children: [
+        Text(goods[index].name),
+        Text(goods[index].unit),
+        Text(goods[index].brand),
+        Text(goods[index].price.toString()),
+        Text(goods[index].balance.toString()),
+      ]);
 }
 

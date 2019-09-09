@@ -1,10 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:koukicons/engineering.dart';
+
 import 'package:mobivik/screens/goods_screen.dart';
 import 'package:mobivik/screens/routescreen.dart';
 import 'package:mobivik/screens/settings.dart';
 import 'package:mobivik/screens/synchronization.dart';
+
+import 'package:koukicons/engineering.dart';
+import 'package:koukicons/synchronize.dart';
 
 void main() {
   runApp(
@@ -42,7 +45,7 @@ class MainScreen extends StatelessWidget {
           child: new ListView(
               padding: const EdgeInsets.all(10.0),
               children: <Widget>[
-                button(Icons.import_export,'Синхронизация',context,'/sync'),
+                button(Icons.sync,'Синхронизация',context,'/sync'),
                 button(Icons.list,'Маршрут',context,'/route'),
                 button(Icons.settings,'Настройки',context,'/settings'),
                 button(Icons.storage,'Товары',context,'/goods'),
@@ -56,7 +59,13 @@ class MainScreen extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.all(5.0),
       child:RaisedButton(
-        child: Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[Icon(iconData),Text(title)],),
+
+        child: Row(mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Icon(iconData),
+            Text(title, style: TextStyle(fontWeight: FontWeight.bold)),
+          ],
+        ),
         onPressed: () { Navigator.of(context).pushNamed(navlink);},
         color: Colors.orangeAccent,
         padding: EdgeInsets.all(10.0),
