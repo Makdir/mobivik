@@ -11,7 +11,9 @@ class GoodsScreen extends StatefulWidget {
 }
 
 class _GoodsScreenState extends State {
-  List<Goods> goods = List();
+  List goods = List();
+
+  List<Widget> _widgetList = List();
 
   @override
   void initState() {
@@ -23,9 +25,16 @@ class _GoodsScreenState extends State {
 
     List<Goods> goodsList = await GoodsDAO().getItems();
     //List<dynamic> jsonData = json.decode(textData);
+    Goods item;
+    for(item in goodsList){
+      if(item.isFolder==false){_widgetList.add(GoodsListRow(item));};
+
+        //_widgetList[1].title.
+
+    }
 
     setState(() {
-      goods.addAll(goodsList);
+      goods.addAll(_widgetList);
     });
   }
 
@@ -44,15 +53,7 @@ class _GoodsScreenState extends State {
               //itemExtent: 20.0,
               itemCount: goods.length,
               itemBuilder: (BuildContext context, int index) {
-                return ListTile(
-                  trailing: Icon(Icons.arrow_forward_ios),
-                  title:GoodsListRow(index),
-                  subtitle: Text("Остаток: ${goods[index].balance.toString()}"),
-                  onTap: (){
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => GoodsScreen(),
-                    ),
-                    );},
-                );
+                return _widgetList[index];
               },
             ),
           ),
@@ -60,13 +61,35 @@ class _GoodsScreenState extends State {
     );
   }
 
-  Row GoodsListRow(int index) => Row(
-      children: [
-        Text(goods[index].name),
-        Text(goods[index].unit),
-        Text(goods[index].brand),
-        Text(goods[index].price.toString()),
-        Text(goods[index].balance.toString()),
-      ]);
+  Widget GoodsListRow(Goods item) {
+    return ExpansionTile(
+      trailing: Icon(Icons.arrow_forward_ios),
+      title:Row(
+        children: [
+          Text("${item.name} (${item.unit})"),
+          Text(item.price.toString()),
+
+        ]),
+//      subtitle: Text("Остаток: ${item.balance.toString()}"),
+//      onTap: (){
+//        Navigator.push(context, MaterialPageRoute(builder: (context) => GoodsScreen(),
+//        ),
+//        );},
+    );
+
+
+
+
+
+  }
+
+  Row GoodsListRowFolder(int index) =>
+
+        Row(
+          children: [
+            Text("${goods[index].name} (${goods[index].unit})"),
+            Text(goods[index].price.toString()),
+
+        ]);
 }
 

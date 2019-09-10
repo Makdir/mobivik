@@ -5,7 +5,7 @@ import 'package:mobivik/models/Goods.dart';
 import 'package:path_provider/path_provider.dart';
 
 
-class GoodsDAO {
+class GoodsDAO{
   Future<List> getItems() async {
     List<Goods> result = List<Goods>();
     String path = await _localPath;
