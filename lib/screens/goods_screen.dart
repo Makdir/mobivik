@@ -13,7 +13,7 @@ class GoodsScreen extends StatefulWidget {
 class _GoodsScreenState extends State {
   List goods = List();
 
-  List<Widget> _widgetList = List();
+  List<ExpansionTile> _widgetList = List();
 
   @override
   void initState() {
@@ -27,9 +27,7 @@ class _GoodsScreenState extends State {
     //List<dynamic> jsonData = json.decode(textData);
     Goods item;
     for(item in goodsList){
-      if(item.isFolder==false){_widgetList.add(GoodsListRow(item));};
-
-        //_widgetList[1].title.
+      _widgetList.add(GoodsListRow(item));
 
     }
 
@@ -61,8 +59,9 @@ class _GoodsScreenState extends State {
     );
   }
 
-  Widget GoodsListRow(Goods item) {
+  ExpansionTile GoodsListRow(Goods item) {
     return ExpansionTile(
+      key: Key(item.id),
       trailing: Icon(Icons.arrow_forward_ios),
       title:Row(
         children: [
