@@ -13,7 +13,7 @@ class GoodsScreen extends StatefulWidget {
 class _GoodsScreenState extends State {
   List goods = List();
 
-  List<ExpansionTile> _widgetList = List();
+  List<Entry> entries = List();
 
   @override
   void initState() {
@@ -24,15 +24,23 @@ class _GoodsScreenState extends State {
   Future getData() async{
 
     List<Goods> goodsList = await GoodsDAO().getItems();
-    //List<dynamic> jsonData = json.decode(textData);
+
     Goods item;
     for(item in goodsList){
-      _widgetList.add(GoodsListRow(item));
+//      _widgetList.add(GoodsListRow(item));
+      String parentId = item.parent_id.toString().trim();
+      if((parentId!="")||(parentId.isNotEmpty))
+      {
+        Entry parentEntry = entries.firstWhere((entry)=>entry.id==parentId);
+        parentEntry.children.add(Entry(item.id, item.name));
+      }else{
+        entries.add(Entry(item.id, item.name));
+      }
 
     }
 
     setState(() {
-      goods.addAll(_widgetList);
+      goods.addAll(goodsList);
     });
   }
 
@@ -51,7 +59,7 @@ class _GoodsScreenState extends State {
               //itemExtent: 20.0,
               itemCount: goods.length,
               itemBuilder: (BuildContext context, int index) {
-                return _widgetList[index];
+                return EntryItem(goods[index]);
               },
             ),
           ),
@@ -92,3 +100,33 @@ class _GoodsScreenState extends State {
         ]);
 }
 
+
+// One entry in the multilevel list displayed by this app.
+class Entry {
+  Entry(this.id, this.title, [this.children = const <Entry>[]]);
+  final String id;
+  final String title;
+  final List<Entry> children;
+}
+
+// Displays one Entry. If the entry has children then it's displayed
+// with an ExpansionTile.
+class EntryItem extends StatelessWidget {
+  const EntryItem(this.entry);
+
+  final Entry entry;
+
+  Widget _buildTiles(Entry root) {
+    if (root.children.isEmpty) return ListTile(title: Text(root.title));
+    return ExpansionTile(
+      key: PageStorageKey<Entry>(root),
+      title: Text(root.title),
+      children: root.children.map(_buildTiles).toList(),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return _buildTiles(entry);
+  }
+}
