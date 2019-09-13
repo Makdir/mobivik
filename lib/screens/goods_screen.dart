@@ -94,7 +94,7 @@ class EntryItem extends StatelessWidget {
       elevation: 3,
       child: Container(
         decoration: BoxDecoration(
-          border: Border.all(width: 1.0, style: BorderStyle.solid),
+          border: Border.all(width: 0.5, style: BorderStyle.solid),
           borderRadius: BorderRadius.all( Radius.circular(3.0)),
         ),
         child: ExpansionTile(

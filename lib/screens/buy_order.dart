@@ -59,7 +59,7 @@ class _BuyOrderState extends State {
           padding: EdgeInsets.all(8.0),
           child: Column(
             children: <Widget>[
-Text(_outlet.name),
+              Text(_outlet.name, style: TextStyle(fontWeight: FontWeight.bold),),
               Expanded(
 
                 child: SingleChildScrollView(
@@ -67,10 +67,10 @@ Text(_outlet.name),
 
                   child: Container(
                     width: 500.0,
-decoration: BoxDecoration(
-  border: Border.all(width: 1.0, style: BorderStyle.solid),
-  borderRadius: BorderRadius.all( Radius.circular(3.0)),
-),
+                    decoration: BoxDecoration(
+                        border: Border.all(width: 0.5, style: BorderStyle.solid),
+
+                      ),
                     child: ListView.builder(
                       padding: EdgeInsets.all(8.0),
                       //itemExtent: 20.0,
@@ -115,7 +115,12 @@ class EntryItem extends StatelessWidget {
       return Container(
         color: Colors.white30,
         child: ListTile(
-          title: Text(root.item.name),
+          title: Row(
+            children: <Widget>[
+              Text(root.item.name),
+              TextField(),
+            ],
+          ),
           subtitle: Text("Balance ${root.item.balance} ${root.item.unit}"),
         ),
       );
