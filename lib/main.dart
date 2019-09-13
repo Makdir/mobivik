@@ -1,20 +1,21 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
+import 'package:koukicons/engineering.dart';
 import 'package:mobivik/screens/goods_screen.dart';
-import 'package:mobivik/screens/routescreen.dart';
+import 'package:mobivik/screens/route_screen.dart';
 import 'package:mobivik/screens/settings.dart';
 import 'package:mobivik/screens/synchronization.dart';
-
-import 'package:koukicons/engineering.dart';
-import 'package:koukicons/synchronize.dart';
 
 void main() {
   runApp(
       new MaterialApp(
 
         title: 'Mobivik',
-        theme: ThemeData(colorScheme: ColorScheme.dark(primary: Colors.amber)),// Colors.black87,),
+        theme:  new ThemeData(
+          primarySwatch: Colors.lime,
+          backgroundColor: Colors.black12,
+
+        ),
         home: new MainScreen(),
         routes: <String, WidgetBuilder> {
           //'/logout': (BuildContext context) => new LoginScreen(),

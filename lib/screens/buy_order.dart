@@ -1,19 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:mobivik/dao/GoodsDAO.dart';
+import 'package:mobivik/models/client_model.dart';
 import 'package:mobivik/models/goods_model.dart';
 
-class GoodsScreen extends StatefulWidget {
+class BuyOrder extends StatefulWidget {
+  final Client outlet;
+
+  BuyOrder({Key key, @required this.outlet}) : super(key: key);
+
   @override
-  _GoodsScreenState createState() {
-    return _GoodsScreenState();
+  _BuyOrderState createState() {
+    return _BuyOrderState(outlet);
   }
 
 }
 
-class _GoodsScreenState extends State {
-  List goodsWidget = List();
+class _BuyOrderState extends State {
+  final Client _outlet;
+  List _goodsWidget = List();
 
   List<Entry> entries = List();
+
+  _BuyOrderState(this._outlet);
 
   @override
   void initState() {
@@ -39,21 +47,43 @@ class _GoodsScreenState extends State {
     }
 
     setState(() {
-      goodsWidget.addAll(entries);
+      _goodsWidget.addAll(entries);
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
-        appBar: new AppBar(title: new Text("Каталог товаров")),
-        body:ListView.builder(
+        appBar: new AppBar(title: new Text("Заказ покупателя")),
+        body:Padding(
           padding: EdgeInsets.all(8.0),
-          //itemExtent: 20.0,
-          itemCount: goodsWidget.length,
-          itemBuilder: (BuildContext context, int index) {
-            return EntryItem(goodsWidget[index]);
-          },
+          child: Column(
+            children: <Widget>[
+Text(_outlet.name),
+              Expanded(
+
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+
+                  child: Container(
+                    width: 500.0,
+decoration: BoxDecoration(
+  border: Border.all(width: 1.0, style: BorderStyle.solid),
+  borderRadius: BorderRadius.all( Radius.circular(3.0)),
+),
+                    child: ListView.builder(
+                      padding: EdgeInsets.all(8.0),
+                      //itemExtent: 20.0,
+                      itemCount: _goodsWidget.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        return EntryItem(_goodsWidget[index]);
+                      },
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
         )
     );
   }
@@ -87,22 +117,21 @@ class EntryItem extends StatelessWidget {
         child: ListTile(
           title: Text(root.item.name),
           subtitle: Text("Balance ${root.item.balance} ${root.item.unit}"),
-          leading: Icon(Icons.linear_scale),
         ),
       );
     return Card(
       elevation: 3,
       child: Container(
-        decoration: BoxDecoration(
+        decoration: new BoxDecoration(
           border: Border.all(width: 1.0, style: BorderStyle.solid),
           borderRadius: BorderRadius.all( Radius.circular(3.0)),
         ),
         child: ExpansionTile(
           key: PageStorageKey<Entry>(root),
-          title: Text(root.item.name, style: TextStyle(fontWeight: FontWeight.bold),),
+          title: Text(root.item.name),
           children: root.children.map(_buildTiles).toList(),
-          leading: Icon(Icons.folder_open),
-          backgroundColor: Colors.black38,
+          leading: Icon(Icons.arrow_right),
+          backgroundColor: Colors.orangeAccent[100],
         ),
       ),
     );

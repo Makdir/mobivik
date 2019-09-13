@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:mobivik/models/Client.dart';
+import 'package:mobivik/models/client_model.dart';
 import 'package:path_provider/path_provider.dart';
 
 

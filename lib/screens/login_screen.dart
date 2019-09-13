@@ -1,8 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:mobivik/screens/routescreen.dart';
-import 'package:mobivik/screens/settings.dart';
-import 'package:mobivik/screens/synchronization.dart';
 
 class LoginScreen extends StatelessWidget {
 

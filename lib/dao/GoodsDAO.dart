@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:mobivik/models/Goods.dart';
+import 'package:mobivik/models/goods_model.dart';
 import 'package:path_provider/path_provider.dart';
 
 
@@ -10,7 +10,7 @@ class GoodsDAO{
     List<Goods> result = List<Goods>();
     String path = await _localPath;
     print("path = $path");
-
+//TODO Permission to storage access
     try {
       final file = new File(path + Platform.pathSeparator + "goods.mv");
       String fileContent = await file.readAsString();

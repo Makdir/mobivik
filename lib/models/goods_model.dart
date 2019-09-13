@@ -6,7 +6,7 @@ class Goods {
   final double price;
   final double balance;
   final String brand;
-  final bool isFolder;
+  final String unit_price;
 
   Goods(
       {
@@ -17,7 +17,7 @@ class Goods {
         this.price,
         this.balance,
         this.brand,
-        this.isFolder
+        this.unit_price
       }
       );
 
@@ -31,7 +31,7 @@ class Goods {
       price: parsedJson['price'],
       balance: parsedJson['balance'],
       brand: parsedJson['brand'],
-        isFolder: parsedJson['isFolder'],
+      unit_price: parsedJson['unit_price'],
     );
   }
 }
