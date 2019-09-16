@@ -2,14 +2,14 @@ class Client {
   final String id;
   final String name;
   final String address;
-  final List debt;
+  final List debtlist;
 
   Client(
       {
         this.id,
         this.name,
         this.address,
-        this.debt
+        this.debtlist
       }
       );
 
@@ -19,7 +19,7 @@ class Client {
       id: parsedJson['id'],
       name: parsedJson['name'],
       address: parsedJson['address'],
-      debt: parsedJson['debt'],
+      debtlist: parsedJson['debtlist'],
     );
   }
 }

@@ -37,10 +37,7 @@ class _RouteScreenState extends State {
     return new Scaffold(
       appBar: new AppBar(title: new Text("Маршрут")),
         body:ListView.builder(
-
           padding: EdgeInsets.all(8.0),
-
-          //itemExtent: 20.0,
           itemCount: route.length,
           itemBuilder: (BuildContext context, int index) {
             return ListTile(

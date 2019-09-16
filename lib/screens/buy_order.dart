@@ -18,8 +18,8 @@ class BuyOrder extends StatefulWidget {
 class _BuyOrderState extends State {
   final Client _outlet;
   List _goodsWidget = List();
-
   List<Entry> entries = List();
+  List<TextEditingController> _controllers = new List();
 
   _BuyOrderState(this._outlet);
 
@@ -73,7 +73,6 @@ class _BuyOrderState extends State {
                       ),
                     child: ListView.builder(
                       padding: EdgeInsets.all(8.0),
-                      //itemExtent: 20.0,
                       itemCount: _goodsWidget.length,
                       itemBuilder: (BuildContext context, int index) {
                         return EntryItem(_goodsWidget[index]);
@@ -118,10 +117,34 @@ class EntryItem extends StatelessWidget {
           title: Row(
             children: <Widget>[
               Text(root.item.name),
-              TextField(),
+              //TextField(),
             ],
           ),
           subtitle: Text("Balance ${root.item.balance} ${root.item.unit}"),
+            trailing: Container(
+              width: 100,
+              decoration: BoxDecoration(
+                border: Border.all(width: 0.5, style: BorderStyle.solid),
+              ),
+              child: new Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: <Widget>[
+                  new Expanded(
+                    //flex: 3,
+                    child: new TextField(
+                      controller: _controllers[index],
+                      textAlign: TextAlign.end,
+                      keyboardType: TextInputType.number,
+                      decoration: InputDecoration.collapsed(
+                        hintText: "${debtlist[index]["debt"]}",
+
+                      ),
+                    ),
+                  ),
+
+                ],
+              ),
+            )
         ),
       );
     return Card(

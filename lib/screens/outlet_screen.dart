@@ -17,8 +17,16 @@ class OutletScreen extends StatefulWidget {
 class _OutletScreenState extends State {
   final Client outlet;
 
+  List debtlist = List();
+  List<TextEditingController> _controllers = new List();
 
   _OutletScreenState(this.outlet);
+
+  void initState(){
+    super.initState();
+    debtlist = outlet.debtlist;
+
+  }
 
 
   @override
@@ -38,7 +46,48 @@ class _OutletScreenState extends State {
                     );
                   },
                 ),
-                Expanded(),
+                Expanded(
+                  child:ListView.builder(
+                    itemCount: debtlist.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      _controllers.add(new TextEditingController());
+                      return Container(
+                        decoration: BoxDecoration(
+                          border: Border.all(width: 0.5, style: BorderStyle.solid),
+                        ),
+                        child: ListTile(
+                          title: Text("Долг ${debtlist[index]["debt"]} (cумма заказа: ${debtlist[index]["summ"]})"),
+                          subtitle: Text("${debtlist[index]["date"]} ${debtlist[index]["docname"]} №${debtlist[index]["number"]}"),
+
+                          trailing: Container(
+                            width: 100,
+                            decoration: BoxDecoration(
+                              border: Border.all(width: 0.5, style: BorderStyle.solid),
+                            ),
+                            child: new Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: <Widget>[
+                                new Expanded(
+                                  //flex: 3,
+                                  child: new TextField(
+                                    controller: _controllers[index],
+                                    textAlign: TextAlign.end,
+                                    keyboardType: TextInputType.number,
+                                    decoration: InputDecoration.collapsed(
+                                        hintText: "${debtlist[index]["debt"]}",
+
+                                    ),
+                                  ),
+                                ),
+
+                              ],
+                            ),
+                          )
+                        ),
+                      );
+                    },
+                  )
+                ),
               ]),
         ),
     );
