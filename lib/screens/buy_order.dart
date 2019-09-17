@@ -32,18 +32,20 @@ class _BuyOrderState extends State {
   Future getData() async{
 
     List<Goods> goodsList = await GoodsDAO().getItems();
+    _controllers.length = goodsList.length;
 
     Goods item;
+    int index = 0;
     for(item in goodsList){
       String parentId = item.parent_id.toString().trim();
       if((parentId!="")||(parentId.isNotEmpty))
       {
         Entry parentEntry = entries.firstWhere((entry)=>entry.id==parentId);
-        parentEntry.children.add(Entry(item));
+        parentEntry.children.add(Entry(item: item, controller: _controllers[index]));
       }else{
-        entries.add(Entry(item));
+        entries.add(Entry(item: item, controller: _controllers[index]));
       }
-
+      index++;
     }
 
     setState(() {
@@ -93,10 +95,11 @@ class Entry {
 //, [this.children = <Entry>[]]);
   final Goods item;
   String id;
+  TextEditingController controller;
 //  final String title;
   final List<Entry> children = <Entry>[];
 
-  Entry(this.item){
+  Entry({this.item, this.controller}){
     this.id = this.item.id;
   }
 
@@ -129,15 +132,14 @@ class EntryItem extends StatelessWidget {
               child: new Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: <Widget>[
-                  new Expanded(
+                  Expanded(
                     //flex: 3,
-                    child: new TextField(
-                      controller: _controllers[index],
+                    child: TextField(
+                      controller: root.controller,
                       textAlign: TextAlign.end,
                       keyboardType: TextInputType.number,
                       decoration: InputDecoration.collapsed(
-                        hintText: "${debtlist[index]["debt"]}",
-
+                        hintText: "заказ",
                       ),
                     ),
                   ),
