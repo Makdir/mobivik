@@ -57,34 +57,19 @@ class _BuyOrderState extends State {
   Widget build(BuildContext context) {
     return new Scaffold(
         appBar: new AppBar(title: new Text("Заказ покупателя")),
-        body:Padding(
-          padding: EdgeInsets.all(8.0),
-          child: Column(
-            children: <Widget>[
-              Text(_outlet.name, style: TextStyle(fontWeight: FontWeight.bold),),
-              Expanded(
-
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-
-                  child: Container(
-                    width: 500.0,
-                    decoration: BoxDecoration(
-                        border: Border.all(width: 0.5, style: BorderStyle.solid),
-
-                      ),
-                    child: ListView.builder(
-                      padding: EdgeInsets.all(8.0),
-                      itemCount: _goodsWidget.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        return EntryItem(_goodsWidget[index]);
-                      },
-                    ),
-                  ),
-                ),
+        body:Column(
+          children: <Widget>[
+            Text(_outlet.name, style: TextStyle(fontWeight: FontWeight.bold),),
+            Expanded(
+              child: ListView.builder(
+                padding: EdgeInsets.all(8.0),
+                itemCount: _goodsWidget.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return EntryItem(_goodsWidget[index]);
+                },
               ),
-            ],
-          ),
+            ),
+          ],
         )
     );
   }
@@ -95,7 +80,7 @@ class Entry {
 //, [this.children = <Entry>[]]);
   final Goods item;
   String id;
-  TextEditingController controller;
+  TextEditingController controller = TextEditingController();
 //  final String title;
   final List<Entry> children = <Entry>[];
 
@@ -135,6 +120,8 @@ class EntryItem extends StatelessWidget {
                   Expanded(
                     //flex: 3,
                     child: TextField(
+                      key: PageStorageKey(root.controller),
+                      //attribute: "order",
                       controller: root.controller,
                       textAlign: TextAlign.end,
                       keyboardType: TextInputType.number,
