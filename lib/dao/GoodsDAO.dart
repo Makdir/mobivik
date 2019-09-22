@@ -13,7 +13,8 @@ class GoodsDAO{
 //TODO Permission to storage access
     try {
       final file = new File(path + Platform.pathSeparator + "goods.mv");
-      String fileContent = await file.readAsString();
+
+      String fileContent = await file.readAsString( encoding: latin1);
       final parsedJson = json.decode(fileContent);
 
       for(Map item in parsedJson){

@@ -40,8 +40,13 @@ class _BuyOrderState extends State {
       String parentId = item.parent_id.toString().trim();
       if((parentId!="")||(parentId.isNotEmpty))
       {
-        Entry parentEntry = entries.firstWhere((entry)=>entry.id==parentId);
-        parentEntry.children.add(Entry(item: item, controller: _controllers[index]));
+        try {
+          Entry parentEntry = entries.firstWhere((entry)=>entry.id==parentId);
+          parentEntry.children.add(Entry(item: item, controller: _controllers[index]));
+        } catch (e) {
+          print("Parent folder didn`r found");
+          entries.add(Entry(item: item, controller: _controllers[index]));
+        }
       }else{
         entries.add(Entry(item: item, controller: _controllers[index]));
       }

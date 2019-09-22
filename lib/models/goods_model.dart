@@ -4,7 +4,7 @@ class Goods {
   final String name;
   final String unit;
   final double price;
-  final double balance;
+  final int balance;
   final String brand;
   final String unit_price;
 
@@ -29,7 +29,7 @@ class Goods {
       name: parsedJson['name'],
       unit: parsedJson['unit'],
       price: parsedJson['price'],
-      balance: parsedJson['balance'],
+      balance:  parsedJson['balance'],
       brand: parsedJson['brand'],
       unit_price: parsedJson['unit_price'],
     );
