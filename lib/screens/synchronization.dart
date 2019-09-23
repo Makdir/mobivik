@@ -3,7 +3,6 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:mobivik/helpers/dbhelper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:simple_permissions/simple_permissions.dart';
 
@@ -87,7 +86,7 @@ class SyncScreen extends StatelessWidget {
     fileDBHelper.saveStringToFile(body, 'originput.mv');
 
     print(outlets);
-    fileDBHelper.saveStringToFile(outlets, 'route.mv');*/
+    fileDBHelper.saveStringToFile(outlets, 'route.mv');
 
     // SQLite
     DatabaseProvider dbProvider = DatabaseProvider();
@@ -112,7 +111,7 @@ class SyncScreen extends StatelessWidget {
         dbProvider.insertOutlet(Outlet.fromMap(outlet));
       };
     }
-    dbProvider.close();
+    dbProvider.close();*/
 
   }
 

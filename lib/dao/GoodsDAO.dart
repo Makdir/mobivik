@@ -1,9 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:mobivik/common/cp1251Decoder.dart';
 import 'package:mobivik/models/goods_model.dart';
 import 'package:path_provider/path_provider.dart';
-
+//import "package:charcode/charcode.dart";
 
 class GoodsDAO{
   Future<List> getItems() async {
@@ -13,8 +14,9 @@ class GoodsDAO{
 //TODO Permission to storage access
     try {
       final file = new File(path + Platform.pathSeparator + "goods.mv");
+      List<int> bytes = await file.readAsBytes();
+      String fileContent = decodeCp1251(bytes);
 
-      String fileContent = await file.readAsString( encoding: latin1);
       final parsedJson = json.decode(fileContent);
 
       for(Map item in parsedJson){
@@ -34,4 +36,6 @@ class GoodsDAO{
     return tempPath;
   }
 }
+
+//*************************************
 

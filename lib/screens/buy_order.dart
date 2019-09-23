@@ -145,15 +145,15 @@ class EntryItem extends StatelessWidget {
       elevation: 3,
       child: Container(
         decoration: new BoxDecoration(
-          border: Border.all(width: 1.0, style: BorderStyle.solid),
+          border: Border.all(width: 0.5, style: BorderStyle.solid),
           borderRadius: BorderRadius.all( Radius.circular(3.0)),
         ),
         child: ExpansionTile(
           key: PageStorageKey<Entry>(root),
-          title: Text(root.item.name),
+          title: Text(root.item.name, style: TextStyle(fontWeight: FontWeight.bold)),
           children: root.children.map(_buildTiles).toList(),
           leading: Icon(Icons.arrow_right),
-          backgroundColor: Colors.orangeAccent[100],
+          //backgroundColor: Colors.orangeAccent[100],
         ),
       ),
     );
