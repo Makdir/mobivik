@@ -14,7 +14,9 @@ class Client {
       );
 
   factory Client.fromJson(Map<String, dynamic> parsedJson) {
-
+//    List debt = parsedJson['debtlist'];
+//    print("debtlist: ${debt.toString()}");
+//    if(debt.isEmpty) print("debtlist: ${debt.isEmpty}");
     return new Client(
       id: parsedJson['id'],
       name: parsedJson['name'],

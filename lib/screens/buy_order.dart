@@ -65,6 +65,28 @@ class _BuyOrderState extends State {
         body:Column(
           children: <Widget>[
             Text(_outlet.name, style: TextStyle(fontWeight: FontWeight.bold),),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: <Widget>[
+                const Text("Вид учета"),
+                DropdownButton<String>(
+                  items: <String>['УУ', 'БУ'].map((String value) {
+                    return new DropdownMenuItem<String>(
+                      value: value,
+                      child: new Text(value),
+                    );
+                  }).toList(),
+                  onChanged: (_) {},
+                )
+
+              ],),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: <Widget>[
+                RaisedButton(child: const Text("Save"),),
+                RaisedButton(child: const Text("Cancel"),),
+
+            ],),
             Expanded(
               child: ListView.builder(
                 padding: EdgeInsets.all(8.0),

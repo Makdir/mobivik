@@ -11,7 +11,7 @@ class GoodsDAO{
     List<Goods> result = List<Goods>();
     String path = await _localPath;
     print("path = $path");
-//TODO Permission to storage access
+    //TODO Permission to storage access
     try {
       final file = new File(path + Platform.pathSeparator + "goods.mv");
       List<int> bytes = await file.readAsBytes();

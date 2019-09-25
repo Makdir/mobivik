@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:mobivik/common/cp1251Decoder.dart';
 import 'package:mobivik/models/client_model.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -12,16 +13,17 @@ class RouteDAO {
     String path = await _localPath;
     print("path = $path");
 
-    try {
+    //try {
       final file = new File(path + Platform.pathSeparator + "route.mv");
-      String fileContent = await file.readAsString();
+      List<int> bytes = await file.readAsBytes();
+      String fileContent = decodeCp1251(bytes);
       final parsedJson = json.decode(fileContent);
 
       for(Map client in parsedJson){
         result.add(Client.fromJson(client));
       }
 
-    } catch (e){print("Еxception in route loading = $e");}
+    //} catch (e){print("Еxception in route loading = $e");}
 
     //List<Client> result = Client.fromJson(jsonResponse);
     return result;
