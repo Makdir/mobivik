@@ -88,16 +88,59 @@ class _BuyOrderState extends State {
 
             ],),
             Expanded(
-              child: ListView.builder(
-                padding: EdgeInsets.all(8.0),
-                itemCount: _goodsWidget.length,
-                itemBuilder: (BuildContext context, int index) {
-                  return EntryItem(_goodsWidget[index]);
-                },
+                child:DefaultTabController(
+                  length: 2,
+                  child: Scaffold(
+                    appBar: AppBar(
+                      bottom: TabBar(
+                        tabs: [
+                          Tab(text: "Catalog"),
+                          Tab(text: "Invoice"),
+                          //Tab(icon: Icon(Icons.directions_bike)),
+                        ],
+                      ),
+                      automaticallyImplyLeading: false,
+                    ),
+                    body: TabBarView(
+                      children: [
+                        TreeList(goodsWidget: _goodsWidget),
+                        ListView.builder(
+                          padding: EdgeInsets.all(3.0),
+                          itemCount: _goodsWidget.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            return _goodsWidget[index];
+                          },
+
+                        ),
+
+                      ]
+                    ),
+                  ),
               ),
             ),
           ],
         )
+    );
+  }
+}
+
+class TreeList extends StatelessWidget {
+  const TreeList({
+    Key key,
+    @required List goodsWidget,
+  }) : _goodsWidget = goodsWidget, super(key: key);
+
+  final List _goodsWidget;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+      padding: EdgeInsets.all(3.0),
+      itemCount: _goodsWidget.length,
+      itemBuilder: (BuildContext context, int index) {
+        return EntryItem(_goodsWidget[index]);
+      },
+
     );
   }
 }
