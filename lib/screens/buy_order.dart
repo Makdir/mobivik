@@ -61,15 +61,23 @@ class _BuyOrderState extends State {
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
-        appBar: new AppBar(title: new Text("Заказ покупателя")),
+        appBar: AppBar(title: new Text("Заказ покупателя")),
         body:Column(
           children: <Widget>[
             Text(_outlet.name, style: TextStyle(fontWeight: FontWeight.bold),),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: <Widget>[
+                RaisedButton(child: const Text("Save"),),
+                RaisedButton(child: const Text("Cancel"),),
+
+              ],),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: <Widget>[
                 const Text("Вид учета"),
                 DropdownButton<String>(
+
                   items: <String>['УУ', 'БУ'].map((String value) {
                     return new DropdownMenuItem<String>(
                       value: value,
@@ -80,40 +88,39 @@ class _BuyOrderState extends State {
                 )
 
               ],),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: <Widget>[
-                RaisedButton(child: const Text("Save"),),
-                RaisedButton(child: const Text("Cancel"),),
 
-            ],),
             Expanded(
+
                 child:DefaultTabController(
                   length: 2,
                   child: Scaffold(
-                    appBar: AppBar(
-                      bottom: TabBar(
-                        tabs: [
+                    appBar: TabBar(
+                      labelColor: Colors.black,
+                      unselectedLabelColor: Colors.grey,
+                      indicatorColor: Colors.orange,
+                      tabs: [
                           Tab(text: "Catalog"),
                           Tab(text: "Invoice"),
                           //Tab(icon: Icon(Icons.directions_bike)),
                         ],
                       ),
-                      automaticallyImplyLeading: false,
-                    ),
-                    body: TabBarView(
-                      children: [
-                        TreeList(goodsWidget: _goodsWidget),
-                        ListView.builder(
-                          padding: EdgeInsets.all(3.0),
-                          itemCount: _goodsWidget.length,
-                          itemBuilder: (BuildContext context, int index) {
-                            return _goodsWidget[index];
-                          },
 
-                        ),
+                    body: Container(
+                      color: Colors.grey[300],
+                      child: TabBarView(
+                        children: [
+                          TreeList(goodsWidget: _goodsWidget),
+                          ListView.builder(
+                            padding: EdgeInsets.all(3.0),
+                            itemCount: _goodsWidget.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              return _goodsWidget[index];
+                            },
 
-                      ]
+                          ),
+
+                        ]
+                      ),
                     ),
                   ),
               ),
@@ -178,7 +185,7 @@ class EntryItem extends StatelessWidget {
               //TextField(),
             ],
           ),
-          subtitle: Text("Balance ${root.item.balance} ${root.item.unit}"),
+          subtitle: Text("Balance ${root.item.balance} ${root.item.unit} id=${root.item.id} Pid=${root.item.parent_id}"),
             trailing: Container(
               width: 100,
               decoration: BoxDecoration(
@@ -215,7 +222,7 @@ class EntryItem extends StatelessWidget {
         ),
         child: ExpansionTile(
           key: PageStorageKey<Entry>(root),
-          title: Text(root.item.name, style: TextStyle(fontWeight: FontWeight.bold)),
+          title: Text("${root.item.name} id=${root.item.id} Pid=${root.item.parent_id}", style: TextStyle(fontWeight: FontWeight.bold)),
           children: root.children.map(_buildTiles).toList(),
           leading: Icon(Icons.arrow_right),
           //backgroundColor: Colors.orangeAccent[100],
