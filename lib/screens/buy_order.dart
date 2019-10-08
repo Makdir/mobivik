@@ -34,24 +34,39 @@ class _BuyOrderState extends State {
     List<Goods> goodsList = await GoodsDAO().getItems();
     _controllers.length = goodsList.length;
 
+    //TODO: dynamic leveling needed
     Goods item;
     int index = 0;
     for(item in goodsList){
       String parentId = item.parent_id.toString().trim();
+      Entry newEntry = Entry(item: item, controller: _controllers[index]);
       if((parentId!="")||(parentId.isNotEmpty))
       {
+        Entry parentEntry;
         try {
-          Entry parentEntry = entries.firstWhere((entry)=>entry.id==parentId);
-          parentEntry.children.add(Entry(item: item, controller: _controllers[index]));
-        } catch (e) {
-          print("Parent folder didn`r found");
-          entries.add(Entry(item: item, controller: _controllers[index]));
-        }
+          // 2 level of expanded list
+          parentEntry = entries.firstWhere((entry) => entry.id == parentId);
+          parentEntry.children.add(newEntry);
+        } on StateError catch(e) {
+          if(e.message=="No element"){
+            entries.forEach((entry){
+              try {
+                // 3 level of expanded list
+                parentEntry = entry.children.firstWhere((entry)=>entry.id==parentId);
+                parentEntry.children.add(newEntry);
+              } on StateError catch(e) {
+              } catch (e) {}});
+          }
+        //TODO: catch handling needed
+        } catch (e) {}
       }else{
-        entries.add(Entry(item: item, controller: _controllers[index]));
+        // top (first) level of expanded list
+        entries.add(newEntry);
       }
       index++;
     }
+
+
 
     setState(() {
       _goodsWidget.addAll(entries);
@@ -235,4 +250,6 @@ class EntryItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return _buildTiles(entry);
   }
+
+
 }
