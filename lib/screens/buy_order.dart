@@ -1,3 +1,6 @@
+import 'dart:collection';
+import 'dart:wasm';
+
 import 'package:flutter/material.dart';
 import 'package:mobivik/dao/GoodsDAO.dart';
 import 'package:mobivik/models/client_model.dart';
@@ -19,7 +22,10 @@ class _BuyOrderState extends State {
   final Client _outlet;
   List _goodsWidget = List();
   List<Entry> entries = List();
-  List<TextEditingController> _controllers = new List();
+  //List<TextEditingController> _controllers = new List();
+  List<Entry> resultGoodsList = List();
+
+  Map<String, TextEditingController> _goodsControllers = new Map();
 
   _BuyOrderState(this._outlet);
 
@@ -32,14 +38,15 @@ class _BuyOrderState extends State {
   Future getData() async{
 
     List<Goods> goodsList = await GoodsDAO().getItems();
-    _controllers.length = goodsList.length;
+    goodsList.forEach((item){_goodsControllers.putIfAbsent(item.id, ()=> TextEditingController());});
+    //_controllers.length = goodsList.length;
 
     //TODO: dynamic leveling needed
     Goods item;
     int index = 0;
     for(item in goodsList){
       String parentId = item.parent_id.toString().trim();
-      Entry newEntry = Entry(item: item, controller: _controllers[index]);
+      Entry newEntry = Entry(item: item, controller: _goodsControllers[item.id]);
       if((parentId!="")||(parentId.isNotEmpty))
       {
         Entry parentEntry;
@@ -65,8 +72,6 @@ class _BuyOrderState extends State {
       }
       index++;
     }
-
-
 
     setState(() {
       _goodsWidget.addAll(entries);
@@ -105,7 +110,6 @@ class _BuyOrderState extends State {
               ],),
 
             Expanded(
-
                 child:DefaultTabController(
                   length: 2,
                   child: Scaffold(
@@ -116,23 +120,24 @@ class _BuyOrderState extends State {
                       tabs: [
                           Tab(text: "Catalog"),
                           Tab(text: "Invoice"),
-                          //Tab(icon: Icon(Icons.directions_bike)),
-                        ],
+                      ],
                       ),
 
                     body: Container(
                       color: Colors.grey[300],
                       child: TabBarView(
                         children: [
-                          TreeList(goodsWidget: _goodsWidget),
-                          ListView.builder(
-                            padding: EdgeInsets.all(3.0),
-                            itemCount: _goodsWidget.length,
-                            itemBuilder: (BuildContext context, int index) {
-                              return _goodsWidget[index];
+                          Container(
+                            child: ListView.builder(
+                                padding: EdgeInsets.all(3.0),
+                                itemCount: _goodsWidget.length,
+                                itemBuilder: (BuildContext context, int index) {
+                              return EntryItem(_goodsWidget[index]);
                             },
 
+                        ),
                           ),
+                          Invoice(resultGoodsList: resultGoodsList),
 
                         ]
                       ),
@@ -146,26 +151,67 @@ class _BuyOrderState extends State {
   }
 }
 
-class TreeList extends StatelessWidget {
-  const TreeList({
+class Invoice extends StatelessWidget {
+  Invoice({
     Key key,
-    @required List goodsWidget,
-  }) : _goodsWidget = goodsWidget, super(key: key);
-
-  final List _goodsWidget;
+    @required List<Entry> resultGoodsList,
+  }) :  super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      padding: EdgeInsets.all(3.0),
-      itemCount: _goodsWidget.length,
-      itemBuilder: (BuildContext context, int index) {
-        return EntryItem(_goodsWidget[index]);
-      },
+    List<TableRow> InvoiceRows = List();
+
+    return Column(
+      children: <Widget>[
+        Row(children: <Widget>[RaisedButton()],),
+        Table(
+          defaultColumnWidth: FixedColumnWidth(150.0),
+          border: TableBorder(
+            horizontalInside: BorderSide(
+              color: Colors.black,
+              style: BorderStyle.solid,
+              width: 1.0,
+            ),
+            verticalInside: BorderSide(
+              color: Colors.black,
+              style: BorderStyle.solid,
+              width: 1.0,
+            ),
+          ),
+          children: InvoiceRows ,
+        )
+      ],
+
 
     );
   }
 }
+
+//class TreeList extends StatelessWidget {
+//
+//  final List _goodsWidget;
+//
+//  const TreeList({
+//    Key key,
+//    @required List goodsWidget,
+//
+//  }) : _goodsWidget = goodsWidget, super(key: key);
+//
+//
+//
+//
+//  @override
+//  Widget build(BuildContext context) {
+//    return ListView.builder(
+//      padding: EdgeInsets.all(3.0),
+//      itemCount: _goodsWidget.length,
+//      itemBuilder: (BuildContext context, int index) {
+//        return EntryItem(_goodsWidget[index]);
+//      },
+//
+//    );
+//  }
+//}
 
 // One entry in the multilevel list displayed by this app.
 class Entry {
@@ -185,6 +231,7 @@ class Entry {
 // Displays one Entry. If the entry has children then it's displayed
 // with an ExpansionTile.
 class EntryItem extends StatelessWidget {
+  //final List<Entry> resultGoodsList;
   const EntryItem(this.entry);
 
   final Entry entry;
@@ -200,7 +247,7 @@ class EntryItem extends StatelessWidget {
               //TextField(),
             ],
           ),
-          subtitle: Text("Balance ${root.item.balance} ${root.item.unit} id=${root.item.id} Pid=${root.item.parent_id}"),
+          subtitle: Text("Balance ${root.item.balance} ${root.item.unit}"),
             trailing: Container(
               width: 100,
               decoration: BoxDecoration(
@@ -213,7 +260,6 @@ class EntryItem extends StatelessWidget {
                     //flex: 3,
                     child: TextField(
                       key: PageStorageKey(root.controller),
-                      //attribute: "order",
                       controller: root.controller,
                       textAlign: TextAlign.end,
                       keyboardType: TextInputType.number,
@@ -237,9 +283,10 @@ class EntryItem extends StatelessWidget {
         ),
         child: ExpansionTile(
           key: PageStorageKey<Entry>(root),
-          title: Text("${root.item.name} id=${root.item.id} Pid=${root.item.parent_id}", style: TextStyle(fontWeight: FontWeight.bold)),
+          title: Text("${root.item.name}", style: TextStyle(fontWeight: FontWeight.bold)),
           children: root.children.map(_buildTiles).toList(),
           leading: Icon(Icons.arrow_right),
+
           //backgroundColor: Colors.orangeAccent[100],
         ),
       ),
@@ -250,6 +297,5 @@ class EntryItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return _buildTiles(entry);
   }
-
 
 }
