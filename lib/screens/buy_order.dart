@@ -22,10 +22,11 @@ class _BuyOrderState extends State {
   final Client _outlet;
   List _goodsWidget = List();
   List<Entry> entries = List();
-  //List<TextEditingController> _controllers = new List();
-  List<Entry> resultGoodsList = List();
+
+  //List<Entry> resultGoodsList;
 
   Map<String, TextEditingController> _goodsControllers = new Map();
+
 
   _BuyOrderState(this._outlet);
 
@@ -40,10 +41,11 @@ class _BuyOrderState extends State {
     List<Goods> goodsList = await GoodsDAO().getItems();
     goodsList.forEach((item){_goodsControllers.putIfAbsent(item.id, ()=> TextEditingController());});
     //_controllers.length = goodsList.length;
+    //goodsList.forEach((item){print("Controller ${item.id}=${_goodsControllers[item.id].text}");});
 
     //TODO: dynamic leveling needed
     Goods item;
-    int index = 0;
+    //int index = 0;
     for(item in goodsList){
       String parentId = item.parent_id.toString().trim();
       Entry newEntry = Entry(item: item, controller: _goodsControllers[item.id]);
@@ -70,7 +72,7 @@ class _BuyOrderState extends State {
         // top (first) level of expanded list
         entries.add(newEntry);
       }
-      index++;
+      //index++;
     }
 
     setState(() {
@@ -117,6 +119,7 @@ class _BuyOrderState extends State {
                       labelColor: Colors.black,
                       unselectedLabelColor: Colors.grey,
                       indicatorColor: Colors.orange,
+                      //onTap: onTabTap,
                       tabs: [
                           Tab(text: "Catalog"),
                           Tab(text: "Invoice"),
@@ -127,17 +130,8 @@ class _BuyOrderState extends State {
                       color: Colors.grey[300],
                       child: TabBarView(
                         children: [
-                          Container(
-                            child: ListView.builder(
-                                padding: EdgeInsets.all(3.0),
-                                itemCount: _goodsWidget.length,
-                                itemBuilder: (BuildContext context, int index) {
-                              return EntryItem(_goodsWidget[index]);
-                            },
-
-                        ),
-                          ),
-                          Invoice(resultGoodsList: resultGoodsList),
+                          TreeList(goodsWidget: _goodsWidget, goodsControllers:_goodsControllers),
+                          Invoice(goodsControllers: _goodsControllers),
 
                         ]
                       ),
@@ -149,36 +143,56 @@ class _BuyOrderState extends State {
         )
     );
   }
+
+//  void onTabTap(int value) {
+//    //print(value);
+//  }
 }
 
 class Invoice extends StatelessWidget {
+  Map<String, TextEditingController> goodsControllers;
+
   Invoice({
     Key key,
-    @required List<Entry> resultGoodsList,
+    @required Map<String, TextEditingController> this.goodsControllers,
   }) :  super(key: key);
+
+
 
   @override
   Widget build(BuildContext context) {
-    List<TableRow> InvoiceRows = List();
+    List<DataRow> InvoiceRows = List();
+    goodsControllers.forEach((k,v){
+      print("$k=,${v.text}");
+      double value;
+      try {
+        value = num.parse(v.text);
+      } catch (e) {
+        value = 1;
+      }
+      if (value>0) {
+        DataRow newRow = DataRow(
+            cells:[
+              DataCell(Text("1")),
+              DataCell(Text("1")),
+              DataCell(Text("1")),
 
+        ]);
+        
+        //newRow.cells.add(DataCell())
+        InvoiceRows.add(newRow);
+      }
+    });
     return Column(
       children: <Widget>[
         Row(children: <Widget>[RaisedButton()],),
-        Table(
-          defaultColumnWidth: FixedColumnWidth(150.0),
-          border: TableBorder(
-            horizontalInside: BorderSide(
-              color: Colors.black,
-              style: BorderStyle.solid,
-              width: 1.0,
-            ),
-            verticalInside: BorderSide(
-              color: Colors.black,
-              style: BorderStyle.solid,
-              width: 1.0,
-            ),
-          ),
-          children: InvoiceRows ,
+        DataTable(
+          columns: [
+            DataColumn(label: Text('Товар')),
+            DataColumn(label: Text('Цена')),
+            DataColumn(label: Text('Количество')),
+          ],
+          rows: InvoiceRows,
         )
       ],
 
@@ -187,31 +201,32 @@ class Invoice extends StatelessWidget {
   }
 }
 
-//class TreeList extends StatelessWidget {
-//
-//  final List _goodsWidget;
-//
-//  const TreeList({
-//    Key key,
-//    @required List goodsWidget,
-//
-//  }) : _goodsWidget = goodsWidget, super(key: key);
-//
-//
-//
-//
-//  @override
-//  Widget build(BuildContext context) {
-//    return ListView.builder(
-//      padding: EdgeInsets.all(3.0),
-//      itemCount: _goodsWidget.length,
-//      itemBuilder: (BuildContext context, int index) {
-//        return EntryItem(_goodsWidget[index]);
-//      },
-//
-//    );
-//  }
-//}
+class TreeList extends StatelessWidget {
+
+  final List _goodsWidget;
+  Map<String, TextEditingController> goodsControllers;
+
+  TreeList({
+    Key key,
+    @required List goodsWidget,
+    @required Map<String, TextEditingController> this.goodsControllers,
+  }) : _goodsWidget = goodsWidget, super(key: key);
+
+
+
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+      padding: EdgeInsets.all(3.0),
+      itemCount: _goodsWidget.length,
+      itemBuilder: (BuildContext context, int index) {
+        return EntryItem(_goodsWidget[index], goodsControllers);
+      },
+
+    );
+  }
+}
 
 // One entry in the multilevel list displayed by this app.
 class Entry {
@@ -231,12 +246,16 @@ class Entry {
 // Displays one Entry. If the entry has children then it's displayed
 // with an ExpansionTile.
 class EntryItem extends StatelessWidget {
+  Map<String, TextEditingController> _goodsControllers;
+
   //final List<Entry> resultGoodsList;
-  const EntryItem(this.entry);
+  EntryItem(this.entry, this._goodsControllers);
 
   final Entry entry;
 
   Widget _buildTiles(Entry root) {
+    var itemID = root.id;
+
     if (root.children.isEmpty)
       return Container(
         color: Colors.white30,
@@ -259,11 +278,11 @@ class EntryItem extends StatelessWidget {
                   Expanded(
                     //flex: 3,
                     child: TextField(
-                      key: PageStorageKey(root.controller),
-                      controller: root.controller,
+                      key: PageStorageKey(itemID),
+                      controller: _goodsControllers[itemID],
                       textAlign: TextAlign.end,
                       keyboardType: TextInputType.number,
-                      decoration: InputDecoration.collapsed(
+                      decoration: InputDecoration(
                         hintText: "заказ",
                       ),
                     ),
