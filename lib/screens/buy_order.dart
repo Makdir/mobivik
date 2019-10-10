@@ -20,6 +20,7 @@ class BuyOrder extends StatefulWidget {
 
 class _BuyOrderState extends State {
   final Client _outlet;
+  List<Goods> _goodsList = List();
   List _goodsWidget = List();
   List<Entry> entries = List();
 
@@ -38,17 +39,17 @@ class _BuyOrderState extends State {
 
   Future getData() async{
 
-    List<Goods> goodsList = await GoodsDAO().getItems();
-    goodsList.forEach((item){_goodsControllers.putIfAbsent(item.id, ()=> TextEditingController());});
+    _goodsList = await GoodsDAO().getItems();
+    _goodsList.forEach((item){_goodsControllers.putIfAbsent(item.id, ()=> TextEditingController());});
     //_controllers.length = goodsList.length;
     //goodsList.forEach((item){print("Controller ${item.id}=${_goodsControllers[item.id].text}");});
 
     //TODO: dynamic leveling needed
     Goods item;
     //int index = 0;
-    for(item in goodsList){
+    for(item in _goodsList){
       String parentId = item.parent_id.toString().trim();
-      Entry newEntry = Entry(item: item, controller: _goodsControllers[item.id]);
+      Entry newEntry = Entry(item: item);
       if((parentId!="")||(parentId.isNotEmpty))
       {
         Entry parentEntry;
@@ -131,7 +132,7 @@ class _BuyOrderState extends State {
                       child: TabBarView(
                         children: [
                           TreeList(goodsWidget: _goodsWidget, goodsControllers:_goodsControllers),
-                          Invoice(goodsControllers: _goodsControllers),
+                          Invoice(goodsControllers: _goodsControllers, goodsList: _goodsList),
 
                         ]
                       ),
@@ -149,36 +150,55 @@ class _BuyOrderState extends State {
 //  }
 }
 
-class Invoice extends StatelessWidget {
+class Invoice extends StatefulWidget {
   Map<String, TextEditingController> goodsControllers;
+  List<Goods> goodsList;
 
   Invoice({
     Key key,
-    @required Map<String, TextEditingController> this.goodsControllers,
+    @required this.goodsControllers,
+    @required this.goodsList,
   }) :  super(key: key);
 
+   @override
+   _InvoiceState createState() {
+     return _InvoiceState(goodsControllers:goodsControllers, goodsList:goodsList);}}
 
+class _InvoiceState extends State {
+  Map<String, TextEditingController> goodsControllers;
+  List<Goods> goodsList;
+
+  _InvoiceState({
+    Key key,
+    @required this.goodsControllers,
+    @required this.goodsList,
+  });
 
   @override
   Widget build(BuildContext context) {
     List<DataRow> InvoiceRows = List();
-    goodsControllers.forEach((k,v){
-      print("$k=,${v.text}");
-      double value;
+    goodsControllers.forEach((id,_controller){
+      //print("$id=${_controller.text}");
+      var value;
       try {
-        value = num.parse(v.text);
+        value = num.parse(_controller.text);
       } catch (e) {
-        value = 1;
+        value = 0;
       }
       if (value>0) {
+        Goods goods = goodsList.firstWhere((item)=> item.id==id);
         DataRow newRow = DataRow(
             cells:[
-              DataCell(Text("1")),
-              DataCell(Text("1")),
-              DataCell(Text("1")),
-
+              DataCell(Text("${goods.name}")),
+              DataCell(Text("${goods.price}")),
+              DataCell(TextField(
+                controller: _controller,
+              )),
+              DataCell(Text("${goods.unit}")),
+              DataCell(Text("?")),
+              DataCell(Text("${goods.price}")),
         ]);
-        
+
         //newRow.cells.add(DataCell())
         InvoiceRows.add(newRow);
       }
@@ -187,12 +207,18 @@ class Invoice extends StatelessWidget {
       children: <Widget>[
         Row(children: <Widget>[RaisedButton()],),
         DataTable(
+
           columns: [
             DataColumn(label: Text('Товар')),
-            DataColumn(label: Text('Цена')),
-            DataColumn(label: Text('Количество')),
+            DataColumn(label: Text('Цена'),       numeric: true),
+            DataColumn(label: Text('Количество'), numeric: true),
+            DataColumn(label: Text('Ед. изм.'), numeric: true),
+            DataColumn(label: Text('Коэффициент'), numeric: true),
+            DataColumn(label: Text('Сумма'),      numeric: true),
           ],
           rows: InvoiceRows,
+          sortAscending: true,
+          sortColumnIndex: 0,
         )
       ],
 
@@ -200,6 +226,7 @@ class Invoice extends StatelessWidget {
     );
   }
 }
+
 
 class TreeList extends StatelessWidget {
 
@@ -233,11 +260,11 @@ class Entry {
 //, [this.children = <Entry>[]]);
   final Goods item;
   String id;
-  TextEditingController controller = TextEditingController();
+  //TextEditingController controller = TextEditingController();
 //  final String title;
   final List<Entry> children = <Entry>[];
 
-  Entry({this.item, this.controller}){
+  Entry({this.item}){
     this.id = this.item.id;
   }
 
