@@ -196,35 +196,53 @@ class _InvoiceState extends State {
               )),
               DataCell(Text("${goods.unit}")),
               DataCell(Text("?")),
-              DataCell(Text("${goods.price}")),
+              DataCell(Text("${num.parse(_controller.text)*goods.price}")),
         ]);
 
         //newRow.cells.add(DataCell())
         InvoiceRows.add(newRow);
       }
     });
-    return Column(
-      children: <Widget>[
-        Row(children: <Widget>[RaisedButton()],),
-        DataTable(
+    return SingleChildScrollView(
+        child: Column(
+          children: <Widget>[
+            Row(children: <Widget>[RaisedButton()],),
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Container(
+                color: Colors.white,
+                child: DataTable (
+                  columnSpacing: 10,
+                  columns: [
+                    DataColumn(
+                        label: Text('Товар')
+                    ),
+                    DataColumn(
+                        label: Text('Цена'),
+                        numeric: true,
+                        tooltip: "Цена за базовую единицу",
 
-          columns: [
-            DataColumn(label: Text('Товар')),
-            DataColumn(label: Text('Цена'),       numeric: true),
-            DataColumn(label: Text('Количество'), numeric: true),
-            DataColumn(label: Text('Ед. изм.'), numeric: true),
-            DataColumn(label: Text('Коэффициент'), numeric: true),
-            DataColumn(label: Text('Сумма'),      numeric: true),
+                        ),
+
+                    DataColumn(label: Text('Количество'), numeric: true),
+                    DataColumn(label: Text('Ед. изм.'), numeric: true),
+                    DataColumn(label: Text('Коэффициент'), numeric: true),
+                    DataColumn(label: Text('Сумма'),      numeric: true),
+                  ],
+                  rows: InvoiceRows,
+//                  sortAscending: true,
+//                  sortColumnIndex: 0,
+                ),
+              ),
+            )
           ],
-          rows: InvoiceRows,
-          sortAscending: true,
-          sortColumnIndex: 0,
-        )
-      ],
 
 
-    );
+        ),
+      );
+
   }
+
 }
 
 
