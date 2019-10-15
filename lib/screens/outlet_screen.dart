@@ -70,11 +70,17 @@ class _OutletScreenState extends State {
                                 new Expanded(
                                   //flex: 3,
                                   child: new TextField(
+                                    readOnly:   debtlist[index]["debt"]<0,
                                     controller: _controllers[index],
-                                    textAlign: TextAlign.end,
+                                    textAlign:    TextAlign.end,
                                     keyboardType: TextInputType.number,
-                                    decoration: InputDecoration.collapsed(
+                                    decoration: InputDecoration(
                                         hintText: "${debtlist[index]["debt"]}",
+                                        fillColor: Color.fromARGB(50, 200, 0,0),
+                                        filled: debtlist[index]["debt"]<0,
+                                        helperText: (debtlist[index]["debt"]<0) ? " переплата" : " введите оплату",
+                                        helperMaxLines: 1,
+                                        helperStyle: TextStyle()
 
                                     ),
                                   ),

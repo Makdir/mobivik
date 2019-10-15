@@ -6,6 +6,10 @@ import 'package:mobivik/dao/GoodsDAO.dart';
 import 'package:mobivik/models/client_model.dart';
 import 'package:mobivik/models/goods_model.dart';
 
+import 'package:koukicons/save.dart';
+import 'package:koukicons/genericSortingAsc.dart';
+import 'package:koukicons/flipboard2.dart';
+
 class BuyOrder extends StatefulWidget {
   final Client outlet;
 
@@ -24,9 +28,13 @@ class _BuyOrderState extends State {
   List _goodsWidget = List();
   List<Entry> entries = List();
 
+  final List<String> accountingTypes = ['УУ', 'БУ'];
+
   //List<Entry> resultGoodsList;
 
   Map<String, TextEditingController> _goodsControllers = new Map();
+
+  String _selectedAT = 'УУ';
 
 
   _BuyOrderState(this._outlet);
@@ -84,30 +92,53 @@ class _BuyOrderState extends State {
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
-        appBar: AppBar(title: new Text("Заказ покупателя")),
+        appBar: AppBar(
+            title: new Text("Заказ покупателя"),
+            //bottom: PreferredSizeWidget ,
+            actions: <Widget>[
+
+                //padding: const EdgeInsets.fromLTRB(0, 8, 25, 8),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(0, 3, 35, 2),
+                child: FlatButton(
+                      child: Column(children: [
+                        KoukiconsSave(height: 35.0),
+                        const Text("Save"),
+                      ]),
+                  ),
+              ),
+
+
+
+            ],
+        ),
         body:Column(
           children: <Widget>[
-            Text(_outlet.name, style: TextStyle(fontWeight: FontWeight.bold),),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: <Widget>[
-                RaisedButton(child: const Text("Save"),),
-                RaisedButton(child: const Text("Cancel"),),
-
-              ],),
+//            Text(_outlet.name, style: TextStyle(fontWeight: FontWeight.bold),),
+//            Row(
+//              mainAxisAlignment: MainAxisAlignment.spaceAround,
+//              children: <Widget>[
+//                RaisedButton(child: const Text("Save"),),
+//                RaisedButton(child: const Text("Cancel"),),
+//
+//              ],),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: <Widget>[
                 const Text("Вид учета"),
                 DropdownButton<String>(
-
-                  items: <String>['УУ', 'БУ'].map((String value) {
+                  value: _selectedAT,
+                  items: accountingTypes.map((String value) {
                     return new DropdownMenuItem<String>(
                       value: value,
                       child: new Text(value),
                     );
                   }).toList(),
-                  onChanged: (_) {},
+                  onChanged: (selectedAT) {
+                    setState(() {
+                      _selectedAT=selectedAT;
+                    });
+                  },
                 )
 
               ],),
@@ -122,8 +153,8 @@ class _BuyOrderState extends State {
                       indicatorColor: Colors.orange,
                       //onTap: onTabTap,
                       tabs: [
-                          Tab(text: "Catalog"),
-                          Tab(text: "Invoice"),
+                          Tab(child: KoukiconsGenericSortingAsc() ),
+                          Tab(child: KoukiconsFlipboard2() ),
                       ],
                       ),
 
@@ -188,6 +219,7 @@ class _InvoiceState extends State {
       if (value>0) {
         Goods goods = goodsList.firstWhere((item)=> item.id==id);
         DataRow newRow = DataRow(
+
             cells:[
               DataCell(Text("${goods.name}")),
               DataCell(Text("${goods.price}")),
@@ -215,19 +247,19 @@ class _InvoiceState extends State {
                   columnSpacing: 10,
                   columns: [
                     DataColumn(
-                        label: Text('Товар')
+                        label: const Text('Товар'),
                     ),
                     DataColumn(
-                        label: Text('Цена'),
+                        label: const Text('Цена'),
                         numeric: true,
                         tooltip: "Цена за базовую единицу",
 
                         ),
 
-                    DataColumn(label: Text('Количество'), numeric: true),
-                    DataColumn(label: Text('Ед. изм.'), numeric: true),
-                    DataColumn(label: Text('Коэффициент'), numeric: true),
-                    DataColumn(label: Text('Сумма'),      numeric: true),
+                    DataColumn(label: const Text('Количество'), numeric: true),
+                    DataColumn(label: const Text('Ед. изм.'), numeric: true),
+                    DataColumn(label: const Text('Коэффициент'), numeric: true),
+                    DataColumn(label: const Text('Сумма'),      numeric: true),
                   ],
                   rows: InvoiceRows,
 //                  sortAscending: true,
