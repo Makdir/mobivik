@@ -12,7 +12,7 @@ class GoodsDAO{
     String path = await _localPath;
     print("path = $path");
     //TODO Permission to storage access
-    try {
+    //try {
       final file = new File(path + Platform.pathSeparator + "goods.mv");
       List<int> bytes = await file.readAsBytes();
       String fileContent = decodeCp1251(bytes);
@@ -23,7 +23,8 @@ class GoodsDAO{
         result.add(Goods.fromJson(item));
       }
 
-    } catch (e){print("Еxception in goods loading = $e");}
+    //} catch (e){print("Еxception in goods loading = $e");}
+
 
     //List<Client> result = Client.fromJson(jsonResponse);
     return result;

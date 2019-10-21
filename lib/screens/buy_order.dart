@@ -1,6 +1,3 @@
-import 'dart:collection';
-import 'dart:wasm';
-
 import 'package:flutter/material.dart';
 import 'package:mobivik/dao/GoodsDAO.dart';
 import 'package:mobivik/models/client_model.dart';
@@ -27,15 +24,17 @@ class _BuyOrderState extends State {
   List<Goods> _goodsList = List();
   List _goodsWidget = List();
   List<Entry> entries = List();
+  
 
   final List<String> accountingTypes = ['УУ', 'БУ'];
-
-  //List<Entry> resultGoodsList;
-
+  String invoiceNumber = "Заказ № "+DateTime.now().millisecondsSinceEpoch.toString();//invoiceNumber = invoiceNumber + DateTime.now().millisecondsSinceEpoch.toString();
+  
   Map<String, TextEditingController> _goodsControllers = new Map();
-
+  Map<String, double> _goodsSumm = new Map();
+  
   String _selectedAT = 'УУ';
-
+  
+  double totalAmount = 0;
 
   _BuyOrderState(this._outlet);
 
@@ -43,61 +42,86 @@ class _BuyOrderState extends State {
   void initState() {
     super.initState();
     getData();
+
   }
 
   Future getData() async{
 
     _goodsList = await GoodsDAO().getItems();
     _goodsList.forEach((item){_goodsControllers.putIfAbsent(item.id, ()=> TextEditingController());});
-    //_controllers.length = goodsList.length;
-    //goodsList.forEach((item){print("Controller ${item.id}=${_goodsControllers[item.id].text}");});
 
     //TODO: dynamic leveling needed
-    Goods item;
     //int index = 0;
-    for(item in _goodsList){
-      String parentId = item.parent_id.toString().trim();
+//    for(item in _goodsList){
+//      String parentId = item.parent_id.toString().trim();
+//      Entry newEntry = Entry(item: item);
+//      if((parentId!="")||(parentId.isNotEmpty))
+//      {
+//        Entry parentEntry;
+//        try {
+//          // 2 level of expanded list
+//          parentEntry = entries.firstWhere((entry) => entry.id == parentId);
+//          parentEntry.children.add(newEntry);
+//        } on StateError catch(e) {
+//          if(e.message=="No element"){
+//            entries.forEach((entry){
+//              try {
+//                // 3 level of expanded list
+//                parentEntry = entry.children.firstWhere((entry)=>entry.id==parentId);
+//                parentEntry.children.add(newEntry);
+//              } on StateError catch(e) {
+//              } catch (e) {
+//
+////                if(e.message=="No element"){
+////                  entry.children.forEach((entry){try {
+////                    Entry parentEntry = entry.children.firstWhere((entry)=>entry.id==parentId);
+////                    parentEntry.children.add(newEntry);}catch(e){}});
+////                }
+//              }});
+//          }
+//        //TODO: catch handling needed
+//        } catch (e) {}
+//      }else{
+//        // top (first) level of expanded list
+//        entries.add(newEntry);
+//      }
+//      //index++;
+//    }
+
+    // Forming hierarchcal structure
+    _goodsList.forEach((item){
       Entry newEntry = Entry(item: item);
-      if((parentId!="")||(parentId.isNotEmpty))
-      {
-        Entry parentEntry;
-        try {
-          // 2 level of expanded list
-          parentEntry = entries.firstWhere((entry) => entry.id == parentId);
-          parentEntry.children.add(newEntry);
-        } on StateError catch(e) {
-          if(e.message=="No element"){
-            entries.forEach((entry){
-              try {
-                // 3 level of expanded list
-                parentEntry = entry.children.firstWhere((entry)=>entry.id==parentId);
-                parentEntry.children.add(newEntry);
-              } on StateError catch(e) {
-              } catch (e) {}});
-          }
-        //TODO: catch handling needed
-        } catch (e) {}
-      }else{
-        // top (first) level of expanded list
-        entries.add(newEntry);
-      }
-      //index++;
-    }
+      entries.add(newEntry);
+    });
+
+    entries.forEach((item){
+      try {
+        String parentId = item.parent_id.toString().trim();
+        Entry parentEntry = entries.firstWhere((entry) => entry.id == parentId);
+        parentEntry.children.add(item);
+      } catch (e) {}
+    });
+
+    entries.removeWhere((entry) => entry.parent_id != "");
 
     setState(() {
       _goodsWidget.addAll(entries);
     });
+
   }
 
+  void totalAmountRecalc(){
+    totalAmount = 0;
+    _goodsSumm.forEach((key, value){totalAmount+=value;});
+  }
+  
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
         appBar: AppBar(
-            title: new Text("Заказ покупателя"),
+            title: Text(_outlet.name),
             //bottom: PreferredSizeWidget ,
             actions: <Widget>[
-
-                //padding: const EdgeInsets.fromLTRB(0, 8, 25, 8),
               Padding(
                 padding: const EdgeInsets.fromLTRB(0, 3, 35, 2),
                 child: FlatButton(
@@ -107,41 +131,45 @@ class _BuyOrderState extends State {
                       ]),
                   ),
               ),
-
-
-
             ],
         ),
         body:Column(
           children: <Widget>[
-//            Text(_outlet.name, style: TextStyle(fontWeight: FontWeight.bold),),
-//            Row(
-//              mainAxisAlignment: MainAxisAlignment.spaceAround,
-//              children: <Widget>[
-//                RaisedButton(child: const Text("Save"),),
-//                RaisedButton(child: const Text("Cancel"),),
-//
-//              ],),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: <Widget>[
-                const Text("Вид учета"),
-                DropdownButton<String>(
-                  value: _selectedAT,
-                  items: accountingTypes.map((String value) {
-                    return new DropdownMenuItem<String>(
-                      value: value,
-                      child: new Text(value),
-                    );
-                  }).toList(),
-                  onChanged: (selectedAT) {
-                    setState(() {
-                      _selectedAT=selectedAT;
-                    });
-                  },
-                )
+                  Row(
+                    //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: <Widget>[
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: const Text("Вид учета", style: TextStyle(fontWeight: FontWeight.w700),),
+                      ),
+                      DropdownButton<String>(
+                        underline: Container(decoration: BoxDecoration(border: Border.all(width: 0.5, style: BorderStyle.solid))),
+                        value: _selectedAT,
+                        items: accountingTypes.map((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value),
+                          );
+                        }).toList(),
+                        onChanged: (selectedAT) {
+                          setState(() {
+                            _selectedAT=selectedAT;
+                          });
+                        },
+                      ),
+                    ],
+                  ),
 
-              ],),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(invoiceNumber),
+                      )
+              ],
+
+                ),
 
             Expanded(
                 child:DefaultTabController(
@@ -175,6 +203,7 @@ class _BuyOrderState extends State {
         )
     );
   }
+
 
 //  void onTabTap(int value) {
 //    //print(value);
@@ -222,13 +251,16 @@ class _InvoiceState extends State {
 
             cells:[
               DataCell(Text("${goods.name}")),
-              DataCell(Text("${goods.price}")),
+              DataCell(Text("${goods.price.toStringAsFixed(2)}")),
               DataCell(TextField(
                 controller: _controller,
+                onEditingComplete: onEditingComplete,
+                textAlign: TextAlign.end,
+
               )),
               DataCell(Text("${goods.unit}")),
-              DataCell(Text("?")),
-              DataCell(Text("${num.parse(_controller.text)*goods.price}")),
+              DataCell(Text("${goods.coef}")),
+              DataCell(Text("${(num.parse(_controller.text)*goods.price).toStringAsFixed(2)}")),
         ]);
 
         //newRow.cells.add(DataCell())
@@ -258,7 +290,7 @@ class _InvoiceState extends State {
 
                     DataColumn(label: const Text('Количество'), numeric: true),
                     DataColumn(label: const Text('Ед. изм.'), numeric: true),
-                    DataColumn(label: const Text('Коэффициент'), numeric: true),
+                    DataColumn(label: const Text('Коэф.'), numeric: true),
                     DataColumn(label: const Text('Сумма'),      numeric: true),
                   ],
                   rows: InvoiceRows,
@@ -275,6 +307,10 @@ class _InvoiceState extends State {
 
   }
 
+
+  void onEditingComplete() {
+
+  }
 }
 
 
@@ -288,9 +324,6 @@ class TreeList extends StatelessWidget {
     @required List goodsWidget,
     @required Map<String, TextEditingController> this.goodsControllers,
   }) : _goodsWidget = goodsWidget, super(key: key);
-
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -310,12 +343,12 @@ class Entry {
 //, [this.children = <Entry>[]]);
   final Goods item;
   String id;
-  //TextEditingController controller = TextEditingController();
-//  final String title;
+  String parent_id;
   final List<Entry> children = <Entry>[];
 
   Entry({this.item}){
     this.id = this.item.id;
+    this.parent_id = this.item.parent_id;
   }
 
 }
@@ -337,15 +370,11 @@ class EntryItem extends StatelessWidget {
       return Container(
         color: Colors.white30,
         child: ListTile(
-          title: Row(
-            children: <Widget>[
-              Text(root.item.name),
-              //TextField(),
-            ],
-          ),
+          title: Text(root.item.name),
+
           subtitle: Text("Balance ${root.item.balance} ${root.item.unit}"),
             trailing: Container(
-              width: 100,
+              width: 75,
               decoration: BoxDecoration(
                 border: Border.all(width: 0.5, style: BorderStyle.solid),
               ),
@@ -379,7 +408,8 @@ class EntryItem extends StatelessWidget {
         ),
         child: ExpansionTile(
           key: PageStorageKey<Entry>(root),
-          title: Text("${root.item.name}", style: TextStyle(fontWeight: FontWeight.bold)),
+          title: Text("${root.item.name}", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.brown)),
+
           children: root.children.map(_buildTiles).toList(),
           leading: Icon(Icons.arrow_right),
 

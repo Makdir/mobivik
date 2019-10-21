@@ -3,10 +3,10 @@ class Goods {
   final String parent_id;
   final String name;
   final String unit;
+  final double coef;
   final double price;
-  final int balance;
+  final double balance;
   final String brand;
-  final String unit_price;
 
   Goods(
       {
@@ -14,24 +14,26 @@ class Goods {
         this.parent_id,
         this.name,
         this.unit,
+        this.coef,
         this.price,
         this.balance,
-        this.brand,
-        this.unit_price
+        this.brand
       }
       );
 
   factory Goods.fromJson(Map<String, dynamic> parsedJson) {
-
+    double price = num.parse(parsedJson['price'].toString()).toDouble();
+    double coef = num.parse(parsedJson['coef'].toString()).toDouble();
+    double balance = num.parse(parsedJson['balance'].toString()).toDouble();
     return new Goods(
       id: parsedJson['id'],
       parent_id: parsedJson['parent_id'],
       name: parsedJson['name'],
       unit: parsedJson['unit'],
-      price: parsedJson['price'],
-      balance:  parsedJson['balance'],
+      price: price,
+      coef: coef,
+      balance:  balance,
       brand: parsedJson['brand'],
-      unit_price: parsedJson['unit_price'],
     );
   }
 }
