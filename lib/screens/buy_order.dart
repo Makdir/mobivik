@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+
 import 'package:mobivik/dao/GoodsDAO.dart';
 import 'package:mobivik/models/client_model.dart';
 import 'package:mobivik/models/goods_model.dart';
@@ -6,6 +8,7 @@ import 'package:mobivik/models/goods_model.dart';
 import 'package:koukicons/save.dart';
 import 'package:koukicons/genericSortingAsc.dart';
 import 'package:koukicons/flipboard2.dart';
+
 
 class BuyOrder extends StatefulWidget {
   final Client outlet;
@@ -30,11 +33,11 @@ class _BuyOrderState extends State {
   String invoiceNumber = "Заказ № "+DateTime.now().millisecondsSinceEpoch.toString();//invoiceNumber = invoiceNumber + DateTime.now().millisecondsSinceEpoch.toString();
   
   Map<String, TextEditingController> _goodsControllers = new Map();
-  Map<String, double> _goodsSumm = new Map();
+
   
   String _selectedAT = 'УУ';
   
-  double totalAmount = 0;
+
 
   _BuyOrderState(this._outlet);
 
@@ -110,10 +113,7 @@ class _BuyOrderState extends State {
 
   }
 
-  void totalAmountRecalc(){
-    totalAmount = 0;
-    _goodsSumm.forEach((key, value){totalAmount+=value;});
-  }
+
   
   @override
   Widget build(BuildContext context) {
@@ -228,11 +228,24 @@ class _InvoiceState extends State {
   Map<String, TextEditingController> goodsControllers;
   List<Goods> goodsList;
 
+  double totalAmount = 0;
+  Map<String, double> _goodsSumm = new Map();
+
   _InvoiceState({
     Key key,
     @required this.goodsControllers,
     @required this.goodsList,
   });
+
+  void totalAmountRecalc(){
+    totalAmount = 0;
+    _goodsSumm.forEach((key, value){totalAmount+=value;});
+  }
+
+  void onEditingComplete(Goods goods, TextEditingController controller) {
+    _goodsSumm.putIfAbsent(goods.id, ()=>goods.price);
+    totalAmountRecalc();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -254,7 +267,7 @@ class _InvoiceState extends State {
               DataCell(Text("${goods.price.toStringAsFixed(2)}")),
               DataCell(TextField(
                 controller: _controller,
-                onEditingComplete: onEditingComplete,
+                onEditingComplete: (){onEditingComplete(goods, _controller);},
                 textAlign: TextAlign.end,
 
               )),
@@ -270,7 +283,7 @@ class _InvoiceState extends State {
     return SingleChildScrollView(
         child: Column(
           children: <Widget>[
-            Row(children: <Widget>[RaisedButton()],),
+            Row(children: <Widget>[Text("Итоговая сумма заказа: $totalAmount")],),
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Container(
@@ -308,9 +321,7 @@ class _InvoiceState extends State {
   }
 
 
-  void onEditingComplete() {
 
-  }
 }
 
 
@@ -387,10 +398,14 @@ class EntryItem extends StatelessWidget {
                       key: PageStorageKey(itemID),
                       controller: _goodsControllers[itemID],
                       textAlign: TextAlign.end,
-                      keyboardType: TextInputType.number,
+                      keyboardType: TextInputType.numberWithOptions(signed: false, decimal: true),
                       decoration: InputDecoration(
                         hintText: "заказ",
                       ),
+                        inputFormatters: [
+                          WhitelistingTextInputFormatter(RegExp("[0-9.]")),
+                          //BlacklistingTextInputFormatter(RegExp("[0-9].[0-9]."))
+                        ]
                     ),
                   ),
 
