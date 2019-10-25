@@ -36,6 +36,8 @@ class _BuyOrderState extends State {
 
   
   String _selectedAT = 'УУ';
+
+  Map<String, double> _goodsSum = Map(); // Sums of selected goods. It has format Map<"Goods id", "Sum">
   
 
 
@@ -52,44 +54,6 @@ class _BuyOrderState extends State {
 
     _goodsList = await GoodsDAO().getItems();
     _goodsList.forEach((item){_goodsControllers.putIfAbsent(item.id, ()=> TextEditingController());});
-
-    //TODO: dynamic leveling needed
-    //int index = 0;
-//    for(item in _goodsList){
-//      String parentId = item.parent_id.toString().trim();
-//      Entry newEntry = Entry(item: item);
-//      if((parentId!="")||(parentId.isNotEmpty))
-//      {
-//        Entry parentEntry;
-//        try {
-//          // 2 level of expanded list
-//          parentEntry = entries.firstWhere((entry) => entry.id == parentId);
-//          parentEntry.children.add(newEntry);
-//        } on StateError catch(e) {
-//          if(e.message=="No element"){
-//            entries.forEach((entry){
-//              try {
-//                // 3 level of expanded list
-//                parentEntry = entry.children.firstWhere((entry)=>entry.id==parentId);
-//                parentEntry.children.add(newEntry);
-//              } on StateError catch(e) {
-//              } catch (e) {
-//
-////                if(e.message=="No element"){
-////                  entry.children.forEach((entry){try {
-////                    Entry parentEntry = entry.children.firstWhere((entry)=>entry.id==parentId);
-////                    parentEntry.children.add(newEntry);}catch(e){}});
-////                }
-//              }});
-//          }
-//        //TODO: catch handling needed
-//        } catch (e) {}
-//      }else{
-//        // top (first) level of expanded list
-//        entries.add(newEntry);
-//      }
-//      //index++;
-//    }
 
     // Forming hierarchcal structure
     _goodsList.forEach((item){
@@ -191,7 +155,7 @@ class _BuyOrderState extends State {
                       child: TabBarView(
                         children: [
                           TreeList(goodsWidget: _goodsWidget, goodsControllers:_goodsControllers),
-                          Invoice(goodsControllers: _goodsControllers, goodsList: _goodsList),
+                          Invoice(goodsControllers: _goodsControllers, goodsList: _goodsList, goodsSum: _goodsSum),
 
                         ]
                       ),
@@ -203,49 +167,58 @@ class _BuyOrderState extends State {
         )
     );
   }
-
-
-//  void onTabTap(int value) {
-//    //print(value);
-//  }
 }
 
 class Invoice extends StatefulWidget {
   Map<String, TextEditingController> goodsControllers;
   List<Goods> goodsList;
 
+  Map<String, double> goodsSum;
+
   Invoice({
     Key key,
     @required this.goodsControllers,
     @required this.goodsList,
+    @required this.goodsSum
   }) :  super(key: key);
 
    @override
    _InvoiceState createState() {
-     return _InvoiceState(goodsControllers:goodsControllers, goodsList:goodsList);}}
+     return _InvoiceState(goodsControllers:goodsControllers, goodsList:goodsList, goodsSum:goodsSum);}}
 
 class _InvoiceState extends State {
   Map<String, TextEditingController> goodsControllers;
   List<Goods> goodsList;
+  //List<Goods> choosedGoods = List();
 
-  double totalAmount = 0;
-  Map<String, double> _goodsSumm = new Map();
+  double _totalSum = 0;
+  Map<String, double> goodsSum;
 
   _InvoiceState({
     Key key,
     @required this.goodsControllers,
     @required this.goodsList,
+    @required this.goodsSum
   });
 
-  void totalAmountRecalc(){
-    totalAmount = 0;
-    _goodsSumm.forEach((key, value){totalAmount+=value;});
+  void totalSumRecalc(){
+
+      _totalSum = 0;
+      goodsSum.forEach((id, sum){
+        _totalSum += sum;
+        print("$id=$sum");
+      });
+
+      setState(() {});
   }
 
-  void onEditingComplete(Goods goods, TextEditingController controller) {
-    _goodsSumm.putIfAbsent(goods.id, ()=>goods.price);
-    totalAmountRecalc();
-  }
+//  recalcRow(Goods goods, String text) {
+//    double amount = num.parse(text).toDouble();
+//    double summ = amount*goods.price;
+//    _goodsSumm.putIfAbsent(goods.id, ()=>summ);
+//    totalAmountRecalc();
+//
+//  }
 
   @override
   Widget build(BuildContext context) {
@@ -267,12 +240,21 @@ class _InvoiceState extends State {
               DataCell(Text("${goods.price.toStringAsFixed(2)}")),
               DataCell(TextField(
                 controller: _controller,
-                onEditingComplete: (){onEditingComplete(goods, _controller);},
+                keyboardType: TextInputType.numberWithOptions(decimal: true,signed: false),
+                onEditingComplete: (){print("onEditingComplete = ${_controller.text}");},
+                onChanged: (text){
+                  double amount = num.parse(text).toDouble();
+                  double sum = amount*goods.price;
+                  goodsSum[id] = sum;
+                  totalSumRecalc();
+
+                },
                 textAlign: TextAlign.end,
 
               )),
               DataCell(Text("${goods.unit}")),
               DataCell(Text("${goods.coef}")),
+              //DataCell(Text("${(num.parse(_controller.text)*goods.price).toStringAsFixed(2)}")),
               DataCell(Text("${(num.parse(_controller.text)*goods.price).toStringAsFixed(2)}")),
         ]);
 
@@ -283,7 +265,7 @@ class _InvoiceState extends State {
     return SingleChildScrollView(
         child: Column(
           children: <Widget>[
-            Row(children: <Widget>[Text("Итоговая сумма заказа: $totalAmount")],),
+            Row(children: <Widget>[Text("Итоговая сумма заказа: $_totalSum")],),
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Container(
@@ -378,12 +360,13 @@ class EntryItem extends StatelessWidget {
     var itemID = root.id;
 
     if (root.children.isEmpty)
-      return Container(
-        color: Colors.white30,
+      return Card(
+        //color: Colors.white30,
+        //borderOnForeground: false,
         child: ListTile(
           title: Text(root.item.name),
 
-          subtitle: Text("Balance ${root.item.balance} ${root.item.unit}"),
+          subtitle: Text("Цена ${root.item.price} грн. Остаток ${root.item.balance} ${root.item.unit}"),
             trailing: Container(
               width: 75,
               decoration: BoxDecoration(
@@ -404,7 +387,7 @@ class EntryItem extends StatelessWidget {
                       ),
                         inputFormatters: [
                           WhitelistingTextInputFormatter(RegExp("[0-9.]")),
-                          //BlacklistingTextInputFormatter(RegExp("[0-9].[0-9]."))
+                          //BlacklistingTextInputFormatter(RegExp(".."))
                         ]
                     ),
                   ),

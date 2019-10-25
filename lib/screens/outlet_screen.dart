@@ -79,7 +79,7 @@ class _OutletScreenState extends State {
                                         fillColor: Color.fromARGB(50, 200, 0,0),
                                         filled: debtlist[index]["debt"]<0,
                                         helperText: (debtlist[index]["debt"]<0) ? " переплата" : " введите оплату",
-                                        helperMaxLines: 1,
+                                        //helperMaxLines: 1,
                                         helperStyle: TextStyle()
 
                                     ),
