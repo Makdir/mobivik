@@ -18,7 +18,7 @@ class _OutletScreenState extends State {
   final Client outlet;
 
   List debtlist = List();
-  List<TextEditingController> _controllers = new List();
+  Map<String, TextEditingController> _controllers = Map();
 
   _OutletScreenState(this.outlet);
 
@@ -32,7 +32,7 @@ class _OutletScreenState extends State {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: new AppBar(title: new Text(outlet.name)),
+        appBar: new AppBar(title: Text(outlet.name)),
         body: Padding(
           padding: EdgeInsets.all(8.0),
           child: Column(
@@ -40,6 +40,7 @@ class _OutletScreenState extends State {
                 RaisedButton(
                   child: const Text("Заказ"),
                   onPressed: () {
+                    savePayments();
                     Navigator.push(
                       context,
                       MaterialPageRoute(builder: (context) => BuyOrder(outlet: outlet) ),
@@ -50,7 +51,7 @@ class _OutletScreenState extends State {
                   child:ListView.builder(
                     itemCount: debtlist.length,
                     itemBuilder: (BuildContext context, int index) {
-                      _controllers.add(new TextEditingController());
+                      String docId = debtlist[index]["date"]+"_"+debtlist[index]["docname"];
                       return Container(
                         decoration: BoxDecoration(
                           border: Border.all(width: 0.5, style: BorderStyle.solid),
@@ -71,7 +72,7 @@ class _OutletScreenState extends State {
                                   //flex: 3,
                                   child: new TextField(
                                     readOnly:   debtlist[index]["debt"]<0,
-                                    controller: _controllers[index],
+                                    controller: _controllers[docId],
                                     textAlign:    TextAlign.end,
                                     keyboardType: TextInputType.number,
                                     decoration: InputDecoration(
@@ -97,5 +98,21 @@ class _OutletScreenState extends State {
               ]),
         ),
     );
+  }
+
+  void savePayments() {
+    List payments = List();
+    _controllers.forEach((docId, controler){
+      double value = num.parse(controler.text).toDouble();
+
+      if(0 < value){
+        Map payment = {
+          'doc_id':docId,
+
+        };
+      };
+    });
+
+
   }
 }
