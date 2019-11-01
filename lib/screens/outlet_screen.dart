@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:mobivik/models/client_model.dart';
+import 'package:mobivik/services/payments.dart';
 
 import 'buy_order.dart';
 
@@ -11,7 +14,6 @@ class OutletScreen extends StatefulWidget {
   _OutletScreenState createState() {
     return _OutletScreenState(outlet);
   }
-
 }
 
 class _OutletScreenState extends State {
@@ -25,9 +27,10 @@ class _OutletScreenState extends State {
   void initState(){
     super.initState();
     debtlist = outlet.debtlist;
-
+    debtlist.forEach((item){
+      _controllers[getDocID(item)]=TextEditingController();
+    });
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +54,7 @@ class _OutletScreenState extends State {
                   child:ListView.builder(
                     itemCount: debtlist.length,
                     itemBuilder: (BuildContext context, int index) {
-                      String docId = debtlist[index]["date"]+"_"+debtlist[index]["docname"];
+                      //String docId = debtlist[index]["date"]+"_"+debtlist[index]["docname"];
                       return Container(
                         decoration: BoxDecoration(
                           border: Border.all(width: 0.5, style: BorderStyle.solid),
@@ -72,7 +75,7 @@ class _OutletScreenState extends State {
                                   //flex: 3,
                                   child: new TextField(
                                     readOnly:   debtlist[index]["debt"]<0,
-                                    controller: _controllers[docId],
+                                    controller: _controllers[getDocID(debtlist[index])],
                                     textAlign:    TextAlign.end,
                                     keyboardType: TextInputType.number,
                                     decoration: InputDecoration(
@@ -81,7 +84,8 @@ class _OutletScreenState extends State {
                                         filled: debtlist[index]["debt"]<0,
                                         helperText: (debtlist[index]["debt"]<0) ? " переплата" : " введите оплату",
                                         //helperMaxLines: 1,
-                                        helperStyle: TextStyle()
+                                        helperStyle: TextStyle(),
+
 
                                     ),
                                   ),
@@ -100,19 +104,49 @@ class _OutletScreenState extends State {
     );
   }
 
+  String getDocID(debtDoc){
+    String result = '';
+    try{
+      result = this.outlet.id.trim() +"_"+ debtDoc["date"] +"_"+ debtDoc["number"];
+    }
+    catch(e){}
+
+    return result;
+  }
+
   void savePayments() {
     List payments = List();
-    _controllers.forEach((docId, controler){
-      double value = num.parse(controler.text).toDouble();
+     String outletId = this.outlet.id.trim();
+     _controllers.forEach((docId, controller){
+        //print("docId=$docId controller=${controller.text}");
+       String text = controller.text;
 
-      if(0 < value){
-        Map payment = {
-          'doc_id':docId,
+        double value;
+        try {
+          value = num.parse(controller.text).toDouble();
+        }catch(e){
+          value = 0;
+        }
 
-        };
-      };
+        print("docId=$docId value=$value");
+        if(0 < value){
+
+          Map item = this.debtlist.firstWhere(
+              ((entry)=> outletId+"_"+entry["date"]+"_"+entry["number"]==docId)
+          );
+
+          Map payment = {
+            'doc_id':docId,
+            'date':item["date"],
+            'number':item["number"],
+            'docname':item["docname"],
+            'sum': value
+          };
+          payments.add(payment);
+
+        }
     });
-
+    Payments.savePayments(payments);
 
   }
 }
