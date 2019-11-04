@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/src/widgets/editable_text.dart';
 import 'package:mobivik/common/cp1251Decoder.dart';
 import 'package:mobivik/common/file_provider.dart';
 
@@ -11,14 +12,32 @@ class Payments {
     print("payment=$payments");
     if(payments.isEmpty) return;
 
-    File openedFile = await FileProvider.openFile('payments.mv');
+    File openedFile = await FileProvider.openOutputFile('payments');
     String fileContent = await openedFile.readAsString();
+    if(fileContent.isEmpty) fileContent = "{}";
+    Map parsedJson = json.decode(fileContent);
+    //print("parsedJson is " + parsedJson.runtimeType.toString());
+    payments.forEach((entry){
+      parsedJson[entry["doc_id"]]=entry;
+    });
+    String outputJson = json.encode(parsedJson);
 
-    final parsedJson = json.decode(fileContent);
-    print("parsedJson is " + parsedJson.runtimeType.toString());
-
-    FileProvider.saveFile('payments.mv');
+    openedFile.writeAsString(outputJson);
+    print("openedFile = " + openedFile.path);
+    //var outputFile = FileProvider.saveFile('payments');
   }
+
+  static String getPayment(docId) {
+    String result;
+    try{
+      result =
+    }
+    catch(e){}
+
+    return result;
+  }
+
+
 
 
 

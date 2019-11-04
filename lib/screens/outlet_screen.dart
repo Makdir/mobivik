@@ -28,7 +28,9 @@ class _OutletScreenState extends State {
     super.initState();
     debtlist = outlet.debtlist;
     debtlist.forEach((item){
-      _controllers[getDocID(item)]=TextEditingController();
+      String docId = getDocID(item);
+      _controllers[docId] = TextEditingController();
+      _controllers[docId].text = Payments.getPayment();
     });
   }
 
@@ -85,8 +87,6 @@ class _OutletScreenState extends State {
                                         helperText: (debtlist[index]["debt"]<0) ? " переплата" : " введите оплату",
                                         //helperMaxLines: 1,
                                         helperStyle: TextStyle(),
-
-
                                     ),
                                   ),
                                 ),
@@ -107,7 +107,7 @@ class _OutletScreenState extends State {
   String getDocID(debtDoc){
     String result = '';
     try{
-      result = this.outlet.id.trim() +"_"+ debtDoc["date"] +"_"+ debtDoc["number"];
+      result = debtDoc["date"] +"_"+ debtDoc["number"];
     }
     catch(e){}
 
@@ -132,7 +132,7 @@ class _OutletScreenState extends State {
         if(0 < value){
 
           Map item = this.debtlist.firstWhere(
-              ((entry)=> outletId+"_"+entry["date"]+"_"+entry["number"]==docId)
+              ((entry)=> entry["date"]+"_"+entry["number"]==docId)
           );
 
           Map payment = {
