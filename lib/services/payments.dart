@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/src/widgets/editable_text.dart';
-import 'package:mobivik/common/cp1251Decoder.dart';
+import 'package:mobivik/common/cp1251_decoder.dart';
 import 'package:mobivik/common/file_provider.dart';
 
 

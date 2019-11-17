@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
 
 class SettingsScreen extends StatefulWidget {
   @override
@@ -13,6 +14,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
   final controllerServerAddress = TextEditingController();
   final controllerAgentCode = TextEditingController();
 
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
+
   @override
   void initState() {
     super.initState();
@@ -24,8 +27,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   Future<Null> getSavedSettings() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    var serverAddress = prefs.getString("serverAddress");
-    var agentCode = prefs.getString("agentCode");
+    final serverAddress = prefs.getString("serverAddress");
+    final agentCode = prefs.getString("agentCode");
 
     setState(() {
       controllerServerAddress.text = serverAddress;
@@ -34,23 +37,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   @override
-  void dispose() {
-    // Clean up the controller when the Widget is removed from the Widget tree
-    // This also removes the _printLatestValue listener
-    controllerServerAddress.dispose();
-    super.dispose();
-  }
-
-  void saveData() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString("serverAddress",       controllerServerAddress.text);
-    prefs.setString("applicationDataPath", controllerAgentCode.text);
-    //print("saveData: ${controllerServerAddress.text}");
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         title: Text('Настройки'),
       ),
@@ -63,6 +52,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
               decoration: InputDecoration(labelText: 'Server address:' ),
               controller: controllerServerAddress,
             ),
+            RaisedButton(
+              onPressed: testConnection,
+              child: Text('Test connection'),
+            ),
             TextField(
               decoration: InputDecoration(labelText: 'Agent code:' ),
               controller: controllerAgentCode,
@@ -71,7 +64,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 children:[
                   RaisedButton(
                     onPressed: saveData,
-                    child: Text('Сохранить'),
+                    child: Text('Save'),
                   ),
                   RaisedButton(
                     onPressed: (){Navigator.pop(context);},
@@ -85,5 +78,37 @@ class _SettingsScreenState extends State<SettingsScreen> {
       ),
 
     );
+  }
+
+  testConnection() async {
+    String requestURL = controllerServerAddress.text.trim()+"/test";
+    print("requestURL = $requestURL");
+    var response = await http.get(
+        requestURL,
+        headers: {'agent-code':controllerAgentCode.text.trim()}
+    );
+    print("Response status: ${response.statusCode}");
+    print("Response body: ${response.body}");
+  }
+
+  saveData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString("serverAddress", controllerServerAddress.text);
+    prefs.setString("agentCode",     controllerAgentCode.text);
+
+    final snackBar = SnackBar(
+      content: const Text("Settings was saved"),
+      elevation: 5,
+      action: SnackBarAction(
+        label: 'Close settings',
+        onPressed: () {
+          Navigator.pop(context);
+        },
+
+      ),
+    );
+
+    _scaffoldKey.currentState.showSnackBar(snackBar);
+
   }
 }

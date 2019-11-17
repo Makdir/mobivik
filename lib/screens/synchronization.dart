@@ -1,8 +1,12 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
+
+
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:mobivik/common/file_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:simple_permissions/simple_permissions.dart';
 
@@ -10,6 +14,7 @@ import 'package:simple_permissions/simple_permissions.dart';
 class SyncScreen extends StatelessWidget {
 //  final Future<Post> post;
 //  SyncScreen({Key key, this.post}) : super(key: key);
+
   Permission permission;
   String result;
 
@@ -18,29 +23,18 @@ class SyncScreen extends StatelessWidget {
 
     return new Scaffold(
 
-        appBar: new AppBar(title: new Text("Синхронизация"),),
-        body: new Column(
+        appBar: AppBar(title: const Text("Синхронизация"),),
+        body: Center(
+          child: Column(
 
-          children: [
-            RaisedButton(
-              onPressed: fetchPost,
-              child: const Text('Синхронизировать'),
-              ),
-/*            FutureBuilder<Post>(
-              future: post,
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                return Text(snapshot.data.title);
-                } else if (snapshot.hasError) {
-                return Text("${snapshot.error}");
-                }
+            children: [
+              RaisedButton(
+                onPressed: fetchPost,
+                child: const Text('Синхронизировать'),
+                ),
 
-                // By default, show a loading spinner
-                return CircularProgressIndicator();
-              },
-            ),*/
-
-          ]
+            ]
+          ),
         )
     );
   }
@@ -48,21 +42,12 @@ class SyncScreen extends StatelessWidget {
   Future<Null> fetchPost() async {
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String serverAddress = prefs.getString("serverAddress").trim();
+    final serverAddress = prefs.getString("serverAddress").trim();
+    final agentCode = prefs.getString("agentCode").trim();
 
-    var url = serverAddress+"/fromserver"; //"http://10.0.2.2:8080/fromserver";
-    print(url);
-    http.get(url, headers: {"agent-code": "600", "color": "blue"})
-        .then((response) {
-      var responseStatusCode = response.statusCode;
-      print("Response status: ${responseStatusCode}");
-      if(responseStatusCode==200) {
-        var body = response.body;
-        print("Response body: ${body}");
-        parseResponseBody(body);
-      }
+    //await getRoute(serverAddress, agentCode);
+    await sendPayments(serverAddress, agentCode);
 
-    });
   }
 
   Future parseResponseBody(String body) async{
@@ -82,37 +67,67 @@ class SyncScreen extends StatelessWidget {
     print('permissionStatus = $permissionStatus');
     List outlets = jsonBody["outlets"];
 
-/*    FileDBHelper fileDBHelper = new FileDBHelper();
-    fileDBHelper.saveStringToFile(body, 'originput.mv');
+  }
 
-    print(outlets);
-    fileDBHelper.saveStringToFile(outlets, 'route.mv');
+  sendPayments(String serverAddress, String agentCode) async{
+    String url = "http://" + serverAddress+"/payments"; //"http://10.0.2.2:8080/fromserver";
+    String payments = await preparePayments();
+    var queryParameters = {
+      'p': payments
+    };
 
-    // SQLite
-    DatabaseProvider dbProvider = DatabaseProvider();
-    await dbProvider.open();
+    var uri = Uri.http(serverAddress, '/payments', queryParameters);
 
-    int outletsNumber = outlets.length;
-    Map<String, dynamic> outlet = Map();
-    for(int i=0; i<outletsNumber; i++){
-      print("$i)   ${outlets[i]}");
-      print("i type is ${outlets[i]['id'].runtimeType}");
-      outlet['id'] = outlets[i]['id'];
-      //assert(outlet['id'] is int);
-      outlet['outletname'] = outlets[i]['outletname'];
-      outlet['address'] = outlets[i]['address'];
-      //outlet['debt'] = outlets[i]['debt'];
+    print(uri);
 
-      print("outlet= ${outlet}");
+    var response = await http.get(uri, headers: {"agent-code": agentCode});
+    print("Response status: ${response.statusCode}");
 
-      int updateResult = await dbProvider.updateOutlet(Outlet.fromMap(outlet));
-      print("updateResult=$updateResult");
-      if(updateResult == 0){
-        dbProvider.insertOutlet(Outlet.fromMap(outlet));
-      };
-    }
-    dbProvider.close();*/
+//    http.get(url, headers: {"agent-code": agentCode})
+//        .then((response) {
+//            var responseStatusCode = response.statusCode;
+//            print("Response status: ${responseStatusCode}");
+//            var body = response.body;
+//            print("Payments body : ${body}");
+//            print("Payments url = ${response.request.url}");
+//            if(responseStatusCode==200) {
+//
+//      }
+//    }
+//    );
 
+
+
+  }
+
+  getRoute(String serverAddress, String agentCode) async{
+//    var url = serverAddress+"/route"; //"http://10.0.2.2:8080/fromserver";
+//    //print(url);
+//    http.get(url, headers: {"agent-code": agentCode})
+//        .then((response) {
+//      var responseStatusCode = response.statusCode;
+//      print("Response status: ${responseStatusCode}");
+//
+//      if(responseStatusCode==200) {
+//        var body = response.body;
+//        //print("Response body: ${body}");
+//        FileProvider.saveInputFile("route", body);
+//
+//        //file.writeAsString(body);
+//        //parseResponseBody(body);
+//
+//      }
+//
+//    });
+
+  }
+
+  preparePayments() async {
+      // TODO delete zero values in payments
+      File file =  await FileProvider.openOutputFile("payments");
+      String result = await file.readAsString();
+      if (result.isEmpty) result = "{}";
+      return result;
   }
 
 }

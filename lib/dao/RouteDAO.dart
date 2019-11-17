@@ -1,22 +1,23 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:mobivik/common/cp1251Decoder.dart';
+import 'package:mobivik/common/cp1251_decoder.dart';
 import 'package:mobivik/models/client_model.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:mobivik/common/file_provider.dart';
 
 
 class RouteDAO {
 
   Future<List> getItems() async {
     List<Client> result = List<Client>();
-    String path = await _localPath;
-    print("path = $path");
-
+        //print("path = $path");
+    print("----------------------------------------------");
     //try {
-      final file = new File(path + Platform.pathSeparator + "route.mv");
-      List<int> bytes = await file.readAsBytes();
-      String fileContent = decodeCp1251(bytes);
+      final File file = await FileProvider.openInputFile("route");
+      //List<int> bytes = await file.readAsBytes();
+      //String fileContent = decodeCp1251(bytes);
+      String fileContent = await file.readAsString();
+      //print("fileContent = $fileContent");
       final parsedJson = json.decode(fileContent);
 
       for(Map client in parsedJson){
@@ -27,13 +28,6 @@ class RouteDAO {
 
     //List<Client> result = Client.fromJson(jsonResponse);
     return result;
-  }
-
-  Future<String> get _localPath async {
-    Directory tempDir = await getTemporaryDirectory();
-    String tempPath = tempDir.path;
-
-    return tempPath;
   }
 
 
