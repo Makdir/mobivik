@@ -1,6 +1,6 @@
 
 import 'package:flutter/material.dart';
-import 'package:mobivik/dao/RouteDAO.dart';
+import 'package:mobivik/dao/route_dao.dart';
 import 'package:mobivik/models/client_model.dart';
 import 'package:mobivik/screens/outlet_screen.dart';
 

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mobivik/dao/GoodsDAO.dart';
+import 'package:mobivik/dao/goods_dao.dart';
 import 'package:mobivik/models/goods_model.dart';
 
 class GoodsScreen extends StatefulWidget {

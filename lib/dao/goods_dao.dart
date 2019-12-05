@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:mobivik/common/cp1251_decoder.dart';
 import 'package:mobivik/models/goods_model.dart';
@@ -25,7 +24,6 @@ class GoodsDAO{
     } catch (e){print("Еxception in goods loading = $e");}
 
 
-    //List<Client> result = Client.fromJson(jsonResponse);
     return result;
   }
 

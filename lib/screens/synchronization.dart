@@ -45,7 +45,7 @@ class SyncScreen extends StatelessWidget {
     final serverAddress = prefs.getString("serverAddress").trim();
     final agentCode = prefs.getString("agentCode").trim();
 
-    //await getRoute(serverAddress, agentCode);
+    await getRoute(serverAddress, agentCode);
     await sendPayments(serverAddress, agentCode);
 
   }
@@ -64,8 +64,8 @@ class SyncScreen extends StatelessWidget {
     var permissionStatus;
     if(res==false){permissionStatus = SimplePermissions.requestPermission(Permission.WriteExternalStorage);};
 
-    print('permissionStatus = $permissionStatus');
-    List outlets = jsonBody["outlets"];
+    //print('permissionStatus = $permissionStatus');
+    //List outlets = jsonBody["outlets"];
 
   }
 

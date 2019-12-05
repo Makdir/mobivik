@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:mobivik/common/user_interface.dart';
 
-import 'package:mobivik/dao/GoodsDAO.dart';
+import 'package:mobivik/dao/goods_dao.dart';
 import 'package:mobivik/models/client_model.dart';
 import 'package:mobivik/models/goods_model.dart';
 
 import 'package:koukicons/save.dart';
 import 'package:koukicons/genericSortingAsc.dart';
 import 'package:koukicons/flipboard2.dart';
+import 'package:mobivik/services/buy_orders.dart';
 
 
 class BuyOrder extends StatefulWidget {
@@ -27,10 +29,11 @@ class _BuyOrderState extends State {
   List<Goods> _goodsList = List();
   List _goodsWidget = List();
   List<Entry> entries = List();
-  
+
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   final List<String> accountingTypes = ['УУ', 'БУ'];
-  String invoiceNumber = "Заказ № "+DateTime.now().millisecondsSinceEpoch.toString();//invoiceNumber = invoiceNumber + DateTime.now().millisecondsSinceEpoch.toString();
+  String _invoiceNumber = "Заказ № "+DateTime.now().millisecondsSinceEpoch.toString();//invoiceNumber = invoiceNumber + DateTime.now().millisecondsSinceEpoch.toString();
   
   Map<String, TextEditingController> _goodsControllers = new Map();
 
@@ -93,6 +96,7 @@ class _BuyOrderState extends State {
                         KoukiconsSave(height: 35.0),
                         const Text("Save"),
                       ]),
+                  onPressed: _saveOrder,
                   ),
               ),
             ],
@@ -129,7 +133,7 @@ class _BuyOrderState extends State {
 
                       Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: Text(invoiceNumber),
+                        child: Text(_invoiceNumber),
                       )
               ],
 
@@ -166,6 +170,15 @@ class _BuyOrderState extends State {
           ],
         )
     );
+  }
+
+  void _saveOrder() {
+    Map order = Map();
+    order["doc_id"] = ;
+
+    BuyOrders.save(order);
+    GraphicalUI.showSnackBar(scaffoldKey: _scaffoldKey, context: context, actionLabel:"Close settings", resultMessage: "Заказ сохранен");
+
   }
 }
 

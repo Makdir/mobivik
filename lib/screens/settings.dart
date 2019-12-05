@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:mobivik/common/user_interface.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
@@ -27,12 +30,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   Future<Null> getSavedSettings() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    final serverAddress = prefs.getString("serverAddress");
-    final agentCode = prefs.getString("agentCode");
+    final _serverAddress = prefs.getString("serverAddress");
+    final _agentCode = prefs.getString("agentCode");
 
     setState(() {
-      controllerServerAddress.text = serverAddress;
-      controllerAgentCode.text = agentCode;
+      controllerServerAddress.text = _serverAddress;
+      controllerAgentCode.text = _agentCode;
     });
   }
 
@@ -53,7 +56,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               controller: controllerServerAddress,
             ),
             RaisedButton(
-              onPressed: testConnection,
+              onPressed: _testConnection,
               child: Text('Test connection'),
             ),
             TextField(
@@ -63,7 +66,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children:[
                   RaisedButton(
-                    onPressed: saveData,
+                    onPressed: _saveData,
                     child: Text('Save'),
                   ),
                   RaisedButton(
@@ -80,35 +83,35 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  testConnection() async {
+  _testConnection() async {
     String requestURL = controllerServerAddress.text.trim()+"/test";
     print("requestURL = $requestURL");
-    var response = await http.get(
-        requestURL,
-        headers: {'agent-code':controllerAgentCode.text.trim()}
-    );
-    print("Response status: ${response.statusCode}");
-    print("Response body: ${response.body}");
+    var response;
+    try {
+       response = await http.get(
+              requestURL,
+              headers: {'agent-code':controllerAgentCode.text.trim()}
+          );
+    } catch (e) {
+      GraphicalUI.showSnackBar(scaffoldKey: _scaffoldKey, context: context, actionLabel:"Close settings", resultMessage: "Error: ${e.toString()}");
+    }
+//    print("Response status: ${response.statusCode}");
+//    print("Response body: ${response.body}");
+    var statusCode = response.statusCode;
+    if (statusCode == 200) {
+      GraphicalUI.showSnackBar(scaffoldKey: _scaffoldKey, context: context, actionLabel:"Close settings", resultMessage: "Test successful!");
+    }
+    else{
+      GraphicalUI.showSnackBar(scaffoldKey: _scaffoldKey, context: context, actionLabel:"Close settings", resultMessage: "Error from server. Status code $statusCode.");
+    }
+
   }
 
-  saveData() async {
+  _saveData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString("serverAddress", controllerServerAddress.text);
     prefs.setString("agentCode",     controllerAgentCode.text);
 
-    final snackBar = SnackBar(
-      content: const Text("Settings was saved"),
-      elevation: 5,
-      action: SnackBarAction(
-        label: 'Close settings',
-        onPressed: () {
-          Navigator.pop(context);
-        },
-
-      ),
-    );
-
-    _scaffoldKey.currentState.showSnackBar(snackBar);
-
+    GraphicalUI.showSnackBar(scaffoldKey: _scaffoldKey, context: context, actionLabel:"Close settings", resultMessage: "Settings was saved");
   }
 }

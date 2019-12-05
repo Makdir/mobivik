@@ -35,8 +35,6 @@ class _OutletScreenState extends State {
     Payments.setPayment(_controllers);
   }
 
-
-
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -151,16 +149,16 @@ class _OutletScreenState extends State {
 
           Map payment = {
             'doc_id':docId,
-            'date':item["date"],
-            'number':item["number"],
-            'docname':item["docname"],
+            'date':    item["date"],
+            'number':  item["number"],
+            'docname': item["docname"],
             'sum': value
           };
           payments.add(payment);
 
         //}
     });
-    Payments.savePayments(payments);
+    Payments.save(payments);
 
   }
 }

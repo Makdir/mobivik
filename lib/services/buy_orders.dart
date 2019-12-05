@@ -2,24 +2,25 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/src/widgets/editable_text.dart';
+import 'package:mobivik/common/cp1251_decoder.dart';
 import 'package:mobivik/common/file_provider.dart';
 
 
-class Payments {
+class BuyOrders {
 
-  static save(List payments) async {
+  static save(Map order) async {
     //print("payment=$payments");
-    if(payments.isEmpty) return;
+    if(order.isEmpty) return;
 
     File openedFile = await FileProvider.openOutputFile('payments');
     String fileContent = await openedFile.readAsString();
     if(fileContent.isEmpty) fileContent = "{}";
     Map parsedJson = json.decode(fileContent);
-    print(" to ");
-    payments.forEach((entry){
-      parsedJson[entry["doc_id"]]=entry;
-
-    });
+    //print(" to ");
+//    order.forEach((entry){
+//      parsedJson[entry["doc_id"]]=entry;
+//
+//    });
     String outputJson = json.encode(parsedJson);
 
     openedFile.writeAsString(outputJson);
