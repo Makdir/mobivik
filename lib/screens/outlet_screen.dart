@@ -28,7 +28,7 @@ class _OutletScreenState extends State {
     super.initState();
     debtlist = outlet.debtlist;
     debtlist.forEach((item){
-      String docId = getDocID(item);
+      String docId = _getDocID(item);
       _controllers[docId] = TextEditingController();
 
     });
@@ -88,7 +88,7 @@ class _OutletScreenState extends State {
                                           //flex: 3,
                                           child: new TextField(
                                             readOnly:   debtlist[index]["debt"]<0,
-                                            controller: _controllers[getDocID(debtlist[index])],
+                                            controller: _controllers[_getDocID(debtlist[index])],
                                             textAlign:    TextAlign.end,
                                             keyboardType: TextInputType.number,
                                             decoration: InputDecoration(
@@ -116,7 +116,7 @@ class _OutletScreenState extends State {
     );
   }
 
-  String getDocID(debtDoc){
+  String _getDocID(debtDoc){
     String result = '';
     try{
       result = debtDoc["date"] +"_"+ debtDoc["number"];

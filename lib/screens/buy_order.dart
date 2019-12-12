@@ -174,11 +174,21 @@ class _BuyOrderState extends State {
 
   void _saveOrder() {
     Map order = Map();
-    order["doc_id"] = ;
+    order["doc_id"] = DateTime.now();
 
     BuyOrders.save(order);
     GraphicalUI.showSnackBar(scaffoldKey: _scaffoldKey, context: context, actionLabel:"Close settings", resultMessage: "Заказ сохранен");
 
+  }
+
+  String _getDocID(debtDoc){
+    String result = '';
+    try{
+      result = debtDoc["date"] +"_"+ debtDoc["number"];
+    }
+    catch(e){}
+
+    return result;
   }
 }
 
