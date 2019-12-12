@@ -70,7 +70,7 @@ class SyncScreen extends StatelessWidget {
   }
 
   sendPayments(String serverAddress, String agentCode) async{
-    String url = "http://" + serverAddress+"/payments"; //"http://10.0.2.2:8080/fromserver";
+    //String url = "http://" + serverAddress+"/payments"; //"http://10.0.2.2:8080";
     String payments = await preparePayments();
     var queryParameters = {
       'p': payments
