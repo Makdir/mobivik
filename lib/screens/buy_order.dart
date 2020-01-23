@@ -84,93 +84,107 @@ class _BuyOrderState extends State {
   
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
-        appBar: AppBar(
-            title: Text(_outlet.name),
-            //bottom: PreferredSizeWidget ,
-            actions: <Widget>[
-              Padding(
-                padding: const EdgeInsets.fromLTRB(0, 3, 35, 2),
-                child: FlatButton(
-                      child: Column(children: [
-                        KoukiconsSave(height: 35.0),
-                        const Text("Save"),
-                      ]),
-                  onPressed: _saveOrder,
-                  ),
-              ),
-            ],
-        ),
-        body:Column(
-          children: <Widget>[
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: <Widget>[
-                  Row(
-                    //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: <Widget>[
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: const Text("Вид учета", style: TextStyle(fontWeight: FontWeight.w700),),
-                      ),
-                      DropdownButton<String>(
-                        underline: Container(decoration: BoxDecoration(border: Border.all(width: 0.5, style: BorderStyle.solid))),
-                        value: _selectedAT,
-                        items: accountingTypes.map((String value) {
-                          return DropdownMenuItem<String>(
-                            value: value,
-                            child: Text(value),
-                          );
-                        }).toList(),
-                        onChanged: (selectedAT) {
-                          setState(() {
-                            _selectedAT=selectedAT;
-                          });
-                        },
-                      ),
-                    ],
-                  ),
+    return WillPopScope(
+      onWillPop: _onExit,
 
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(_invoiceNumber),
-                      )
-              ],
-
+      child: Scaffold(
+          appBar: AppBar(
+              title: Text(_outlet.name),
+              //bottom: PreferredSizeWidget ,
+              actions: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(0, 3, 35, 2),
+                  child:
+                    FlatButton(
+                        child: Column(children: [
+                          KoukiconsSave(height: 35.0),
+                          const Text("Save"),
+                        ]),
+                        onPressed: _saveOrder,
+                    ),
                 ),
-
-            Expanded(
-                child:DefaultTabController(
-                  length: 2,
-                  child: Scaffold(
-                    appBar: TabBar(
-                      labelColor: Colors.black,
-                      unselectedLabelColor: Colors.grey,
-                      indicatorColor: Colors.orange,
-                      //onTap: onTabTap,
-                      tabs: [
-                          Tab(child: KoukiconsGenericSortingAsc() ),
-                          Tab(child: KoukiconsFlipboard2() ),
+              ],
+          ),
+          body:Column(
+            children: <Widget>[
+              FlatButton(
+                child: Column(children: [
+                  KoukiconsSave(height: 35.0),
+                  const Text("Save"),
+                ]),
+                onPressed: _onExit,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: <Widget>[
+                    Row(
+                      //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: <Widget>[
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: const Text("Вид учета", style: TextStyle(fontWeight: FontWeight.w700),),
+                        ),
+                        DropdownButton<String>(
+                          underline: Container(decoration: BoxDecoration(border: Border.all(width: 0.5, style: BorderStyle.solid))),
+                          value: _selectedAT,
+                          items: accountingTypes.map((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(value),
+                            );
+                          }).toList(),
+                          onChanged: (selectedAT) {
+                            setState(() {
+                              _selectedAT=selectedAT;
+                            });
+                          },
+                        ),
                       ],
-                      ),
+                    ),
 
-                    body: Container(
-                      color: Colors.grey[300],
-                      child: TabBarView(
-                        children: [
-                          TreeList(goodsWidget: _goodsWidget, goodsControllers:_goodsControllers),
-                          Invoice(goodsControllers: _goodsControllers, goodsList: _goodsList, goodsSum: _goodsSum),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(_invoiceNumber),
+                    )
+                ],
 
-                        ]
+                  ),
+
+              Expanded(
+                  child:DefaultTabController(
+                    length: 2,
+                    child: Scaffold(
+                      appBar: TabBar(
+                        labelColor: Colors.black,
+                        unselectedLabelColor: Colors.grey,
+                        indicatorColor: Colors.orange,
+                        //onTap: onTabTap,
+                        tabs: [
+                            Tab(child: KoukiconsGenericSortingAsc() ),
+                            Tab(child: KoukiconsFlipboard2() ),
+                        ],
+                        ),
+
+                      body: Container(
+                        color: Colors.grey[300],
+                        child: TabBarView(
+                          children: [
+                            TreeList(goodsWidget: _goodsWidget, goodsControllers:_goodsControllers),
+                            Invoice(goodsControllers: _goodsControllers, goodsList: _goodsList, goodsSum: _goodsSum),
+
+                          ]
+                        ),
                       ),
                     ),
-                  ),
+                ),
               ),
-            ),
-          ],
-        )
+            ],
+          )
+      ),
     );
   }
+
+
 
   void _saveOrder() {
     Map order = Map();
@@ -181,6 +195,19 @@ class _BuyOrderState extends State {
     BuyOrders.save(order);
     GraphicalUI.showSnackBar(scaffoldKey: _scaffoldKey, context: context, actionLabel:"Close settings", resultMessage: "Заказ сохранен");
 
+  }
+
+  Future<bool> _onExit() async{
+    bool shouldExit = await GraphicalUI.confirmDialog1(context,'Закрыть форму заказа?');
+    if (shouldExit) {
+      bool mustSaved = await GraphicalUI.confirmDialog1(context, 'Сохранить заказ?');
+      //print("mustSaved $mustSaved");
+      if (mustSaved) _saveOrder();
+    }
+    //print("shouldExit $shouldExit");
+
+    //
+    return shouldExit;
   }
 
 

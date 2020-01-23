@@ -12,16 +12,15 @@ import 'package:simple_permissions/simple_permissions.dart';
 
 
 class SyncScreen extends StatelessWidget {
-//  final Future<Post> post;
-//  SyncScreen({Key key, this.post}) : super(key: key);
 
   Permission permission;
   String result;
 
+
   @override
   Widget build(BuildContext context) {
 
-    return new Scaffold(
+    return Scaffold(
 
         appBar: AppBar(title: const Text("Синхронизация"),),
         body: Center(
@@ -29,7 +28,7 @@ class SyncScreen extends StatelessWidget {
 
             children: [
               RaisedButton(
-                onPressed: fetchPost,
+                onPressed: _fetchPost,
                 child: const Text('Синхронизировать'),
                 ),
 
@@ -39,14 +38,19 @@ class SyncScreen extends StatelessWidget {
     );
   }
 
-  Future<Null> fetchPost() async {
+  Future<Null> _fetchPost() async {
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final serverAddress = prefs.getString("serverAddress").trim();
     final agentCode = prefs.getString("agentCode").trim();
 
-    await getRoute(serverAddress, agentCode);
-    await sendPayments(serverAddress, agentCode);
+    await _getData("goods", serverAddress, agentCode);
+    await _getData("route", serverAddress, agentCode);
+
+//    await getGoods(agentCode);
+//    await getRoute(agentCode);
+//
+    await _sendPayments(serverAddress, agentCode);
 
   }
 
@@ -69,60 +73,64 @@ class SyncScreen extends StatelessWidget {
 
   }
 
-  sendPayments(String serverAddress, String agentCode) async{
-    //String url = "http://" + serverAddress+"/payments"; //"http://10.0.2.2:8080";
-    String payments = await preparePayments();
-    var queryParameters = {
-      'p': payments
-    };
+  _getData(String command, String serverAddress, String agentCode) async{
 
-    var uri = Uri.http(serverAddress, '/payments', queryParameters);
+    //"http://10.0.2.2:8080";
+    String uri = "http://" + serverAddress.trim() + "/" + command.trim();
+    var client = http.Client();
 
-    print(uri);
+    try {
+      var response = await client.get(uri,
+          headers: {
+            "agent-code": agentCode
+          }
+      ); //_digest.toString()
+      //print("Response status: ${response.statusCode}");
+      var responseStatusCode = response.statusCode;
+      //print("${uri} Response status: ${responseStatusCode}");
+      //print("${uri} Response headers: ${response.headers}");
+      if(responseStatusCode == 200) {
+        print("${uri} Response body: ${response.body}");
+        FileProvider.saveInputFile("route", response.body);
+      }
+    } catch (e) {
+      print(e);
+    } finally {
+      client.close();
+    }
 
-    var response = await http.get(uri, headers: {"agent-code": agentCode});
-    print("Response status: ${response.statusCode}");
+  }
 
-//    http.get(url, headers: {"agent-code": agentCode})
-//        .then((response) {
-//            var responseStatusCode = response.statusCode;
-//            print("Response status: ${responseStatusCode}");
-//            var body = response.body;
-//            print("Payments body : ${body}");
-//            print("Payments url = ${response.request.url}");
-//            if(responseStatusCode==200) {
-//
-//      }
-//    }
-//    );
+  _sendPayments(String serverAddress, String agentCode) async{
 
+    String uri = "http://" + serverAddress.trim() + "/payments" ;
+    var body = _preparePayments();
+
+    var client = http.Client();
+
+    try {
+      var response = await client.post(uri,
+          body: body,
+          headers: {
+            "agent-code": agentCode
+          }
+      );
+      var responseStatusCode = response.statusCode;
+
+      if(responseStatusCode == 200) {
+        print("payments Response body: ${response.body}");
+        //FileProvider.saveInputFile("route", response.body);
+      }
+    } catch (e) {
+      print(e);
+    } finally {
+      client.close();
+    }
 
 
   }
 
-  getRoute(String serverAddress, String agentCode) async{
-//    var url = serverAddress+"/route"; //"http://10.0.2.2:8080/fromserver";
-//    //print(url);
-//    http.get(url, headers: {"agent-code": agentCode})
-//        .then((response) {
-//      var responseStatusCode = response.statusCode;
-//      print("Response status: ${responseStatusCode}");
-//
-//      if(responseStatusCode==200) {
-//        var body = response.body;
-//        //print("Response body: ${body}");
-//        FileProvider.saveInputFile("route", body);
-//
-//        //file.writeAsString(body);
-//        //parseResponseBody(body);
-//
-//      }
-//
-//    });
-
-  }
-
-  preparePayments() async {
+  _preparePayments() async {
       // TODO delete zero values in payments
       File file =  await FileProvider.openOutputFile("payments");
       String result = await file.readAsString();
