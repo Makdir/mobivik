@@ -37,6 +37,24 @@ class _OutletScreenState extends State {
 
   @override
   Widget build(BuildContext context) {
+    if (debtlist.length==0)
+      return Scaffold(
+          appBar: new AppBar(title: Text(outlet.name)),
+          body: Padding(
+              padding: EdgeInsets.all(8.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children:[
+                  NewBuyOrderButton(outlet: outlet),
+                  Container(
+                      child: const Text("На данный момент у клиента нет долгов")
+                  ),
+                ]
+
+            )
+          )
+      );
+
     return WillPopScope(
       onWillPop: () {
         _savePayments();
@@ -47,17 +65,9 @@ class _OutletScreenState extends State {
           body: Padding(
             padding: EdgeInsets.all(8.0),
             child: Column(
+
                 children:[
-                  RaisedButton(
-                    child: const Text("Новый заказ"),
-                    onPressed: () {
-                      //_savePayments();
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => BuyOrder(outlet: outlet) ),
-                      );
-                    },
-                  ),
+                  new NewBuyOrderButton(outlet: outlet),
                   Padding(
                     padding: const EdgeInsets.fromLTRB(0, 10, 0, 5),
                     child: const Text("Долги и оплаты", style: TextStyle(fontWeight: FontWeight.bold),),
@@ -68,6 +78,7 @@ class _OutletScreenState extends State {
                             itemCount: debtlist.length,
                             itemBuilder: (BuildContext context, int index) {
                               //String docId = debtlist[index]["date"]+"_"+debtlist[index]["docname"];
+
                               return Container(
                                 decoration: BoxDecoration(
                                   border: Border.all(width: 0.5, style: BorderStyle.solid),
@@ -160,5 +171,28 @@ class _OutletScreenState extends State {
     });
     Payments.save(payments);
 
+  }
+}
+
+class NewBuyOrderButton extends StatelessWidget {
+  const NewBuyOrderButton({
+    Key key,
+    @required this.outlet,
+  }) : super(key: key);
+
+  final Client outlet;
+
+  @override
+  Widget build(BuildContext context) {
+    return RaisedButton(
+      child: const Text("Новый заказ"),
+      onPressed: () {
+        //_savePayments();
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => BuyOrder(outlet: outlet) ),
+        );
+      },
+    );
   }
 }

@@ -23,6 +23,7 @@ void main() {
           '/route': (BuildContext context) => new RouteScreen(),
           '/sync': (BuildContext context) => new SyncScreen(),
           '/goods': (BuildContext context) => new GoodsScreen(),
+          '/orders': (BuildContext context) => new GoodsScreen(),
         },
       )
   );
@@ -48,7 +49,7 @@ class MainScreen extends StatelessWidget {
               children: <Widget>[
                 button(Icons.sync,'Синхронизация',context,'/sync'),
                 button(Icons.list,'Маршрут',context,'/route'),
-                button(Icons.settings,'Настройки',context,'/settings'),
+                button(Icons.settings,'Журнал заказов',context,'/orders'),
                 button(Icons.storage,'Товары',context,'/goods'),
               ],
         )

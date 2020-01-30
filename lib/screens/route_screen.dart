@@ -34,8 +34,8 @@ class _RouteScreenState extends State {
 
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
-      appBar: new AppBar(title: new Text("Маршрут")),
+    return Scaffold(
+      appBar: AppBar(title: new Text("Маршрут")),
         body:ListView.builder(
           padding: EdgeInsets.all(8.0),
           itemCount: route.length,

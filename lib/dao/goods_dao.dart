@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:mobivik/common/cp1251_decoder.dart';
 import 'package:mobivik/models/goods_model.dart';
@@ -11,9 +12,11 @@ class GoodsDAO{
 
     //TODO Permission to storage access
     try {
-      final file = FileProvider.openInputFile("goods.mv");
-      List<int> bytes = await file.readAsBytes();
-      String fileContent = decodeCp1251(bytes);
+      final File file = await FileProvider.openInputFile("goods");
+//      List<int> bytes = await file.readAsBytes();
+//      String fileContent = decodeCp1251(bytes);
+
+      String fileContent = await file.readAsString();
 
       final parsedJson = json.decode(fileContent);
 

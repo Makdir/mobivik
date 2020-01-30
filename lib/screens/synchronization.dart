@@ -68,8 +68,6 @@ class SyncScreen extends StatelessWidget {
     var permissionStatus;
     if(res==false){permissionStatus = SimplePermissions.requestPermission(Permission.WriteExternalStorage);};
 
-    //print('permissionStatus = $permissionStatus');
-    //List outlets = jsonBody["outlets"];
 
   }
 
@@ -87,11 +85,10 @@ class SyncScreen extends StatelessWidget {
       ); //_digest.toString()
       //print("Response status: ${response.statusCode}");
       var responseStatusCode = response.statusCode;
-      //print("${uri} Response status: ${responseStatusCode}");
-      //print("${uri} Response headers: ${response.headers}");
+
       if(responseStatusCode == 200) {
         print("${uri} Response body: ${response.body}");
-        FileProvider.saveInputFile("route", response.body);
+        FileProvider.saveInputFile(command, response.body);
       }
     } catch (e) {
       print(e);
