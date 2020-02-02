@@ -12,7 +12,7 @@ class Entry {
 
   Entry({this.item}){
     this.id = this.item.id;
-    this.parent_id = this.item.parent_id;
+    this.parent_id = this.item.parentId;
   }
 
 }
@@ -28,8 +28,8 @@ class EntryItem extends StatelessWidget {
 
   Widget buildTiles(Entry root) {
     var itemID = root.id;
-
-    if (root.children.isEmpty)
+    int isFolder = root.item.isFolder;
+    if ((root.children.isEmpty)&&(isFolder==0))
       return Card(
 
         child: ListTile(
@@ -66,24 +66,26 @@ class EntryItem extends StatelessWidget {
             )
         ),
       );
-    return Card(
-      elevation: 3,
-      child: Container(
-        decoration: new BoxDecoration(
-          border: Border.all(width: 0.5, style: BorderStyle.solid),
-          borderRadius: BorderRadius.all( Radius.circular(3.0)),
-        ),
-        child: ExpansionTile(
-          key: PageStorageKey<Entry>(root),
-          title: Text("${root.item.name}", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.brown)),
+    if (isFolder==1)
+      return Card(
+        elevation: 3,
+        child: Container(
+          decoration: new BoxDecoration(
+            border: Border.all(width: 0.5, style: BorderStyle.solid),
+            borderRadius: BorderRadius.all( Radius.circular(3.0)),
+          ),
+          child: ExpansionTile(
+            key: PageStorageKey<Entry>(root),
+            title: Text("${root.item.name}", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.brown)),
 
-          children: root.children.map(buildTiles).toList(),
-          leading: Icon(Icons.arrow_right),
+            children: root.children.map(buildTiles).toList(),
+            leading: Icon(Icons.arrow_right),
 
-          //backgroundColor: Colors.orangeAccent[100],
+            //backgroundColor: Colors.orangeAccent[100],
+          ),
         ),
-      ),
-    );
+      );
+    return const Text('');
   }
 
   @override

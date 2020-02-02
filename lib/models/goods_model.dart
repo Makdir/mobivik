@@ -1,6 +1,7 @@
 class Goods {
   final String id;
-  final String parent_id;
+  final String parentId;
+  final int isFolder;
   final String name;
   final String unit;
   final double coef;
@@ -11,7 +12,8 @@ class Goods {
   Goods(
       {
         this.id,
-        this.parent_id,
+        this.parentId,
+        this.isFolder,
         this.name,
         this.unit,
         this.coef,
@@ -27,7 +29,8 @@ class Goods {
     double balance = num.parse(parsedJson['balance'].toString()).toDouble();
     return new Goods(
       id: parsedJson['id'],
-      parent_id: parsedJson['parent_id'],
+      parentId: parsedJson['parent_id'],
+      isFolder: parsedJson['is_folder'],
       name: parsedJson['name'],
       unit: parsedJson['unit'],
       price: price,

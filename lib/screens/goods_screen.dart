@@ -27,7 +27,7 @@ class _GoodsScreenState extends State {
 
     Goods item;
     for(item in goodsList){
-      String parentId = item.parent_id.toString().trim();
+      String parentId = item.parentId.toString().trim();
       if((parentId!="")||(parentId.isNotEmpty))
       {
         Entry parentEntry = entries.firstWhere((entry)=>entry.id==parentId);

@@ -58,7 +58,7 @@ class _BuyOrderState extends State {
   Future _getData() async{
 
     _goodsList = await GoodsDAO().getItems();
-    _goodsList.forEach((item){print("item=${item.name}");});
+
     _goodsList.forEach((item){_goodsControllers.putIfAbsent(item.id, ()=> TextEditingController());});
 
     // Forming hierarchcal structure
@@ -186,6 +186,25 @@ class _BuyOrderState extends State {
     order["doc_id"] = _creationDateTime;
 
     //order["_id"] = DateTime.now();
+    List<Map> docTable = List();
+
+    _goodsControllers.forEach((id,_controller){
+        var value;
+        try {
+          value = num.parse(_controller.text);
+        } catch (e) {
+          value = 0;
+        }
+        if (value>0) {
+          //Goods goods = goodsList.firstWhere((item)=> item.id==id);
+          Map row = Map();
+          row["id"] = id;
+          //row["unit"] = goods.unit;
+          row["id"] = _controller.text;
+          docTable.add(row);
+        }
+    });
+
 
 
     BuyOrders.save(order);
