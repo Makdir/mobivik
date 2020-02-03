@@ -13,11 +13,12 @@ class BuyOrders {
 
     File openedFile = await FileProvider.openOutputFile('buyorders');
     String fileContent = await openedFile.readAsString();
-    if(fileContent.isEmpty) fileContent = "{}";
+    if(fileContent.isEmpty) fileContent = "[]";
     List ordersList = json.decode(fileContent);
     ordersList.removeWhere((item) => item["doc_id"] == order["doc_id"]);
     ordersList.add(order);
-
+    print("===========================================================");
+    print("ordersList=$ordersList");
     String outputJson = json.encode(ordersList);
 
     openedFile.writeAsString(outputJson);

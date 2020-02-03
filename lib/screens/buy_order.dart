@@ -183,8 +183,7 @@ class _BuyOrderState extends State {
 
   void _saveOrder() {
     Map order = Map();
-    order["doc_id"] = _creationDateTime;
-
+    order["doc_id"] = _creationDateTime.toIso8601String();
     //order["_id"] = DateTime.now();
     List<Map> docTable = List();
 
@@ -199,23 +198,20 @@ class _BuyOrderState extends State {
           //Goods goods = goodsList.firstWhere((item)=> item.id==id);
           Map row = Map();
           row["id"] = id;
-          //row["unit"] = goods.unit;
-          row["id"] = _controller.text;
+          row["qty"] = _controller.text;
           docTable.add(row);
         }
     });
-
-
-
+    order["table"] = docTable;
     BuyOrders.save(order);
     GraphicalUI.showSnackBar(scaffoldKey: _scaffoldKey, context: context, actionLabel:"Close settings", resultMessage: "Заказ сохранен");
-
   }
 
   Future<bool> _onExit() async{
-    bool shouldExit = await GraphicalUI.confirmDialog1(context,'Закрыть форму заказа?');
+    print('_goodsSum = $_goodsSum');
+    bool shouldExit = await GraphicalUI.confirmDialog(context,'Закрыть форму заказа?');
     if (shouldExit && (_goodsSum.length!=0)) {
-      bool mustSaved = await GraphicalUI.confirmDialog1(context, 'Сохранить заказ?');
+      bool mustSaved = await GraphicalUI.confirmDialog(context, 'Сохранить заказ?');
       if (mustSaved) _saveOrder();
     }
     return shouldExit;
@@ -319,16 +315,10 @@ class _InvoiceState extends State {
                 child: DataTable (
                   columnSpacing: 10,
                   columns: [
-                    DataColumn(
-                        label: const Text('Товар'),
-                    ),
-                    DataColumn(
-                        label: const Text('Цена'),
-                        numeric: true,
+                    DataColumn(label: const Text('Товар'),),
+                    DataColumn(label: const Text('Цена'), numeric: true,
                         tooltip: "Цена за базовую единицу",
-
                         ),
-
                     DataColumn(label: const Text('Количество'), numeric: true),
                     DataColumn(label: const Text('Ед. изм.'),   numeric: false),
                     DataColumn(label: const Text('Коэф.'),      numeric: true),
@@ -345,13 +335,8 @@ class _InvoiceState extends State {
 
         ),
       );
-
   }
-
-
-
 }
-
 
 class TreeList extends StatelessWidget {
 
@@ -372,7 +357,6 @@ class TreeList extends StatelessWidget {
       itemBuilder: (BuildContext context, int index) {
         return EntryItem(goodsWidget[index], goodsControllers);
       },
-
     );
   }
 }

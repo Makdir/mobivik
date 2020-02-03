@@ -17,7 +17,7 @@ class GraphicalUI{
     scaffoldKey.currentState.showSnackBar(snackBar);
   }
 
-  static Future<bool> confirmDialog1(BuildContext context, String message) async{
+  static Future<bool> confirmDialog(BuildContext context, String message) async{
     return await showDialog<bool>(
         context: context,
         barrierDismissible: false, // user must tap button!

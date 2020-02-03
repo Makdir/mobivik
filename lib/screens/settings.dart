@@ -84,7 +84,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   _testConnection() async {
-    String requestURL = controllerServerAddress.text.trim()+"/test";
+    String requestURL = "http://" + controllerServerAddress.text.trim()+"/test";
     print("requestURL = $requestURL");
     var response;
     try {

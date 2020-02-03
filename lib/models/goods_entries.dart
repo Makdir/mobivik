@@ -31,10 +31,8 @@ class EntryItem extends StatelessWidget {
     int isFolder = root.item.isFolder;
     if ((root.children.isEmpty)&&(isFolder==0))
       return Card(
-
         child: ListTile(
             title: Text(root.item.name),
-
             subtitle: Text("Цена ${root.item.price} грн. Остаток ${root.item.balance} ${root.item.unit}"),
             trailing: Container(
               width: 75,
