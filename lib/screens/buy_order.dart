@@ -234,7 +234,9 @@ class Invoice extends StatefulWidget {
 
    @override
    _InvoiceState createState() {
-     return _InvoiceState(goodsControllers:goodsControllers, goodsList:goodsList, goodsSum:goodsSum);}}
+     return _InvoiceState(goodsControllers:goodsControllers, goodsList:goodsList, goodsSum:goodsSum);
+   }
+}
 
 class _InvoiceState extends State {
   Map<String, TextEditingController> goodsControllers;
@@ -259,7 +261,7 @@ class _InvoiceState extends State {
         print("$id=$sum");
       });
 
-      setState(() {});
+      //setState(() {});
   }
 
   @override
@@ -288,8 +290,10 @@ class _InvoiceState extends State {
                   double amount = num.parse(text).toDouble();
                   double sum = amount*goods.price;
                   goodsSum[id] = sum;
-                  totalSumRecalc();
 
+                  setState(() {
+                    totalSumRecalc();
+                  });
                 },
                 textAlign: TextAlign.end,
 
@@ -307,7 +311,11 @@ class _InvoiceState extends State {
     return SingleChildScrollView(
         child: Column(
           children: <Widget>[
-            Row(children: <Widget>[Text("Итоговая сумма заказа: $_totalSum")],),
+            Row(
+              children: <Widget>[
+                Text("Итоговая сумма заказа: $_totalSum"),
+               ],
+            ),
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Container(
