@@ -40,7 +40,7 @@ class _BuyOrderState extends State {
   final List<String> _accountingTypes = ['УУ', 'БУ'];
   final DateTime _creationDateTime = DateTime.now();
 
-  String _invoiceNumber = "Заказ № "+DateTime.now().millisecondsSinceEpoch.toString();
+  String invoiceNumber = "Заказ № "+DateTime.now().millisecondsSinceEpoch.toString();
   Map<String, TextEditingController> _goodsControllers = new Map();
   String _selectedAT = 'УУ';
 
@@ -141,7 +141,7 @@ class _BuyOrderState extends State {
 
                       Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: Text(_invoiceNumber),
+                        child: Text(invoiceNumber),
                       )
                   ],
 
@@ -260,13 +260,13 @@ class _InvoiceState extends State {
         _totalSum += sum;
         print("$id=$sum");
       });
-
       //setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
     List<DataRow> InvoiceRows = List();
+    _totalSum = 0;
     goodsControllers.forEach((id,_controller){
       //print("$id=${_controller.text}");
       var value;
@@ -277,8 +277,9 @@ class _InvoiceState extends State {
       }
       if (value>0) {
         Goods goods = goodsList.firstWhere((item)=> item.id==id);
+        double sum = (num.parse(_controller.text)*goods.price);
+        _totalSum += sum;
         DataRow newRow = DataRow(
-
             cells:[
               DataCell(Text("${goods.name}")),
               DataCell(Text("${goods.price.toStringAsFixed(2)}")),
@@ -301,11 +302,11 @@ class _InvoiceState extends State {
               DataCell(Text("${goods.unit}")),
               DataCell(Text("${goods.coef}")),
               //DataCell(Text("${(num.parse(_controller.text)*goods.price).toStringAsFixed(2)}")),
-              DataCell(Text("${(num.parse(_controller.text)*goods.price).toStringAsFixed(2)}")),
+              DataCell(Text("${sum.toStringAsFixed(2)}")),
         ]);
-
         //newRow.cells.add(DataCell())
         InvoiceRows.add(newRow);
+
       }
     });
     return SingleChildScrollView(
