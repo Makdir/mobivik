@@ -10,7 +10,7 @@ import 'package:mobivik/models/goods_model.dart';
 import 'package:koukicons/save.dart';
 import 'package:koukicons/genericSortingAsc.dart';
 import 'package:koukicons/flipboard2.dart';
-import 'package:mobivik/services/buy_orders.dart';
+import 'package:mobivik/services/buyorders_service.dart';
 
 
 class BuyOrder extends StatefulWidget {
@@ -91,6 +91,7 @@ class _BuyOrderState extends State {
     return WillPopScope(
       onWillPop: _onExit,
       child: Scaffold(
+            key: _scaffoldKey,
             appBar: AppBar(
                 title: Text(_outlet.name),
                 //bottom: PreferredSizeWidget ,
@@ -208,12 +209,15 @@ class _BuyOrderState extends State {
   }
 
   Future<bool> _onExit() async{
-    print('_goodsSum = $_goodsSum');
+    //print('_goodsSum = $_goodsSum');
     bool shouldExit = await GraphicalUI.confirmDialog(context,'Закрыть форму заказа?');
-    if (shouldExit && (_goodsSum.length!=0)) {
+    if (shouldExit) {
       bool mustSaved = await GraphicalUI.confirmDialog(context, 'Сохранить заказ?');
       if (mustSaved) _saveOrder();
-    }
+
+
+      }
+
     return shouldExit;
   }
 }
@@ -318,7 +322,7 @@ class _InvoiceState extends State {
                     child: RichText(
                       text: TextSpan(text: "Итоговая сумма заказа:", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
                         children: <TextSpan>[
-                          TextSpan(text: " $_totalSum", style: TextStyle(fontSize: 16.0),),
+                          TextSpan(text: " ${_totalSum.toStringAsFixed(2)}", style: TextStyle(fontSize: 16.0),),
                         ],
                       ),
                       //text: TextSpan("Итоговая сумма заказа: $_totalSum", style: TextStyle(fontWeight: FontWeight.bold),),

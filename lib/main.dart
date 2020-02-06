@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:koukicons/engineering.dart';
+import 'package:mobivik/screens/buyorders_journal.dart';
 import 'package:mobivik/screens/goods_screen.dart';
 import 'package:mobivik/screens/route_screen.dart';
 import 'package:mobivik/screens/settings.dart';
@@ -23,7 +24,7 @@ void main() {
           '/route': (BuildContext context) => new RouteScreen(),
           '/sync': (BuildContext context) => new SyncScreen(),
           '/goods': (BuildContext context) => new GoodsScreen(),
-          '/orders': (BuildContext context) => new GoodsScreen(),
+          '/buyorders': (BuildContext context) => new BuyordersJournal(),
         },
       )
   );
@@ -49,8 +50,8 @@ class MainScreen extends StatelessWidget {
               children: <Widget>[
                 button(Icons.sync,'Синхронизация',context,'/sync'),
                 button(Icons.list,'Маршрут',context,'/route'),
-                button(Icons.settings,'Журнал заказов',context,'/orders'),
-                button(Icons.storage,'Товары',context,'/goods'),
+                button(Icons.settings,'Журнал заказов',context,'/buyorders'),
+                //button(Icons.storage,'Товары',context,'/goods'),
               ],
         )
 

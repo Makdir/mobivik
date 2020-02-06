@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:flutter/src/widgets/editable_text.dart';
 import 'package:mobivik/common/file_provider.dart';
 
 
@@ -26,22 +25,15 @@ class BuyOrders {
     //var outputFile = FileProvider.saveFile('payments');
   }
 
-  static Future<Map<String, TextEditingController>> setPayment( Map<String, TextEditingController> controllers) async {
+  static Future<List> getBuyorders() async {
 
     File openedFile = await FileProvider.openOutputFile('buyorders');
     String fileContent = await openedFile.readAsString();
-    if(fileContent.isEmpty) fileContent = "{}";
-    Map parsedJson = json.decode(fileContent);
-    //print("parsedJson is " + parsedJson.runtimeType.toString());
-    controllers.forEach((docId, controller){
-      try {
-        controller.text = parsedJson[docId]['sum'].toString();
+    if(fileContent.isEmpty) fileContent = "[]";
+    List buyordersList = json.decode(fileContent);
 
-      } catch (e) {}
 
-    });
-
-    return controllers;
+    return buyordersList;
   }
 
 }
