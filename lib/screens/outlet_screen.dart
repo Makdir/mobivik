@@ -39,15 +39,14 @@ class _OutletScreenState extends State {
   Widget build(BuildContext context) {
     if (debtlist.length==0)
       return Scaffold(
-          appBar: new AppBar(title: Text(outlet.name)),
-          body: Padding(
-              padding: EdgeInsets.all(8.0),
+          appBar: AppBar(title: Text(outlet.name)),
+          body: Center(
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
                 children:[
                   NewBuyOrderButton(outlet: outlet),
-                  Container(
-                      child: const Text("На данный момент у клиента нет долгов")
+                  Padding(
+                      padding: const EdgeInsets.fromLTRB(0, 10, 0, 5),
+                      child: const Text("На данный момент у клиента нет долгов", style: TextStyle(fontWeight: FontWeight.bold),)
                   ),
                 ]
 
@@ -67,7 +66,7 @@ class _OutletScreenState extends State {
             child: Column(
 
                 children:[
-                  new NewBuyOrderButton(outlet: outlet),
+                  NewBuyOrderButton(outlet: outlet),
                   Padding(
                     padding: const EdgeInsets.fromLTRB(0, 10, 0, 5),
                     child: const Text("Долги и оплаты", style: TextStyle(fontWeight: FontWeight.bold),),
@@ -133,7 +132,6 @@ class _OutletScreenState extends State {
       result = debtDoc["date"] +"_"+ debtDoc["number"];
     }
     catch(e){}
-
     return result;
   }
 
@@ -141,18 +139,12 @@ class _OutletScreenState extends State {
     List payments = List();
      String outletId = this.outlet.id.trim();
      _controllers.forEach((docId, controller){
-        //print("docId=$docId controller=${controller.text}");
-       //String text = controller.text;
-
         double value;
         try {
           value = num.parse(controller.text).toDouble();
         }catch(e){
           value = 0;
         }
-
-        //print("docId=$docId value=$value");
-        //if(0 < value){
 
           Map item = this.debtlist.firstWhere(
               ((entry)=> entry["date"]+"_"+entry["number"]==docId)
@@ -184,10 +176,22 @@ class NewBuyOrderButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return RaisedButton(
-      child: const Text("Новый заказ"),
+    return MaterialButton(
+      minWidth: 200,
+      child: const Text("Новый заказ", style: TextStyle(fontWeight: FontWeight.bold),),
+      color: Colors.amber,
+      //padding: EdgeInsets.fromLTRB(90, 9, 90, 10),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+            bottomLeft: Radius.circular(10.0),
+            bottomRight: Radius.circular(10.0),
+            topLeft: Radius.circular(10.0),
+            topRight: Radius.circular(10.0)),
+      ),
+      splashColor: Colors.limeAccent,
+      elevation: 3,
       onPressed: () {
-        //_savePayments();
+
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => BuyOrder(outlet: outlet) ),

@@ -314,7 +314,17 @@ class _InvoiceState extends State {
           children: <Widget>[
             Row(
               children: <Widget>[
-                Text("Итоговая сумма заказа: $_totalSum"),
+                Container(
+                    child: RichText(
+                      text: TextSpan(text: "Итоговая сумма заказа:", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
+                        children: <TextSpan>[
+                          TextSpan(text: " $_totalSum", style: TextStyle(fontSize: 16.0),),
+                        ],
+                      ),
+                      //text: TextSpan("Итоговая сумма заказа: $_totalSum", style: TextStyle(fontWeight: FontWeight.bold),),
+                    ),
+                  margin: EdgeInsets.all(10.0),
+                ),
                ],
             ),
             SingleChildScrollView(
