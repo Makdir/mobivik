@@ -183,10 +183,12 @@ class _BuyOrderState extends State {
   }
 
   void _saveOrder() {
+    String doc_id = _creationDateTime.toIso8601String();
+
     Map order = Map();
-    order["doc_id"] = _creationDateTime.toIso8601String();
-    //order["_id"] = DateTime.now();
+    order["doc_id"] = doc_id;
     List<Map> docTable = List();
+
 
     _goodsControllers.forEach((id,_controller){
         var value;
@@ -205,6 +207,11 @@ class _BuyOrderState extends State {
     });
     order["table"] = docTable;
     BuyOrders.save(order);
+
+    // Data for journal
+    Map header = Map();
+    header["outlet"] = _outlet;
+
     GraphicalUI.showSnackBar(scaffoldKey: _scaffoldKey, context: context, actionLabel:"Close settings", resultMessage: "Заказ сохранен");
   }
 
@@ -384,3 +391,9 @@ class TreeList extends StatelessWidget {
   }
 }
 
+class InvoiceRows{
+  List rows = [];
+  InvoiceRows(){
+
+  }
+}
