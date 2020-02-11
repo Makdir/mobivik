@@ -16,23 +16,30 @@ class BuyOrders {
     List ordersList = json.decode(fileContent);
     ordersList.removeWhere((item) => item["doc_id"] == order["doc_id"]);
     ordersList.add(order);
-    print("===========================================================");
-    print("ordersList=$ordersList");
     String outputJson = json.encode(ordersList);
-
     openedFile.writeAsString(outputJson);
-    //print("openedFile = " + openedFile.path);
-    //var outputFile = FileProvider.saveFile('payments');
   }
 
-  static Future<List> getBuyorders() async {
+  static saveHeader(Map header) async {
+    //print("payment=$payments");
+    if(header.isEmpty) return;
 
-    File openedFile = await FileProvider.openOutputFile('buyorders');
+    File openedFile = await FileProvider.openAuxiliaryFile('boheaders');
+    String fileContent = await openedFile.readAsString();
+    if(fileContent.isEmpty) fileContent = "[]";
+    List ordersList = json.decode(fileContent);
+    ordersList.removeWhere((item) => item["doc_id"] == header["doc_id"]);
+    ordersList.add(header);
+    String outputJson = json.encode(ordersList);
+    openedFile.writeAsString(outputJson);
+  }
+
+  static Future<List> getBuyorderHeaders() async {
+
+    File openedFile = await FileProvider.openAuxiliaryFile('boheaders');
     String fileContent = await openedFile.readAsString();
     if(fileContent.isEmpty) fileContent = "[]";
     List buyordersList = json.decode(fileContent);
-
-
     return buyordersList;
   }
 

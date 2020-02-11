@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:intl/intl.dart';
 import 'package:mobivik/common/user_interface.dart';
 
 import 'package:mobivik/dao/goods_dao.dart';
@@ -44,7 +45,7 @@ class _BuyOrderState extends State {
   Map<String, TextEditingController> _goodsControllers = new Map();
   String _selectedAT = 'УУ';
 
-  Map<String, double> _goodsSum = Map(); /// _goodsSum is a list of sums of chosen goods. It has format Map<"Goods id", "Sum">
+  InvoiceTable _invoiceTable = InvoiceTable(); /// _goodsSum is a list of sums of chosen goods. It has format Map<"Goods id", "Sum">
 
   _BuyOrderState(this._outlet);
 
@@ -168,7 +169,7 @@ class _BuyOrderState extends State {
                           child: TabBarView(
                             children: [
                               TreeList(goodsWidget: _goodsWidget, goodsControllers:_goodsControllers),
-                              Invoice(goodsControllers: _goodsControllers, goodsList: _goodsList, goodsSum: _goodsSum),
+                              Invoice(goodsControllers: _goodsControllers, goodsList: _goodsList, invoiceTable: _invoiceTable),
 
                             ]
                           ),
@@ -210,20 +211,23 @@ class _BuyOrderState extends State {
 
     // Data for journal
     Map header = Map();
-    header["outlet"] = _outlet;
+    header["doc_id"] = doc_id;
+    header["outlet"] = _outlet.name;
+    header["date_time"] = DateFormat('dd.MM.yyyy HH:mm').format(_creationDateTime);
+    header["total_sum"] = _invoiceTable.totalSum.toStringAsFixed(2);
+    header["can_be_changed"] = true;
+    BuyOrders.saveHeader(header);
 
     GraphicalUI.showSnackBar(scaffoldKey: _scaffoldKey, context: context, actionLabel:"Close settings", resultMessage: "Заказ сохранен");
   }
 
   Future<bool> _onExit() async{
-    //print('_goodsSum = $_goodsSum');
+    //print('_goodsSum = ${_invoiceTable.totalSum}');
     bool shouldExit = await GraphicalUI.confirmDialog(context,'Закрыть форму заказа?');
-    if (shouldExit) {
+    if ((shouldExit)&&(_invoiceTable.totalSum > 0)) {
       bool mustSaved = await GraphicalUI.confirmDialog(context, 'Сохранить заказ?');
       if (mustSaved) _saveOrder();
-
-
-      }
+    }
 
     return shouldExit;
   }
@@ -234,34 +238,34 @@ class Invoice extends StatefulWidget {
   Map<String, TextEditingController> goodsControllers;
   List<Goods> goodsList;
 
-  Map<String, double> goodsSum;
+  InvoiceTable invoiceTable;
 
   Invoice({
     Key key,
     @required this.goodsControllers,
     @required this.goodsList,
-    @required this.goodsSum
+    @required this.invoiceTable
   }) :  super(key: key);
 
    @override
    _InvoiceState createState() {
-     return _InvoiceState(goodsControllers:goodsControllers, goodsList:goodsList, goodsSum:goodsSum);
+     return _InvoiceState(goodsControllers:goodsControllers, goodsList:goodsList, invoiceTable:invoiceTable);
    }
 }
 
 class _InvoiceState extends State {
   Map<String, TextEditingController> goodsControllers;
   List<Goods> goodsList;
-  //List<Goods> choosedGoods = List();
+  InvoiceTable invoiceTable;
 
   double _totalSum = 0;
-  Map<String, double> goodsSum;
+  Map<String, double> goodsSum = {};
 
   _InvoiceState({
     Key key,
     @required this.goodsControllers,
     @required this.goodsList,
-    @required this.goodsSum
+    @required this.invoiceTable
   });
 
   void totalSumRecalc(){
@@ -269,15 +273,17 @@ class _InvoiceState extends State {
       _totalSum = 0;
       goodsSum.forEach((id, sum){
         _totalSum += sum;
-        print("$id=$sum");
+        //print("$id=$sum");
       });
-      //setState(() {});
+      invoiceTable.totalSum = _totalSum;
   }
 
   @override
   Widget build(BuildContext context) {
-    List<DataRow> InvoiceRows = List();
+    //List<DataRow> InvoiceRows = List();
     _totalSum = 0;
+    //invoiceTable.totalSum = 0;
+    invoiceTable.rows.clear();
     goodsControllers.forEach((id,_controller){
       //print("$id=${_controller.text}");
       var value;
@@ -297,7 +303,6 @@ class _InvoiceState extends State {
               DataCell(TextField(
                 controller: _controller,
                 keyboardType: TextInputType.numberWithOptions(decimal: true,signed: false),
-                onEditingComplete: (){print("onEditingComplete = ${_controller.text}");},
                 onChanged: (text){
                   double amount = num.parse(text).toDouble();
                   double sum = amount*goods.price;
@@ -311,15 +316,16 @@ class _InvoiceState extends State {
 
               )),
               DataCell(Text("${goods.unit}")),
-              DataCell(Text("${goods.coef}")),
-              //DataCell(Text("${(num.parse(_controller.text)*goods.price).toStringAsFixed(2)}")),
+              //DataCell(Text("${goods.coef}")),
               DataCell(Text("${sum.toStringAsFixed(2)}")),
         ]);
         //newRow.cells.add(DataCell())
-        InvoiceRows.add(newRow);
-
+        //InvoiceRows.add(newRow);
+        invoiceTable.rows.add(newRow);
       }
     });
+    invoiceTable.totalSum = _totalSum;
+
     return SingleChildScrollView(
         child: Column(
           children: <Widget>[
@@ -351,10 +357,10 @@ class _InvoiceState extends State {
                         ),
                     DataColumn(label: const Text('Количество'), numeric: true),
                     DataColumn(label: const Text('Ед. изм.'),   numeric: false),
-                    DataColumn(label: const Text('Коэф.'),      numeric: true),
+                    //DataColumn(label: const Text('Коэф.'),      numeric: true),
                     DataColumn(label: const Text('Сумма'),      numeric: true),
                   ],
-                  rows: InvoiceRows,
+                  rows: invoiceTable.rows,
 //                  sortAscending: true,
 //                  sortColumnIndex: 0,
                 ),
@@ -391,9 +397,9 @@ class TreeList extends StatelessWidget {
   }
 }
 
-class InvoiceRows{
-  List rows = [];
-  InvoiceRows(){
+class InvoiceTable{
+  double totalSum;
+  List<DataRow> rows = [];
+  InvoiceTable();
 
-  }
 }
