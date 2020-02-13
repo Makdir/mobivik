@@ -45,7 +45,7 @@ class BuyOrders {
 
   static Future<Map> getBuyorderById(String docId) async {
 
-    File openedFile = await FileProvider.openAuxiliaryFile('buyorders');
+    File openedFile = await FileProvider.openOutputFile('buyorders');
     String fileContent = await openedFile.readAsString();
     if(fileContent.isEmpty) return null;
 

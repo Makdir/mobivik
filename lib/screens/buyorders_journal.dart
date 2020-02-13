@@ -1,17 +1,13 @@
 
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:mobivik/screens/reopened_buyorder.dart';
 import 'package:mobivik/services/buyorders_service.dart';
-import 'package:mobivik/models/client_model.dart';
-import 'package:mobivik/screens/outlet_screen.dart';
 
 class BuyordersJournal extends StatefulWidget {
   @override
   _BuyordersJournal createState() {
     return _BuyordersJournal();
   }
-
 }
 
 class _BuyordersJournal extends State {
@@ -29,14 +25,12 @@ class _BuyordersJournal extends State {
   }
 
   Future getData() async{
-
     List buyordersList = await BuyOrders.getBuyorderHeaders();
     buyordersList.forEach((item){
       double sum = double.parse(item["total_sum"]);
       _totalSum += sum;
-    
-    });
 
+    });
 
     setState(() {
       buyorders.addAll(buyordersList);

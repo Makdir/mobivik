@@ -56,21 +56,22 @@ class _ReopenedBuyOrderState extends State {
 
     // Loading list of all goods and controller initialisation
     _goodsList = await GoodsDAO().getItems();
-    _goodsList.forEach((item){_goodsControllers.putIfAbsent(item.id, ()=> TextEditingController());});
+    //_goodsList.forEach((item){_goodsControllers.putIfAbsent(item.id, ()=> TextEditingController());});
+    _goodsList.forEach((item){_goodsControllers[item.id] = TextEditingController(); });
 
     // Getting order data
     _docId = order['doc_id'];
+
     _outlet = order['outlet'];
     _creationDateTime = order['date_time'];
     _invoiceTable.totalSum = double.parse(order['total_sum']);
 
     Map buyorder = await BuyOrders.getBuyorderById(_docId);
     List rows = buyorder['table'];
+
     rows.forEach((item){
       _goodsControllers[item['id']].text = item['qty'];
     });
-
-
 
     // Loading and forming hierarchcal structure of goods
     _goodsList.forEach((item){
