@@ -35,19 +35,22 @@ class _RouteScreenState extends State {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.black,
       appBar: AppBar(title: new Text("Маршрут")),
         body:ListView.builder(
           padding: EdgeInsets.all(8.0),
           itemCount: route.length,
           itemBuilder: (BuildContext context, int index) {
-            return ListTile(
-              trailing: Icon(Icons.arrow_forward_ios),
-              title:Text(route[index].name),
-              subtitle: Text(route[index].address),
-              onTap: (){
-                Navigator.push(context, MaterialPageRoute(builder: (context) => OutletScreen(outlet: route[index]),
-                ),
-                );},
+            return Card(
+              child: ListTile(
+                trailing: Icon(Icons.arrow_forward_ios),
+                title:Text(route[index].name),
+                subtitle: Text(route[index].address),
+                onTap: (){
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => OutletScreen(outlet: route[index]),
+                  ),
+                  );},
+              ),
             );
           },
         )

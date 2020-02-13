@@ -91,4 +91,29 @@ class EntryItem extends StatelessWidget {
     return buildTiles(entry);
   }
 
+
+//  Future getGoodsEntries() async {
+//
+//
+//    _goodsList = await GoodsDAO().getItems();
+//    _goodsList.forEach((item){_goodsControllers.putIfAbsent(item.id, ()=> TextEditingController());});
+//
+//    _goodsList.forEach((item){
+//      Entry newEntry = Entry(item: item);
+//      _entries.add(newEntry);
+//    });
+//    // Item can not have empty id. It is wrong.
+//    _entries.removeWhere((entry) => entry.id.isEmpty);
+//
+//    _entries.forEach((item){
+//      try {
+//        String parentId = item.parent_id.toString().trim();
+//        Entry parentEntry = _entries.firstWhere((entry) => entry.id == parentId);
+//        parentEntry.children.add(item);
+//      } catch (e) {}
+//    });
+//    // Deleting items without paren. (But also this may be due to wrong data.)
+//    _entries.removeWhere((entry) => entry.parent_id != "");
+//  }
+
 }

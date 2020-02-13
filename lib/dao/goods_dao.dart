@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:mobivik/common/cp1251_decoder.dart';
 import 'package:mobivik/models/goods_model.dart';
 import 'package:mobivik/common/file_provider.dart';
 //import "package:charcode/charcode.dart";

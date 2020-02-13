@@ -4,7 +4,6 @@ import 'package:intl/intl.dart';
 import 'package:mobivik/common/user_interface.dart';
 
 import 'package:mobivik/dao/goods_dao.dart';
-import 'package:mobivik/models/client_model.dart';
 import 'package:mobivik/models/goods_entries.dart';
 import 'package:mobivik/models/goods_model.dart';
 
@@ -14,24 +13,21 @@ import 'package:koukicons/flipboard2.dart';
 import 'package:mobivik/services/buyorders_service.dart';
 
 
-class BuyOrder extends StatefulWidget {
-  final Client outlet;
+class ReopenedBuyOrder extends StatefulWidget {
+  final Map order;
 
-  BuyOrder({Key key, @required this.outlet}) : super(key: key);
+  ReopenedBuyOrder({Key key, @required this.order}) : super(key: key);
 
   @override
-  _BuyOrderState createState() {
-    return _BuyOrderState(outlet);
+  _ReopenedBuyOrderState createState() {
+    return _ReopenedBuyOrderState(order);
   }
 
 }
 
-/// _goodsList is all goods available for salling
-///
-///
-///
-class _BuyOrderState extends State {
-  final Client _outlet;
+class _ReopenedBuyOrderState extends State {
+  final Map order;
+  String _outlet;
   List<Goods> _goodsList = List();
   List<Entry> _goodsWidget = List();
   List<Entry> _entries = List();
@@ -39,15 +35,15 @@ class _BuyOrderState extends State {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   final List<String> _accountingTypes = ['УУ', 'БУ'];
-  final DateTime _creationDateTime = DateTime.now();
+  String _docId;
+  String _creationDateTime;
 
-  //String invoiceNumber = "Заказ № "+DateTime.now().millisecondsSinceEpoch.toString();
-  Map<String, TextEditingController> _goodsControllers = new Map();
+  Map<String, TextEditingController> _goodsControllers = Map();
   String _selectedAT = 'УУ';
 
   InvoiceTable _invoiceTable = InvoiceTable(); /// _goodsSum is a list of sums of chosen goods. It has format Map<"Goods id", "Sum">
 
-  _BuyOrderState(this._outlet);
+  _ReopenedBuyOrderState(this.order);
 
   @override
   void initState() {
@@ -58,16 +54,29 @@ class _BuyOrderState extends State {
 
   Future _getData() async{
 
+    // Loading list of all goods and controller initialisation
     _goodsList = await GoodsDAO().getItems();
-
     _goodsList.forEach((item){_goodsControllers.putIfAbsent(item.id, ()=> TextEditingController());});
 
-    // Forming hierarchcal structure
+    // Getting order data
+    _docId = order['doc_id'];
+    _outlet = order['outlet'];
+    _creationDateTime = order['date_time'];
+    _invoiceTable.totalSum = double.parse(order['total_sum']);
+
+    Map buyorder = await BuyOrders.getBuyorderById(_docId);
+    List rows = buyorder['table'];
+    rows.forEach((item){
+      _goodsControllers[item['id']].text = item['qty'];
+    });
+
+
+
+    // Loading and forming hierarchcal structure of goods
     _goodsList.forEach((item){
       Entry newEntry = Entry(item: item);
       _entries.add(newEntry);
     });
-
     // Item can not have empty id. It is wrong.
     _entries.removeWhere((entry) => entry.id.isEmpty);
 
@@ -87,6 +96,7 @@ class _BuyOrderState extends State {
 
   }
 
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -94,7 +104,7 @@ class _BuyOrderState extends State {
       child: Scaffold(
             key: _scaffoldKey,
             appBar: AppBar(
-                title: Text(_outlet.name),
+                title: Text('$_outlet'),
                 //bottom: PreferredSizeWidget ,
                 actions: <Widget>[
                   Padding(
@@ -120,9 +130,8 @@ class _BuyOrderState extends State {
                         //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: <Widget>[
                           Padding(
-                            child: const Text("Вид учета", style: TextStyle(fontWeight: FontWeight.w700),),
                             padding: const EdgeInsets.all(8.0),
-
+                            child: const Text("Вид учета", style: TextStyle(fontWeight: FontWeight.w700),),
                           ),
                           DropdownButton<String>(
                             underline: Container(decoration: BoxDecoration(border: Border.all(width: 0.5, style: BorderStyle.solid))),
@@ -144,7 +153,7 @@ class _BuyOrderState extends State {
 
                       Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: Text(DateFormat('dd.MM.yyyy HH:mm').format(_creationDateTime)),
+                        child: Text('Дата создания ${_creationDateTime}'),
                       )
                   ],
 
@@ -185,10 +194,10 @@ class _BuyOrderState extends State {
   }
 
   void _saveOrder() {
-    String doc_id = _creationDateTime.toIso8601String();
+    //String doc_id = doc_id;
 
     Map order = Map();
-    order["doc_id"] = doc_id;
+    order["doc_id"] = _docId;
     List<Map> docTable = List();
 
 
@@ -212,14 +221,14 @@ class _BuyOrderState extends State {
 
     // Data for journal
     Map header = Map();
-    header["doc_id"] = doc_id;
-    header["outlet"] = _outlet.name;
-    header["date_time"] = DateFormat('dd.MM.yyyy HH:mm').format(_creationDateTime);
+    header["doc_id"] = _docId;
+    header["outlet"] = _outlet;
+    header["date_time"] = _creationDateTime.trim();
     header["total_sum"] = _invoiceTable.totalSum.toStringAsFixed(2);
     header["can_be_changed"] = true;
     BuyOrders.saveHeader(header);
 
-    GraphicalUI.showSnackBar(scaffoldKey: _scaffoldKey, context: context, actionLabel:"", resultMessage: "Заказ сохранен");
+    GraphicalUI.showSnackBar(scaffoldKey: _scaffoldKey, context: context, actionLabel:"Close settings", resultMessage: "Заказ сохранен");
   }
 
   Future<bool> _onExit() async{
@@ -274,7 +283,7 @@ class _InvoiceState extends State {
       _totalSum = 0;
       goodsSum.forEach((id, sum){
         _totalSum += sum;
-        //print("$id=$sum");
+        print("$id=$sum");
       });
       invoiceTable.totalSum = _totalSum;
   }
@@ -304,6 +313,7 @@ class _InvoiceState extends State {
               DataCell(TextField(
                 controller: _controller,
                 keyboardType: TextInputType.numberWithOptions(decimal: true,signed: false),
+                onEditingComplete: (){print("onEditingComplete = ${_controller.text}");},
                 onChanged: (text){
                   double amount = num.parse(text).toDouble();
                   double sum = amount*goods.price;

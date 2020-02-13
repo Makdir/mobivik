@@ -14,7 +14,7 @@ void main() {
         title: 'Mobivik',
         theme:  new ThemeData(
           primarySwatch: Colors.lime,
-          backgroundColor: Colors.black12,
+          backgroundColor: Colors.black38,
 
         ),
         home: new MainScreen(),
@@ -36,6 +36,7 @@ class MainScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
+        //backgroundColor: Colors.black54,
         appBar: new AppBar(title: const Text(""), actions: <Widget>[
             IconButton(
               icon: KoukiconsEngineering(),//Icon(Icons.settings_applications),
@@ -43,9 +44,8 @@ class MainScreen extends StatelessWidget {
                 Navigator.of(context).pushNamed("/settings");
               },
         ),],),
-        body: new Container(
-          color: Colors.white,
-          child: new ListView(
+        body: Container(
+          child: ListView(
               padding: const EdgeInsets.all(10.0),
               children: <Widget>[
                 button(Icons.sync,'Синхронизация',context,'/sync'),
@@ -62,16 +62,17 @@ class MainScreen extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.all(5.0),
       child:RaisedButton(
-
+        textTheme: ButtonTextTheme.primary,
         child: Row(mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Icon(iconData),
-            Text(title, style: TextStyle(fontWeight: FontWeight.bold)),
+            Text(title, style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold)),
           ],
         ),
         onPressed: () { Navigator.of(context).pushNamed(navlink);},
+        elevation: 5,
         color: Colors.orangeAccent,
-        padding: EdgeInsets.all(10.0),
+        padding: EdgeInsets.fromLTRB(10, 30, 10, 30),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.only(
                           bottomLeft: Radius.circular(3.0),

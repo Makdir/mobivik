@@ -43,5 +43,22 @@ class BuyOrders {
     return buyordersList;
   }
 
+  static Future<Map> getBuyorderById(String docId) async {
+
+    File openedFile = await FileProvider.openAuxiliaryFile('buyorders');
+    String fileContent = await openedFile.readAsString();
+    if(fileContent.isEmpty) return null;
+
+    List ordersList = json.decode(fileContent);
+    Map buyorder;
+    try {
+      buyorder = ordersList.firstWhere((item) => item["doc_id"] == docId);
+    } catch(e) {
+      return null;
+    }
+
+    return buyorder;
+  }
+
 }
 
