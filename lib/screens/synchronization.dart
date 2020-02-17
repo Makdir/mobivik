@@ -2,8 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-
-
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:mobivik/common/file_provider.dart';
@@ -44,12 +42,11 @@ class SyncScreen extends StatelessWidget {
     final serverAddress = prefs.getString("serverAddress").trim();
     final agentCode = prefs.getString("agentCode").trim();
 
+    await _getSettings(serverAddress, agentCode);
+
     await _getData("goods", serverAddress, agentCode);
     await _getData("route", serverAddress, agentCode);
 
-//    await getGoods(agentCode);
-//    await getRoute(agentCode);
-//
     await _sendPayments(serverAddress, agentCode);
 
   }
@@ -59,9 +56,9 @@ class SyncScreen extends StatelessWidget {
     if(body.isEmpty) return;
     //File file = writeFile(body);
     Map<String,dynamic> jsonBody = json.decode(body);
-    print(jsonBody);
-    print(jsonBody["outlets"]);
-    print(jsonBody["outlets"].runtimeType);
+    //print(jsonBody);
+    //print(jsonBody["outlets"]);
+    //print(jsonBody["outlets"].runtimeType);
 
     bool res = await SimplePermissions.checkPermission(Permission.WriteExternalStorage);
     print('res = $res');
@@ -133,6 +130,11 @@ class SyncScreen extends StatelessWidget {
       String result = await file.readAsString();
       if (result.isEmpty) result = "{}";
       return result;
+  }
+
+  _getSettings(String serverAddress, String agentCode) {
+
+
   }
 
 }
