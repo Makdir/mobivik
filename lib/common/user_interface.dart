@@ -44,3 +44,41 @@ class GraphicalUI{
 
 }
 
+/// General theme button
+/// @param caption - title of button
+/// @param onPressedAction - event of button clicking
+
+class StandartButton extends StatelessWidget {
+  String caption = "";
+
+  var onPressedAction;
+
+  StandartButton({
+    Key key,
+    this.caption,
+    this.onPressedAction
+  }) : super(key: key);
+
+//@required
+  //final Client outlet;
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialButton(
+      minWidth: 200,
+      child: Text(caption, style: TextStyle(fontWeight: FontWeight.bold),),
+      color: Colors.amber,
+      //padding: EdgeInsets.fromLTRB(90, 9, 90, 10),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+            bottomLeft: Radius.circular(10.0),
+            bottomRight: Radius.circular(10.0),
+            topLeft: Radius.circular(10.0),
+            topRight: Radius.circular(10.0)),
+      ),
+      splashColor: Colors.limeAccent,
+      elevation: 3,
+      onPressed: onPressedAction,
+    );
+  }
+}

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:mobivik/common/user_interface.dart';
 import 'package:mobivik/models/client_model.dart';
 import 'package:mobivik/services/payments.dart';
 
@@ -35,6 +36,14 @@ class _OutletScreenState extends State {
     Payments.setPayment(_controllers);
   }
 
+  gotoNewBuyOrder() {
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => BuyOrder(outlet: outlet) ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     if (debtlist.length==0)
@@ -43,7 +52,7 @@ class _OutletScreenState extends State {
           body: Center(
               child: Column(
                 children:[
-                  NewBuyOrderButton(outlet: outlet),
+                  StandartButton(caption: "Новый заказ", onPressedAction: gotoNewBuyOrder),
                   Padding(
                       padding: const EdgeInsets.fromLTRB(0, 10, 0, 5),
                       child: const Text("На данный момент у клиента нет долгов", style: TextStyle(fontWeight: FontWeight.bold),)
@@ -66,7 +75,7 @@ class _OutletScreenState extends State {
             child: Column(
 
                 children:[
-                  NewBuyOrderButton(outlet: outlet),
+                  StandartButton(caption: "Новый заказ", onPressedAction: gotoNewBuyOrder),
                   Padding(
                     padding: const EdgeInsets.fromLTRB(0, 10, 0, 5),
                     child: const Text("Долги и оплаты", style: TextStyle(fontWeight: FontWeight.bold),),
@@ -166,37 +175,37 @@ class _OutletScreenState extends State {
   }
 }
 
-class NewBuyOrderButton extends StatelessWidget {
-  const NewBuyOrderButton({
-    Key key,
-    @required this.outlet,
-  }) : super(key: key);
-
-  final Client outlet;
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialButton(
-      minWidth: 200,
-      child: const Text("Новый заказ", style: TextStyle(fontWeight: FontWeight.bold),),
-      color: Colors.amber,
-      //padding: EdgeInsets.fromLTRB(90, 9, 90, 10),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.only(
-            bottomLeft: Radius.circular(10.0),
-            bottomRight: Radius.circular(10.0),
-            topLeft: Radius.circular(10.0),
-            topRight: Radius.circular(10.0)),
-      ),
-      splashColor: Colors.limeAccent,
-      elevation: 3,
-      onPressed: () {
-
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => BuyOrder(outlet: outlet) ),
-        );
-      },
-    );
-  }
-}
+//class NewBuyOrderButton extends StatelessWidget {
+//  const NewBuyOrderButton({
+//    Key key,
+//    @required this.outlet,
+//  }) : super(key: key);
+//
+//  final Client outlet;
+//
+//  @override
+//  Widget build(BuildContext context) {
+//    return MaterialButton(
+//      minWidth: 200,
+//      child: const Text("Новый заказ", style: TextStyle(fontWeight: FontWeight.bold),),
+//      color: Colors.amber,
+//      //padding: EdgeInsets.fromLTRB(90, 9, 90, 10),
+//      shape: RoundedRectangleBorder(
+//        borderRadius: BorderRadius.only(
+//            bottomLeft: Radius.circular(10.0),
+//            bottomRight: Radius.circular(10.0),
+//            topLeft: Radius.circular(10.0),
+//            topRight: Radius.circular(10.0)),
+//      ),
+//      splashColor: Colors.limeAccent,
+//      elevation: 3,
+//      onPressed: () {
+//
+//        Navigator.push(
+//          context,
+//          MaterialPageRoute(builder: (context) => BuyOrder(outlet: outlet) ),
+//        );
+//      },
+//    );
+//  }
+//}
