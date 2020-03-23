@@ -48,12 +48,12 @@ class GraphicalUI{
 /// @param caption - title of button
 /// @param onPressedAction - event of button clicking
 
-class StandartButton extends StatelessWidget {
+class StandardButton extends StatelessWidget {
   String caption = "";
 
   var onPressedAction;
 
-  StandartButton({
+  StandardButton({
     Key key,
     this.caption,
     this.onPressedAction

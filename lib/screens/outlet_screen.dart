@@ -52,10 +52,10 @@ class _OutletScreenState extends State {
           body: Center(
               child: Column(
                 children:[
-                  StandartButton(caption: "Новый заказ", onPressedAction: gotoNewBuyOrder),
+                  StandardButton(caption: "Новый заказ", onPressedAction: gotoNewBuyOrder),
                   Padding(
                       padding: const EdgeInsets.fromLTRB(0, 10, 0, 5),
-                      child: const Text("На данный момент у клиента нет долгов", style: TextStyle(fontWeight: FontWeight.bold),)
+                      child:   const Text("На данный момент у клиента нет долгов", style: TextStyle(fontWeight: FontWeight.bold),)
                   ),
                 ]
 
@@ -75,7 +75,7 @@ class _OutletScreenState extends State {
             child: Column(
 
                 children:[
-                  StandartButton(caption: "Новый заказ", onPressedAction: gotoNewBuyOrder),
+                  StandardButton(caption: "Новый заказ", onPressedAction: gotoNewBuyOrder),
                   Padding(
                     padding: const EdgeInsets.fromLTRB(0, 10, 0, 5),
                     child: const Text("Долги и оплаты", style: TextStyle(fontWeight: FontWeight.bold),),
@@ -159,11 +159,14 @@ class _OutletScreenState extends State {
               ((entry)=> entry["date"]+"_"+entry["number"]==docId)
           );
 
+          String paymentId = DateTime.now().toIso8601String();
+
           Map payment = {
-            'doc_id':docId,
-            'date':    item["date"],
-            'number':  item["number"],
-            'docname': item["docname"],
+            'payment_id': paymentId,
+            'doc_id':     docId,
+            'date':       item["date"],
+            'number':     item["number"],
+            'docname':    item["docname"],
             'sum': value
           };
           payments.add(payment);

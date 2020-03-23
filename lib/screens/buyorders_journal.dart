@@ -44,7 +44,7 @@ class _BuyordersJournal extends State {
     //_tempSum = 0;
     return Scaffold(
       backgroundColor: Colors.black,
-      appBar: AppBar(title: new Text("Журнал заказов")),
+      appBar: AppBar(title: Text("Журнал заказов")),
         body:Column(
           children: <Widget>[
               Container(
@@ -59,7 +59,7 @@ class _BuyordersJournal extends State {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
-                    Text("Итоговая сумма:", style: TextStyle(fontSize: _totalFontSize),),
+                    Text("Итоговая сумма:",     style: TextStyle(fontSize: _totalFontSize),),
                     Text("$_sumRepresentation", style: TextStyle(fontSize: _totalFontSize, fontWeight: FontWeight.bold),),
                   ],
                 ),
@@ -78,6 +78,7 @@ class _BuyordersJournal extends State {
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: <Widget>[
                                   Text(buyorders[index]["date_time"].toString()),
+                                  Text(buyorders[index]["actype"].toString()),
                                   Text(buyorders[index]["total_sum"].toString(),
                                     style: TextStyle(
                                       fontSize: _totalFontSize,

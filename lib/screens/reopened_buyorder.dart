@@ -195,7 +195,7 @@ class _ReopenedBuyOrderState extends State {
   }
 
   void _saveOrder() {
-    //String doc_id = doc_id;
+
 
     Map order = Map();
     order["doc_id"] = _docId;
@@ -225,6 +225,7 @@ class _ReopenedBuyOrderState extends State {
     header["doc_id"] = _docId;
     header["outlet"] = _outlet;
     header["date_time"] = _creationDateTime.trim();
+    header["actype"] = _selectedAT;
     header["total_sum"] = _invoiceTable.totalSum.toStringAsFixed(2);
     header["can_be_changed"] = true;
     BuyOrders.saveHeader(header);

@@ -158,7 +158,7 @@ class _SyncScreen extends State {
           child: Column(
 
             children: [
-              StandartButton(caption: "Синхронизировать", onPressedAction: _fetchPost),
+              StandardButton(caption: "Синхронизировать", onPressedAction: _fetchPost),
               LinearProgressIndicator(value: indicatorValue, backgroundColor: Colors.black)
             ]
           ),

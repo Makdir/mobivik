@@ -189,8 +189,14 @@ class _BuyOrderState extends State {
 
     Map order = Map();
     order["doc_id"] = doc_id;
+    order["outlet_id"] = _outlet.id;
+    if(_selectedAT == 'УУ') {
+      order["actype"] = 0;
+    }
+    else{
+      order["actype"] = 1;
+    }
     List<Map> docTable = List();
-
 
     _goodsControllers.forEach((id,_controller){
         var value;
@@ -215,6 +221,7 @@ class _BuyOrderState extends State {
     header["doc_id"] = doc_id;
     header["outlet"] = _outlet.name;
     header["date_time"] = DateFormat('dd.MM.yyyy HH:mm').format(_creationDateTime);
+    header["actype"] = _selectedAT;
     header["total_sum"] = _invoiceTable.totalSum.toStringAsFixed(2);
     header["can_be_changed"] = true;
     BuyOrders.saveHeader(header);
