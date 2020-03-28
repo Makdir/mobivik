@@ -30,8 +30,6 @@ void main() {
   );
 }
 
-
-
 class MainScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {

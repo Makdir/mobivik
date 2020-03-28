@@ -37,6 +37,7 @@ class _ReopenedBuyOrderState extends State {
   final List<String> _accountingTypes = ['УУ', 'БУ'];
   String _docId;
   String _creationDateTime;
+  TextEditingController commentController = TextEditingController();
 
   Map<String, TextEditingController> _goodsControllers = Map();
   String _selectedAT = 'УУ';
@@ -159,7 +160,18 @@ class _ReopenedBuyOrderState extends State {
                   ],
 
                     ),
-
+                Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: <Widget>[
+                      //const Text('Комментарий'),
+                      Expanded(
+                        child: TextField(
+                          decoration: InputDecoration(labelText: 'Комментарий', ),
+                          controller: commentController,
+                        ),
+                      )
+                    ]
+                ),
                 Expanded(
                     child:DefaultTabController(
                       length: 2,
@@ -173,7 +185,7 @@ class _ReopenedBuyOrderState extends State {
                               Tab(child: KoukiconsGenericSortingAsc() ),
                               Tab(child: KoukiconsFlipboard2() ),
                           ],
-                          ),
+                        ),
 
                         body: Container(
                           color: Colors.grey[300],
@@ -236,6 +248,9 @@ class _ReopenedBuyOrderState extends State {
   Future<bool> _onExit() async{
     //print('_goodsSum = ${_invoiceTable.totalSum}');
     bool shouldExit = await GraphicalUI.confirmDialog(context,'Закрыть форму заказа?');
+    if ((shouldExit)&&(_invoiceTable.totalSum == null)) {
+      return true;
+    }
     if ((shouldExit)&&(_invoiceTable.totalSum > 0)) {
       bool mustSaved = await GraphicalUI.confirmDialog(context, 'Сохранить заказ?');
       if (mustSaved) _saveOrder();

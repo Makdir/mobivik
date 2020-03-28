@@ -40,12 +40,16 @@ class _BuyOrderState extends State {
 
   final List<String> _accountingTypes = ['УУ', 'БУ'];
   final DateTime _creationDateTime = DateTime.now();
+  TextEditingController commentController = TextEditingController();
 
   //String invoiceNumber = "Заказ № "+DateTime.now().millisecondsSinceEpoch.toString();
   Map<String, TextEditingController> _goodsControllers = new Map();
   String _selectedAT = 'УУ';
 
-  InvoiceTable _invoiceTable = InvoiceTable(); /// _goodsSum is a list of sums of chosen goods. It has format Map<"Goods id", "Sum">
+  InvoiceTable _invoiceTable = InvoiceTable();
+
+
+  /// _goodsSum is a list of sums of chosen goods. It has format Map<"Goods id", "Sum">
 
   _BuyOrderState(this._outlet);
 
@@ -149,7 +153,18 @@ class _BuyOrderState extends State {
                   ],
 
                     ),
-
+               Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: <Widget>[
+                      //const Text('Комментарий'),
+                      Expanded(
+                        child: TextField(
+                          decoration: InputDecoration(labelText: 'Комментарий', ),
+                          controller: commentController,
+                        ),
+                      )
+                    ]
+                ),
                 Expanded(
                     child:DefaultTabController(
                       length: 2,
@@ -232,6 +247,9 @@ class _BuyOrderState extends State {
   Future<bool> _onExit() async{
     //print('_goodsSum = ${_invoiceTable.totalSum}');
     bool shouldExit = await GraphicalUI.confirmDialog(context,'Закрыть форму заказа?');
+    if ((shouldExit)&&(_invoiceTable.totalSum == null)) {
+      return true;
+    }
     if ((shouldExit)&&(_invoiceTable.totalSum > 0)) {
       bool mustSaved = await GraphicalUI.confirmDialog(context, 'Сохранить заказ?');
       if (mustSaved) _saveOrder();
