@@ -6,6 +6,47 @@ import 'package:path_provider/path_provider.dart';
 
 class FileProvider {
 
+  static saveFile(String fileName, String content, String folder) async{
+    Directory tempDir = await getTemporaryDirectory();
+    String tempPath = tempDir.path;
+
+    Directory directory = Directory(tempPath+Platform.pathSeparator+folder);
+    bool isExist = await directory.exists();
+    if (isExist==false) {
+      await directory.create(recursive: true);
+    }
+
+    File file = File(directory.path+Platform.pathSeparator+"$fileName.mv");
+
+    isExist = await file.exists();
+    if (isExist==false) {
+      await file.create(recursive: true);
+    }
+
+    file.writeAsString(content);
+
+    return file;
+  }
+
+  static openFile(String fileName, String folder) async{
+    Directory tempDir = await getTemporaryDirectory();
+    String tempPath = tempDir.path;
+
+    Directory directory = Directory(tempPath+Platform.pathSeparator + folder);
+    bool isExist = await directory.exists();
+    if (isExist==false) {
+      await directory.create(recursive: true);
+    }
+
+    File file = File(directory.path+Platform.pathSeparator + "$fileName.mv");
+
+    isExist = await file.exists();
+    if (isExist==false) {
+      await file.create(recursive: true);
+    }
+    return file;
+  }
+
   static openOutputFile(String fileName) async{
     Directory tempDir = await getTemporaryDirectory();
     String tempPath = tempDir.path;
@@ -85,6 +126,26 @@ class FileProvider {
     return outputFile;
   }
 
+  static saveOutputFile(String fileName, String content) async{
+    Directory tempDir = await getTemporaryDirectory();
+    String tempPath = tempDir.path;
 
+    Directory directory = Directory(tempPath+Platform.pathSeparator+"output");
+    bool isExist = await directory.exists();
+    if (isExist==false) {
+      await directory.create(recursive: true);
+    }
+
+    File file = File(directory.path+Platform.pathSeparator+"$fileName.mv");
+
+    isExist = await file.exists();
+    if (isExist==false) {
+      await file.create(recursive: true);
+    }
+
+    file.writeAsString(content);
+
+    return file;
+  }
 }
 

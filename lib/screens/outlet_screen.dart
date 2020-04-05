@@ -20,6 +20,10 @@ class OutletScreen extends StatefulWidget {
 class _OutletScreenState extends State {
   final Client outlet;
 
+  double totalDebtSum = 0;
+  double totalPaymentSum = 0;
+  final double _totalFontSize = 16;
+
   List debtlist = List();
   Map<String, TextEditingController> _controllers = Map();
 
@@ -31,9 +35,20 @@ class _OutletScreenState extends State {
     debtlist.forEach((item){
       String docId = _getDocID(item);
       _controllers[docId] = TextEditingController();
-
+      totalDebtSum += double.parse(item["debt"].toString());
+      //totalPaymentSum += double.parse(_controllers[docId].text);
     });
     Payments.setPayment(_controllers);
+  }
+
+  void totalSumRecalc(){
+
+    totalPaymentSum = 0;
+    _controllers.forEach((id, controller){
+      totalPaymentSum += double.parse(controller.text);
+      //print("$id=$sum");
+    });
+    //invoiceTable.totalSum = _totalSum;
   }
 
   gotoNewBuyOrder() {
@@ -58,7 +73,6 @@ class _OutletScreenState extends State {
                       child:   const Text("На данный момент у клиента нет долгов", style: TextStyle(fontWeight: FontWeight.bold),)
                   ),
                 ]
-
             )
           )
       );
@@ -80,6 +94,18 @@ class _OutletScreenState extends State {
                     padding: const EdgeInsets.fromLTRB(0, 10, 0, 5),
                     child: const Text("Долги и оплаты", style: TextStyle(fontWeight: FontWeight.bold),),
                   ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(15, 0, 15, 0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        Text("Текущий долг:",     style: TextStyle(fontSize: _totalFontSize),),
+                        Text("$totalDebtSum. ",   style: TextStyle(fontSize: _totalFontSize+1, fontWeight: FontWeight.bold),),
+                        Text("Принято денег:",     style: TextStyle(fontSize: _totalFontSize),),
+                        Text("$totalPaymentSum. ", style: TextStyle(fontSize: _totalFontSize+1, fontWeight: FontWeight.bold),),
+                      ],
+                    ),
+                  ),
                   Expanded(
 
                       child: ListView.builder(
@@ -100,12 +126,12 @@ class _OutletScreenState extends State {
                                     decoration: BoxDecoration(
                                       border: Border.all(width: 0.5, style: BorderStyle.solid),
                                     ),
-                                    child: new Row(
+                                    child: Row(
                                       mainAxisAlignment: MainAxisAlignment.end,
                                       children: <Widget>[
-                                        new Expanded(
+                                        Expanded(
                                           //flex: 3,
-                                          child: new TextField(
+                                          child: TextField(
                                             readOnly:   debtlist[index]["debt"]<0,
                                             controller: _controllers[_getDocID(debtlist[index])],
                                             textAlign:    TextAlign.end,
@@ -118,6 +144,12 @@ class _OutletScreenState extends State {
                                                 //helperMaxLines: 1,
                                                 helperStyle: TextStyle(),
                                             ),
+                                            onChanged: (text){
+                                              //double amount = num.parse(text).toDouble();
+                                              setState(() {
+                                                totalSumRecalc();
+                                              });
+                                            },
                                           ),
                                         ),
 
@@ -146,7 +178,7 @@ class _OutletScreenState extends State {
 
   void _savePayments() {
     List payments = List();
-     String outletId = this.outlet.id.trim();
+     //String outletId = this.outlet.id.trim();
      _controllers.forEach((docId, controller){
         double value;
         try {
@@ -159,10 +191,10 @@ class _OutletScreenState extends State {
               ((entry)=> entry["date"]+"_"+entry["number"]==docId)
           );
 
-          String paymentId = DateTime.now().toIso8601String();
+          String payDate = DateTime.now().toIso8601String();
 
           Map payment = {
-            'payment_id': paymentId,
+            'paydate': payDate,
             'doc_id':     docId,
             'date':       item["date"],
             'number':     item["number"],
@@ -170,45 +202,9 @@ class _OutletScreenState extends State {
             'sum': value
           };
           payments.add(payment);
-
         //}
     });
     Payments.save(payments);
 
   }
 }
-
-//class NewBuyOrderButton extends StatelessWidget {
-//  const NewBuyOrderButton({
-//    Key key,
-//    @required this.outlet,
-//  }) : super(key: key);
-//
-//  final Client outlet;
-//
-//  @override
-//  Widget build(BuildContext context) {
-//    return MaterialButton(
-//      minWidth: 200,
-//      child: const Text("Новый заказ", style: TextStyle(fontWeight: FontWeight.bold),),
-//      color: Colors.amber,
-//      //padding: EdgeInsets.fromLTRB(90, 9, 90, 10),
-//      shape: RoundedRectangleBorder(
-//        borderRadius: BorderRadius.only(
-//            bottomLeft: Radius.circular(10.0),
-//            bottomRight: Radius.circular(10.0),
-//            topLeft: Radius.circular(10.0),
-//            topRight: Radius.circular(10.0)),
-//      ),
-//      splashColor: Colors.limeAccent,
-//      elevation: 3,
-//      onPressed: () {
-//
-//        Navigator.push(
-//          context,
-//          MaterialPageRoute(builder: (context) => BuyOrder(outlet: outlet) ),
-//        );
-//      },
-//    );
-//  }
-//}

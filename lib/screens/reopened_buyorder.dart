@@ -211,8 +211,14 @@ class _ReopenedBuyOrderState extends State {
 
     Map order = Map();
     order["doc_id"] = _docId;
+    if(_selectedAT == 'УУ') {
+      order["actype"] = 0;
+    }
+    else{
+      order["actype"] = 1;
+    }
+    order["comment"] = commentController.text;
     List<Map> docTable = List();
-
 
     _goodsControllers.forEach((id,_controller){
         var value;

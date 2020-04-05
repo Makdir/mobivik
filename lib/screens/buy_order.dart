@@ -211,6 +211,7 @@ class _BuyOrderState extends State {
     else{
       order["actype"] = 1;
     }
+    order["comment"] = commentController.text;
     List<Map> docTable = List();
 
     _goodsControllers.forEach((id,_controller){
@@ -339,7 +340,6 @@ class _InvoiceState extends State {
                   });
                 },
                 textAlign: TextAlign.end,
-
               )),
               DataCell(Text("${goods.unit}")),
               //DataCell(Text("${goods.coef}")),
