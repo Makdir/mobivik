@@ -109,9 +109,6 @@ class _SyncScreen extends State {
     if(body.isEmpty) return;
     //File file = writeFile(body);
     Map<String,dynamic> jsonBody = json.decode(body);
-    //print(jsonBody);
-    //print(jsonBody["outlets"]);
-    //print(jsonBody["outlets"].runtimeType);
 
     bool res = await SimplePermissions.checkPermission(Permission.WriteExternalStorage);
     print('res = $res');
@@ -133,7 +130,6 @@ class _SyncScreen extends State {
             "agent-code": agentCode
           }
       ); //_digest.toString()
-      //print("Response status: ${response.statusCode}");
       var responseStatusCode = response.statusCode;
 
       if(responseStatusCode == 200) {
@@ -152,35 +148,7 @@ class _SyncScreen extends State {
       httpClient.close();
     }
 
-
-
   }
-
-//  _sendPayments(String serverAddress, String agentCode) async{
-//    String uri = "http://" + serverAddress.trim() + "/payments" ;
-//    var body = _preparePayments();
-//
-//    var client = http.Client();
-//
-//    try {
-//      var response = await client.post(uri,
-//          body: body,
-//          headers: {
-//            "agent-code": agentCode
-//          }
-//      );
-//      var responseStatusCode = response.statusCode;
-//
-//      if(responseStatusCode == 200) {
-//        print("payments Response body: ${response.body}");
-//        //FileProvider.saveInputFile("route", response.body);
-//      }
-//    } catch (e) {
-//      print(e);
-//    } finally {
-//      client.close();
-//    }
-//  }
 
   _sendData(String dataType, String serverAddress, String agentCode) async{
     String uri = "http://" + serverAddress.trim() + Platform.pathSeparator + dataType;
@@ -188,16 +156,15 @@ class _SyncScreen extends State {
     File file =  await FileProvider.openOutputFile(dataType);
     String body = await file.readAsString();
     if (body.isEmpty) body = "{}";
-    //var body = _preparePayments();
 
     var client = http.Client();
 
     try {
       var response = await client.post(uri,
-          body: body,
-          headers: {
-            "agent-code": agentCode
-          }
+            body: body,
+            headers: {
+              "agent-code": agentCode
+            }
       );
       var responseStatusCode = response.statusCode;
 
