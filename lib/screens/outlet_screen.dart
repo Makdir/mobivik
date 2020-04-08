@@ -95,13 +95,13 @@ class _OutletScreenState extends State {
                     child: const Text("Долги и оплаты", style: TextStyle(fontWeight: FontWeight.bold),),
                   ),
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(15, 0, 15, 0),
+                    padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
-                        Text("Текущий долг:",     style: TextStyle(fontSize: _totalFontSize),),
+                        Text("Долг:",     style: TextStyle(fontSize: _totalFontSize),),
                         Text("$totalDebtSum. ",   style: TextStyle(fontSize: _totalFontSize+1, fontWeight: FontWeight.bold),),
-                        Text("Принято денег:",     style: TextStyle(fontSize: _totalFontSize),),
+                        Text("Принято:",     style: TextStyle(fontSize: _totalFontSize),),
                         Text("$totalPaymentSum. ", style: TextStyle(fontSize: _totalFontSize+1, fontWeight: FontWeight.bold),),
                       ],
                     ),
