@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
+import 'package:koukicons/error.dart';
 import 'package:mobivik/common/user_interface.dart';
 
 import 'package:mobivik/dao/goods_dao.dart';
@@ -110,7 +111,7 @@ class _ReopenedBuyOrderState extends State {
                 //bottom: PreferredSizeWidget ,
                 actions: <Widget>[
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(0, 3, 35, 2),
+                    padding: const EdgeInsets.fromLTRB(0, 3, 5, 3),
                     child:
                       FlatButton(
                           child: Column(children: [
@@ -119,6 +120,17 @@ class _ReopenedBuyOrderState extends State {
                           ]),
                           onPressed: _saveOrder,
                       ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(5, 3, 35, 2),
+                    child:
+                    FlatButton(
+                      child: Column(children: [
+                        KoukiconsError(height: 35.0),
+                        const Text("Delete"),
+                      ]),
+                      onPressed: _deleteOrder,
+                    ),
                   ),
                 ],
             ),
@@ -208,7 +220,6 @@ class _ReopenedBuyOrderState extends State {
 
   void _saveOrder() {
 
-
     Map order = Map();
     order["doc_id"] = _docId;
     if(_selectedAT == 'УУ') {
@@ -249,6 +260,10 @@ class _ReopenedBuyOrderState extends State {
     BuyOrders.saveHeader(header);
 
     GraphicalUI.showSnackBar(scaffoldKey: _scaffoldKey, context: context, actionLabel:"Close settings", resultMessage: "Заказ сохранен");
+  }
+
+  void _deleteOrder() {
+
   }
 
   Future<bool> _onExit() async{
