@@ -27,7 +27,7 @@ class Goods {
     double price = num.parse(parsedJson['price'].toString()).toDouble();
     double coef = num.parse(parsedJson['coef'].toString()).toDouble();
     double balance = num.parse(parsedJson['balance'].toString()).toDouble();
-    return new Goods(
+    return Goods(
       id: parsedJson['id'],
       parentId: parsedJson['parent_id'],
       isFolder: parsedJson['is_folder'],

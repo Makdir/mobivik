@@ -29,17 +29,18 @@ class EntryItem extends StatelessWidget {
   Widget buildTiles(Entry root) {
     var itemID = root.id;
     int isFolder = root.item.isFolder;
-    if ((root.children.isEmpty)&&(isFolder==0))
+    if ((root.children.isEmpty)&&(isFolder==0)){
+      double balance = root.item.balance;
       return Card(
         child: ListTile(
             title: Text(root.item.name),
-            subtitle: Text("Цена ${root.item.price} грн. Остаток ${root.item.balance} ${root.item.unit}"),
+            subtitle: Text("Цена ${root.item.price} грн. Остаток $balance ${root.item.unit}"),
             trailing: Container(
               width: 75,
               decoration: BoxDecoration(
                 border: Border.all(width: 0.5, style: BorderStyle.solid),
               ),
-              child: new Row(
+              child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: <Widget>[
                   Expanded(
@@ -50,8 +51,11 @@ class EntryItem extends StatelessWidget {
                         textAlign: TextAlign.end,
                         keyboardType: TextInputType.numberWithOptions(signed: false, decimal: true),
                         decoration: InputDecoration(
-                          hintText: "заказ",
+                          hintText: (balance>0) ? "заказ" : "-",
+                          fillColor: Colors.grey,
+                          filled: balance<=0,
                         ),
+                        readOnly: balance<=0,
                         inputFormatters: [
                           WhitelistingTextInputFormatter(RegExp("[0-9.]")),
                           //BlacklistingTextInputFormatter(RegExp(".."))
@@ -63,7 +67,7 @@ class EntryItem extends StatelessWidget {
               ),
             )
         ),
-      );
+      );}
     if (isFolder==1)
       return Card(
         elevation: 3,

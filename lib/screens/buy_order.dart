@@ -116,55 +116,7 @@ class _BuyOrderState extends State {
             ),
             body:Column(
               children: <Widget>[
-
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: <Widget>[
-                      Row(
-                        //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: <Widget>[
-                          Padding(
-                            child: const Text("Вид учета", style: TextStyle(fontWeight: FontWeight.w700),),
-                            padding: const EdgeInsets.all(8.0),
-
-                          ),
-                          DropdownButton<String>(
-                            underline: Container(decoration: BoxDecoration(border: Border.all(width: 0.5, style: BorderStyle.solid))),
-                            value: _selectedAT,
-                            items: _accountingTypes.map((String value) {
-                              return DropdownMenuItem<String>(
-                                value: value,
-                                child: Text(value),
-                              );
-                            }).toList(),
-                            onChanged: (selectedAT) {
-                              setState(() {
-                                _selectedAT = selectedAT;
-                              });
-                            },
-                          ),
-                        ],
-                      ),
-
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(DateFormat('dd.MM.yyyy HH:mm').format(_creationDateTime)),
-                      )
-                  ],
-
-                    ),
-               Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: <Widget>[
-                      //const Text('Комментарий'),
-                      Expanded(
-                        child: TextField(
-                          decoration: InputDecoration(labelText: 'Комментарий', ),
-                          controller: commentController,
-                        ),
-                      )
-                    ]
-                ),
+                HeaderOfOrder(),
                 Expanded(
                     child:DefaultTabController(
                       length: 2,
@@ -199,6 +151,61 @@ class _BuyOrderState extends State {
     );
   }
 
+  Widget HeaderOfOrder(){
+    return Column(
+      children: <Widget>[
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: <Widget>[
+            Row(
+              //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: <Widget>[
+                Padding(
+                  child: const Text("Вид учета", style: TextStyle(fontWeight: FontWeight.w700),),
+                  padding: const EdgeInsets.all(8.0),
+
+                ),
+                DropdownButton<String>(
+                  underline: Container(decoration: BoxDecoration(border: Border.all(width: 0.5, style: BorderStyle.solid))),
+                  value: _selectedAT,
+                  items: _accountingTypes.map((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
+                  onChanged: (selectedAT) {
+                    setState(() {
+                      _selectedAT = selectedAT;
+                    });
+                  },
+                ),
+              ],
+            ),
+
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(DateFormat('dd.MM.yyyy HH:mm').format(_creationDateTime)),
+            )
+          ],
+
+        ),
+        Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: <Widget>[
+              //const Text('Комментарий'),
+              Expanded(
+                child: TextField(
+                  decoration: InputDecoration(labelText: 'Комментарий', ),
+                  controller: commentController,
+                ),
+              )
+            ]
+        ),
+      ],
+    );
+  }
+  
   void _saveOrder() {
     String doc_id = _creationDateTime.toIso8601String();
 
@@ -300,7 +307,7 @@ class _InvoiceState extends State {
       _totalSum = 0;
       goodsSum.forEach((id, sum){
         _totalSum += sum;
-        //print("$id=$sum");
+
       });
       invoiceTable.totalSum = _totalSum;
   }
