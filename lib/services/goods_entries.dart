@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'goods_model.dart';
+import 'package:mobivik/screens/buy_order.dart';
+import '../models/goods_model.dart';
 
 /// One entry in the multilevel list displayed by this app.
 class Entry {
@@ -23,8 +24,9 @@ class EntryItem extends StatelessWidget {
 
   final Entry entry;
   final Map<String, TextEditingController> goodsControllers;
+  BuyOrderState summoner;
 
-  EntryItem(this.entry, this.goodsControllers);
+  EntryItem(this.entry, this.goodsControllers, this.summoner);
 
   Widget buildTiles(Entry root) {
     var itemID = root.id;
@@ -48,6 +50,9 @@ class EntryItem extends StatelessWidget {
                     child: TextField(
                         key: PageStorageKey(itemID),
                         controller: goodsControllers[itemID],
+                        onChanged: (text){
+                          totalSumRecalc();
+                          },
                         textAlign: TextAlign.end,
                         keyboardType: TextInputType.numberWithOptions(signed: false, decimal: true),
                         decoration: InputDecoration(
@@ -55,9 +60,9 @@ class EntryItem extends StatelessWidget {
                           fillColor: Colors.grey,
                           filled: balance<=0,
                         ),
-                        readOnly: balance<=0,
+                        //readOnly: balance<=0,
                         inputFormatters: [
-                          WhitelistingTextInputFormatter(RegExp("[0-9.]")),
+                          WhitelistingTextInputFormatter(RegExp("[0-9]")),
                           //BlacklistingTextInputFormatter(RegExp(".."))
                         ]
                     ),
@@ -79,7 +84,7 @@ class EntryItem extends StatelessWidget {
           child: ExpansionTile(
             key: PageStorageKey<Entry>(root),
             title: Text("${root.item.name}", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.brown)),
-
+            //backgroundColor: Colors.lightGreenAccent,
             children: root.children.map(buildTiles).toList(),
             leading: Icon(Icons.arrow_right),
 
@@ -95,29 +100,45 @@ class EntryItem extends StatelessWidget {
     return buildTiles(entry);
   }
 
+  totalSumRecalc(){
 
-//  Future getGoodsEntries() async {
-//
-//
-//    _goodsList = await GoodsDAO().getItems();
-//    _goodsList.forEach((item){_goodsControllers.putIfAbsent(item.id, ()=> TextEditingController());});
-//
-//    _goodsList.forEach((item){
-//      Entry newEntry = Entry(item: item);
-//      _entries.add(newEntry);
-//    });
-//    // Item can not have empty id. It is wrong.
-//    _entries.removeWhere((entry) => entry.id.isEmpty);
-//
-//    _entries.forEach((item){
-//      try {
-//        String parentId = item.parent_id.toString().trim();
-//        Entry parentEntry = _entries.firstWhere((entry) => entry.id == parentId);
-//        parentEntry.children.add(item);
-//      } catch (e) {}
-//    });
-//    // Deleting items without paren. (But also this may be due to wrong data.)
-//    _entries.removeWhere((entry) => entry.parent_id != "");
-//  }
+    List<Goods> goodsList = summoner.goodsList;
+    double totalSum = 0;
+    goodsControllers.forEach((id, controller){
 
+      try {
+        double amount = double.parse(controller.text);
+        double price = goodsList.firstWhere((goods)=>goods.id==id).price;
+        totalSum += price*amount;
+      }catch(e){}
+
+    });
+    summoner.setState(()=>summoner.totalSum = totalSum);
+  }
+
+}
+
+class TreeList extends StatelessWidget {
+
+  final List<Entry> goodsWidget;
+  final Map<String, TextEditingController> goodsControllers;
+  BuyOrderState summoner;
+
+  TreeList({
+    Key key,
+    @required this.goodsWidget,
+    @required this.goodsControllers,
+    @required this.summoner,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+      padding: EdgeInsets.all(3.0),
+      itemCount: goodsWidget.length,
+      itemBuilder: (BuildContext context, int index) {
+        return EntryItem(goodsWidget[index], goodsControllers, summoner);
+      },
+    );
+  }
 }

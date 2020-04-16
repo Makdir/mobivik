@@ -5,7 +5,8 @@ import 'package:mobivik/common/user_interface.dart';
 
 import 'package:mobivik/dao/goods_dao.dart';
 import 'package:mobivik/models/client_model.dart';
-import 'package:mobivik/models/goods_entries.dart';
+import 'package:mobivik/services/goods_entries.dart';
+import 'package:mobivik/services/invoice_table.dart';
 import 'package:mobivik/models/goods_model.dart';
 
 import 'package:koukicons/save.dart';
@@ -20,8 +21,8 @@ class BuyOrder extends StatefulWidget {
   BuyOrder({Key key, @required this.outlet}) : super(key: key);
 
   @override
-  _BuyOrderState createState() {
-    return _BuyOrderState(outlet);
+  BuyOrderState createState() {
+    return BuyOrderState(outlet);
   }
 
 }
@@ -30,9 +31,9 @@ class BuyOrder extends StatefulWidget {
 ///
 ///
 ///
-class _BuyOrderState extends State {
+class BuyOrderState extends State {
   final Client _outlet;
-  List<Goods> _goodsList = List();
+  List<Goods> goodsList = List();
   List<Entry> _goodsWidget = List();
   List<Entry> _entries = List();
 
@@ -47,11 +48,11 @@ class _BuyOrderState extends State {
   String _selectedAT = 'УУ';
 
   InvoiceTable _invoiceTable = InvoiceTable();
-
+  double totalSum = 0;
 
   /// _goodsSum is a list of sums of chosen goods. It has format Map<"Goods id", "Sum">
 
-  _BuyOrderState(this._outlet);
+  BuyOrderState(this._outlet);
 
   @override
   void initState() {
@@ -62,12 +63,12 @@ class _BuyOrderState extends State {
 
   Future _getData() async{
 
-    _goodsList = await GoodsDAO().getItems();
+    goodsList = await GoodsDAO().getItems();
 
-    _goodsList.forEach((item){_goodsControllers.putIfAbsent(item.id, ()=> TextEditingController());});
+    goodsList.forEach((item){_goodsControllers.putIfAbsent(item.id, ()=> TextEditingController());});
 
     // Forming hierarchcal structure
-    _goodsList.forEach((item){
+    goodsList.forEach((item){
       Entry newEntry = Entry(item: item);
       _entries.add(newEntry);
     });
@@ -136,8 +137,8 @@ class _BuyOrderState extends State {
                           color: Colors.grey[300],
                           child: TabBarView(
                             children: [
-                              TreeList(goodsWidget: _goodsWidget, goodsControllers:_goodsControllers),
-                              Invoice(goodsControllers: _goodsControllers, goodsList: _goodsList, invoiceTable: _invoiceTable),
+                              TreeList(goodsWidget: _goodsWidget, goodsControllers:_goodsControllers, summoner: this),
+                              Invoice(goodsControllers: _goodsControllers, goodsList: goodsList, invoiceTable: _invoiceTable, summoner: this),
 
                             ]
                           ),
@@ -162,7 +163,7 @@ class _BuyOrderState extends State {
               children: <Widget>[
                 Padding(
                   child: const Text("Вид учета", style: TextStyle(fontWeight: FontWeight.w700),),
-                  padding: const EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.all(3.0),
 
                 ),
                 DropdownButton<String>(
@@ -184,16 +185,20 @@ class _BuyOrderState extends State {
             ),
 
             Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.all(3.0),
               child: Text(DateFormat('dd.MM.yyyy HH:mm').format(_creationDateTime)),
-            )
+            ),
+            Padding(
+                padding: const EdgeInsets.all(3.0),
+                child: Text('Сумма ${totalSum.toStringAsFixed(2)}', style: TextStyle(fontWeight: FontWeight.w700),)
+            ),
           ],
 
         ),
         Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: <Widget>[
-              //const Text('Комментарий'),
+              
               Expanded(
                 child: TextField(
                   decoration: InputDecoration(labelText: 'Комментарий', ),
@@ -267,172 +272,180 @@ class _BuyOrderState extends State {
   }
 }
 
-/// Part of buy order screen with ordered goods
-class Invoice extends StatefulWidget {
-  Map<String, TextEditingController> goodsControllers;
-  List<Goods> goodsList;
+///// Part of buy order screen with ordered goods
+//class Invoice extends StatefulWidget {
+//  Map<String, TextEditingController> goodsControllers;
+//  List<Goods> goodsList;
+//  InvoiceTable invoiceTable;
+//  BuyOrderState summoner;
+//
+//  Invoice({
+//    Key key,
+//    @required this.goodsControllers,
+//    @required this.goodsList,
+//    @required this.invoiceTable,
+//    @required this.summoner
+//  }) :  super(key: key);
+//
+//   @override
+//   _InvoiceState createState() {
+//     return _InvoiceState(goodsControllers:goodsControllers, goodsList:goodsList, invoiceTable:invoiceTable, summoner: summoner);
+//   }
+//}
+//
+//class _InvoiceState extends State {
+//  Map<String, TextEditingController> goodsControllers;
+//  List<Goods> goodsList;
+//  InvoiceTable invoiceTable;
+//  BuyOrderState summoner;
+//
+//  double _totalSum = 0;
+//  Map<String, double> goodsSum = {};
+//
+//  _InvoiceState({
+//    Key key,
+//    @required this.goodsControllers,
+//    @required this.goodsList,
+//    @required this.invoiceTable,
+//    @required this.summoner
+//  });
+//
+//  void totalSumRecalc(){
+//
+//      _totalSum = 0;
+//      goodsSum.forEach((id, sum){
+//        _totalSum += sum;
+//
+//      });
+//      invoiceTable.totalSum = _totalSum;
+//      //summoner.totalSum = _totalSum;
+//      summoner.setState(()=>summoner.totalSum = _totalSum);
+//  }
+//
+//  @override
+//  Widget build(BuildContext context) {
+//    //List<DataRow> InvoiceRows = List();
+//    _totalSum = 0;
+//    //invoiceTable.totalSum = 0;
+//    invoiceTable.rows.clear();
+//    goodsControllers.forEach((id,_controller){
+//      //print("$id=${_controller.text}");
+//      var value;
+//      try {
+//        value = num.parse(_controller.text);
+//      } catch (e) {
+//        value = 0;
+//      }
+//      if (value>0) {
+//        Goods goods = goodsList.firstWhere((item)=> item.id==id);
+//        double sum = (num.parse(_controller.text)*goods.price);
+//        _totalSum += sum;
+//        DataRow newRow = DataRow(
+//            cells:[
+//              DataCell(Text("${goods.name}")),
+//              DataCell(Text("${goods.price.toStringAsFixed(2)}")),
+//              DataCell(TextField(
+//                controller: _controller,
+//                keyboardType: TextInputType.numberWithOptions(decimal: true,signed: false),
+//                onChanged: (text){
+//                  double amount = num.parse(text).toDouble();
+//                  double sum = amount*goods.price;
+//                  goodsSum[id] = sum;
+//
+//                  setState(() {
+//                    totalSumRecalc();
+//                  });
+//                },
+//                textAlign: TextAlign.end,
+//              )),
+//              DataCell(Text("${goods.unit}")),
+//              //DataCell(Text("${goods.coef}")),
+//              DataCell(Text("${sum.toStringAsFixed(2)}")),
+//        ]);
+//        //newRow.cells.add(DataCell())
+//        //InvoiceRows.add(newRow);
+//        invoiceTable.rows.add(newRow);
+//      }
+//    });
+//    invoiceTable.totalSum = _totalSum;
+//
+//    return SingleChildScrollView(
+//        child: Column(
+//          children: <Widget>[
+//            Row(
+//              children: <Widget>[
+//                Container(
+//                    child: RichText(
+//                      text: TextSpan(text: "Итоговая сумма заказа:", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
+//                        children: <TextSpan>[
+//                          TextSpan(text: " ${_totalSum.toStringAsFixed(2)}", style: TextStyle(fontSize: 16.0),),
+//                        ],
+//                      ),
+//                      //text: TextSpan("Итоговая сумма заказа: $_totalSum", style: TextStyle(fontWeight: FontWeight.bold),),
+//                    ),
+//                  margin: EdgeInsets.all(10.0),
+//                ),
+//               ],
+//            ),
+//            SingleChildScrollView(
+//              scrollDirection: Axis.horizontal,
+//              child: Container(
+//                color: Colors.white,
+//                child: DataTable (
+//                  columnSpacing: 10,
+//                  columns: [
+//                    DataColumn(label: const Text('Товар'),),
+//                    DataColumn(label: const Text('Цена'), numeric: true,
+//                        tooltip: "Цена за базовую единицу",
+//                        ),
+//                    DataColumn(label: const Text('Количество'), numeric: true),
+//                    DataColumn(label: const Text('Ед. изм.'),   numeric: false),
+//                    //DataColumn(label: const Text('Коэф.'),      numeric: true),
+//                    DataColumn(label: const Text('Сумма'),      numeric: true),
+//                  ],
+//                  rows: invoiceTable.rows,
+////                  sortAscending: true,
+////                  sortColumnIndex: 0,
+//                ),
+//              ),
+//            )
+//          ],
+//
+//
+//        ),
+//      );
+//  }
+//}
 
-  InvoiceTable invoiceTable;
+//class InvoiceTable{
+//  double totalSum;
+//  List<DataRow> rows = [];
+//  InvoiceTable();
+//
+//}
 
-  Invoice({
-    Key key,
-    @required this.goodsControllers,
-    @required this.goodsList,
-    @required this.invoiceTable
-  }) :  super(key: key);
+//class TreeList extends StatelessWidget {
+//
+//  final List<Entry> goodsWidget;
+//  final Map<String, TextEditingController> goodsControllers;
+//  BuyOrderState summoner;
+//
+//  TreeList({
+//    Key key,
+//    @required this.goodsWidget,
+//    @required this.goodsControllers,
+//    @required this.summoner,
+//  });
+//
+//  @override
+//  Widget build(BuildContext context) {
+//    return ListView.builder(
+//      padding: EdgeInsets.all(3.0),
+//      itemCount: goodsWidget.length,
+//      itemBuilder: (BuildContext context, int index) {
+//        return EntryItem(goodsWidget[index], goodsControllers, summoner);
+//      },
+//    );
+//  }
+//}
 
-   @override
-   _InvoiceState createState() {
-     return _InvoiceState(goodsControllers:goodsControllers, goodsList:goodsList, invoiceTable:invoiceTable);
-   }
-}
-
-class _InvoiceState extends State {
-  Map<String, TextEditingController> goodsControllers;
-  List<Goods> goodsList;
-  InvoiceTable invoiceTable;
-
-  double _totalSum = 0;
-  Map<String, double> goodsSum = {};
-
-  _InvoiceState({
-    Key key,
-    @required this.goodsControllers,
-    @required this.goodsList,
-    @required this.invoiceTable
-  });
-
-  void totalSumRecalc(){
-
-      _totalSum = 0;
-      goodsSum.forEach((id, sum){
-        _totalSum += sum;
-
-      });
-      invoiceTable.totalSum = _totalSum;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    //List<DataRow> InvoiceRows = List();
-    _totalSum = 0;
-    //invoiceTable.totalSum = 0;
-    invoiceTable.rows.clear();
-    goodsControllers.forEach((id,_controller){
-      //print("$id=${_controller.text}");
-      var value;
-      try {
-        value = num.parse(_controller.text);
-      } catch (e) {
-        value = 0;
-      }
-      if (value>0) {
-        Goods goods = goodsList.firstWhere((item)=> item.id==id);
-        double sum = (num.parse(_controller.text)*goods.price);
-        _totalSum += sum;
-        DataRow newRow = DataRow(
-            cells:[
-              DataCell(Text("${goods.name}")),
-              DataCell(Text("${goods.price.toStringAsFixed(2)}")),
-              DataCell(TextField(
-                controller: _controller,
-                keyboardType: TextInputType.numberWithOptions(decimal: true,signed: false),
-                onChanged: (text){
-                  double amount = num.parse(text).toDouble();
-                  double sum = amount*goods.price;
-                  goodsSum[id] = sum;
-
-                  setState(() {
-                    totalSumRecalc();
-                  });
-                },
-                textAlign: TextAlign.end,
-              )),
-              DataCell(Text("${goods.unit}")),
-              //DataCell(Text("${goods.coef}")),
-              DataCell(Text("${sum.toStringAsFixed(2)}")),
-        ]);
-        //newRow.cells.add(DataCell())
-        //InvoiceRows.add(newRow);
-        invoiceTable.rows.add(newRow);
-      }
-    });
-    invoiceTable.totalSum = _totalSum;
-
-    return SingleChildScrollView(
-        child: Column(
-          children: <Widget>[
-            Row(
-              children: <Widget>[
-                Container(
-                    child: RichText(
-                      text: TextSpan(text: "Итоговая сумма заказа:", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
-                        children: <TextSpan>[
-                          TextSpan(text: " ${_totalSum.toStringAsFixed(2)}", style: TextStyle(fontSize: 16.0),),
-                        ],
-                      ),
-                      //text: TextSpan("Итоговая сумма заказа: $_totalSum", style: TextStyle(fontWeight: FontWeight.bold),),
-                    ),
-                  margin: EdgeInsets.all(10.0),
-                ),
-               ],
-            ),
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Container(
-                color: Colors.white,
-                child: DataTable (
-                  columnSpacing: 10,
-                  columns: [
-                    DataColumn(label: const Text('Товар'),),
-                    DataColumn(label: const Text('Цена'), numeric: true,
-                        tooltip: "Цена за базовую единицу",
-                        ),
-                    DataColumn(label: const Text('Количество'), numeric: true),
-                    DataColumn(label: const Text('Ед. изм.'),   numeric: false),
-                    //DataColumn(label: const Text('Коэф.'),      numeric: true),
-                    DataColumn(label: const Text('Сумма'),      numeric: true),
-                  ],
-                  rows: invoiceTable.rows,
-//                  sortAscending: true,
-//                  sortColumnIndex: 0,
-                ),
-              ),
-            )
-          ],
-
-
-        ),
-      );
-  }
-}
-
-class TreeList extends StatelessWidget {
-
-  final List<Entry> goodsWidget;
-  final Map<String, TextEditingController> goodsControllers;
-
-  TreeList({
-    Key key,
-    @required this.goodsWidget,
-    @required this.goodsControllers,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return ListView.builder(
-      padding: EdgeInsets.all(3.0),
-      itemCount: goodsWidget.length,
-      itemBuilder: (BuildContext context, int index) {
-        return EntryItem(goodsWidget[index], goodsControllers);
-      },
-    );
-  }
-}
-
-class InvoiceTable{
-  double totalSum;
-  List<DataRow> rows = [];
-  InvoiceTable();
-
-}
