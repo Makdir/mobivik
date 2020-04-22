@@ -68,6 +68,7 @@ class _OutletScreenState extends State {
               child: Column(
                 children:[
                   StandardButton(caption: "Новый заказ", onPressedAction: gotoNewBuyOrder),
+                  CreditInfo(outlet: outlet),
                   Padding(
                       padding: const EdgeInsets.fromLTRB(0, 10, 0, 5),
                       child:   const Text("На данный момент у клиента нет долгов", style: TextStyle(fontWeight: FontWeight.bold),)
@@ -90,6 +91,7 @@ class _OutletScreenState extends State {
 
                 children:[
                   StandardButton(caption: "Новый заказ", onPressedAction: gotoNewBuyOrder),
+                  CreditInfo(outlet: outlet),
                   Padding(
                     padding: const EdgeInsets.fromLTRB(0, 10, 0, 5),
                     child: const Text("Долги и оплаты", style: TextStyle(fontWeight: FontWeight.bold),),
@@ -206,5 +208,33 @@ class _OutletScreenState extends State {
     });
     Payments.save(payments);
 
+  }
+}
+
+class CreditInfo extends StatelessWidget {
+  const CreditInfo({
+    Key key,
+    @required this.outlet,
+  }) : super(key: key);
+
+  final Client outlet;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.all(9.0),
+      decoration: BoxDecoration(
+        //color: Colors.purple,
+        border: Border.all( width: 2.0 ),
+        borderRadius: BorderRadius.all( Radius.circular(10.0) ),
+
+      ),
+      child: Column(
+        children:[
+          Text("Максимальная сумма кредита: ${outlet.creditLimit}"),
+          Text("Максимальный срок кредита: ${outlet.creditTerm}")
+        ]
+      ),
+    );
   }
 }

@@ -18,11 +18,12 @@ class Client {
   );
 
   factory Client.fromJson(Map<String, dynamic> parsedJson) {
-    return new Client(
+    double creditLimit = num.parse(parsedJson['credit_limit'].toString()).toDouble();
+    return Client(
       id: parsedJson['id'],
       name: parsedJson['name'],
       address: parsedJson['address'],
-      creditLimit: parsedJson['credit_limit'],
+      creditLimit: creditLimit,
       creditTerm: parsedJson['credit_term'],
       debtlist: parsedJson['debtlist'],
 

@@ -59,9 +59,6 @@ class StandardButton extends StatelessWidget {
     this.onPressedAction
   }) : super(key: key);
 
-//@required
-  //final Client outlet;
-
   @override
   Widget build(BuildContext context) {
     return MaterialButton(

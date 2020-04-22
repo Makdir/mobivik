@@ -13,13 +13,12 @@ class RouteDAO {
 
     try {
       final File file = await FileProvider.openInputFile("route");
-      //List<int> bytes = await file.readAsBytes();
-      //String fileContent = decodeCp1251(bytes);
       String fileContent = await file.readAsString();
-      //print("fileContent = $fileContent");
+      //print("------------fileContent = $fileContent");
       final parsedJson = json.decode(fileContent);
-
+      print("------------parsedJson = $parsedJson");
       for(Map client in parsedJson){
+        print("> client = $client");
         result.add(Client.fromJson(client));
       }
 
