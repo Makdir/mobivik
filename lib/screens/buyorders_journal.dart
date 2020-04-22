@@ -5,12 +5,12 @@ import 'package:mobivik/services/buyorders_service.dart';
 
 class BuyordersJournal extends StatefulWidget {
   @override
-  _BuyordersJournal createState() {
-    return _BuyordersJournal();
+  _BuyordersJournalState createState() {
+    return _BuyordersJournalState();
   }
 }
 
-class _BuyordersJournal extends State {
+class _BuyordersJournalState extends State {
 
   List buyorders = List();
   double _totalSum = 0;
@@ -27,7 +27,7 @@ class _BuyordersJournal extends State {
   Future getData() async{
     List buyordersList = await BuyOrders.getBuyorderHeaders();
     buyordersList.forEach((item){
-      double sum = double.parse(item["total_sum"]);
+      double sum = double.parse(item["total_sum"].toString());
       _totalSum += sum;
 
     });
@@ -36,6 +36,11 @@ class _BuyordersJournal extends State {
       buyorders.addAll(buyordersList);
       _sumRepresentation = _totalSum.toStringAsFixed(2);
     });
+  }
+
+  Future reload() async {
+    buyorders.clear();
+    await getData();
   }
 
   @override
@@ -69,6 +74,7 @@ class _BuyordersJournal extends State {
                   padding: EdgeInsets.all(8.0),
                   itemCount: buyorders.length,
                   itemBuilder: (BuildContext context, int index) {
+                    String orderSum = double.parse( buyorders[index]["total_sum"].toString() ).toStringAsFixed(2);
                     return Card(
                           elevation: 3,
                           child: ListTile(
@@ -79,7 +85,7 @@ class _BuyordersJournal extends State {
                                 children: <Widget>[
                                   Text(buyorders[index]["date_time"].toString()),
                                   Text(buyorders[index]["actype"].toString()),
-                                  Text(buyorders[index]["total_sum"].toString(),
+                                  Text(orderSum,
                                     style: TextStyle(
                                       fontSize: _totalFontSize,
                                       fontWeight: FontWeight.w700,
@@ -88,8 +94,12 @@ class _BuyordersJournal extends State {
                                   ),
                                 ],
                             ),
-                            onTap: (){
-                              Navigator.push(context, MaterialPageRoute(builder: (context) => ReopenedBuyOrder(order: buyorders[index]), ),);},
+                            onTap: () async {
+                                //Navigator.push(context, MaterialPageRoute(builder: (context) => ReopenedBuyOrder(order: buyorders[index]), ), );
+                                await Navigator.push(context, MaterialPageRoute(builder: (context) => ReopenedBuyOrder(buyorders[index]["doc_id"]), ));
+                                reload();
+                              },
+
                           ),
                         );
                   },

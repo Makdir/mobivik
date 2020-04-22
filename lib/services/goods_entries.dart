@@ -113,7 +113,9 @@ class EntryItem extends StatelessWidget {
       }catch(e){}
 
     });
-    summoner.setState(()=>summoner.totalSum = totalSum);
+    summoner.setState(
+            ()=>summoner.totalSum = totalSum
+    );
   }
 
 }

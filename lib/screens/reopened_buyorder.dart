@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:intl/intl.dart';
 import 'package:koukicons/error.dart';
 import 'package:mobivik/common/user_interface.dart';
 
@@ -15,21 +13,26 @@ import 'package:koukicons/flipboard2.dart';
 import 'package:mobivik/services/buyorders_service.dart';
 import 'package:mobivik/services/invoice_table.dart';
 
+import 'buyorders_journal.dart';
+
 
 class ReopenedBuyOrder extends StatefulWidget {
-  final Map order;
+  //final Map order;
+  //ReopenedBuyOrder({Key key, @required this.order}) : super(key: key);
 
-  ReopenedBuyOrder({Key key, @required this.order}) : super(key: key);
+  final docId;
+  ReopenedBuyOrder(this.docId);
 
   @override
   _ReopenedBuyOrderState createState() {
-    return _ReopenedBuyOrderState(order);
+    return _ReopenedBuyOrderState(docId);
   }
 
 }
 
 class _ReopenedBuyOrderState extends State implements BuyOrderState {
-  final Map order;
+
+  Map order;
   String _outlet;
   List<Goods> goodsList = List();
   List<Entry> _goodsWidget = List();
@@ -46,8 +49,12 @@ class _ReopenedBuyOrderState extends State implements BuyOrderState {
   String _selectedAT = 'УУ';
 
   InvoiceTable _invoiceTable = InvoiceTable(); /// _goodsSum is a list of sums of chosen goods. It has format Map<"Goods id", "Sum">
+  ///
+  @override
+  double totalSum = 0.0;
 
-  _ReopenedBuyOrderState(this.order);
+  //_ReopenedBuyOrderState(this.order);
+  _ReopenedBuyOrderState(this._docId);
 
   @override
   void initState() {
@@ -57,21 +64,25 @@ class _ReopenedBuyOrderState extends State implements BuyOrderState {
   }
 
   Future _getData() async{
-
-    // Loading list of all goods and controller initialisation
-    goodsList = await GoodsDAO().getItems();
-    goodsList.forEach((item){_goodsControllers[item.id] = TextEditingController(); });
-
     // Getting order data
-    _docId = order['doc_id'];
+    List buyordersList = await BuyOrders.getBuyorderHeaders();
+    //print('_docId = $_docId');
+    this.order = buyordersList.firstWhere((header)=>header['doc_id']==_docId, orElse: null);
+    if(this.order==null) return;
+    //print('order = $order');
+    //_docId = order['doc_id'];
 
     _outlet = order['outlet'];
     _creationDateTime = order['date_time'];
-    totalSum = double.parse(order['total_sum']);
+    totalSum = double.parse(order['total_sum'].toString());
     _invoiceTable.totalSum = totalSum;  // maybe _invoiceTable.totalSum is unused and it can be deleted
 
     Map buyorder = await BuyOrders.getBuyorderById(_docId);
     List rows = buyorder['table'];
+
+    // Loading list of all goods and controller initialisation
+    goodsList = await GoodsDAO().getItems();
+    goodsList.forEach((item){_goodsControllers[item.id] = TextEditingController(); });
 
     rows.forEach((item){
       _goodsControllers[item['id']].text = item['qty'];
@@ -113,7 +124,7 @@ class _ReopenedBuyOrderState extends State implements BuyOrderState {
                 //bottom: PreferredSizeWidget ,
                 actions: <Widget>[
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(0, 3, 5, 3),
+                    padding: const EdgeInsets.fromLTRB(0, 0, 5, 0),
                     child:
                       FlatButton(
                           child: Column(children: [
@@ -124,7 +135,7 @@ class _ReopenedBuyOrderState extends State implements BuyOrderState {
                       ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(5, 3, 35, 2),
+                    padding: const EdgeInsets.fromLTRB(5, 0, 35, 0),
                     child:
                     FlatButton(
                       child: Column(children: [
@@ -173,8 +184,7 @@ class _ReopenedBuyOrderState extends State implements BuyOrderState {
     );
   }
 
-  void _saveOrder() {
-
+  Future _saveOrder() async {
     Map order = Map();
     order["doc_id"] = _docId;
     if(_selectedAT == 'УУ') {
@@ -210,33 +220,44 @@ class _ReopenedBuyOrderState extends State implements BuyOrderState {
     header["outlet"] = _outlet;
     header["date_time"] = _creationDateTime.trim();
     header["actype"] = _selectedAT;
-    header["total_sum"] = _invoiceTable.totalSum.toStringAsFixed(2);
-    header["can_be_changed"] = true;
-    BuyOrders.saveHeader(header);
+    header["total_sum"] = totalSum;
+    header["can_be_changed"] = 1;
+    await BuyOrders.saveHeader(header);
 
-    GraphicalUI.showSnackBar(scaffoldKey: _scaffoldKey, context: context, actionLabel:"Close settings", resultMessage: "Заказ сохранен");
+    GraphicalUI.showSnackBar(scaffoldKey: _scaffoldKey, context: context, actionLabel:"", resultMessage: "Заказ сохранен");
   }
 
-  void _deleteOrder() {
+  void _deleteOrder() async{
+    bool shouldDelete = await GraphicalUI.confirmDialog(context,'Удалить заказ?');
+    if (!shouldDelete) {
+      return;
+    }
+    print('========================================================================');
+    print('doc_id = ${_docId}');
 
+    await BuyOrders.deleteBuyorderById(_docId);
+
+    //Navigator.push(context, MaterialPageRoute(builder: (context) => BuyordersJournal(), ));
+    Navigator.of(context).pop();
   }
 
   Future<bool> _onExit() async{
     //print('_goodsSum = ${_invoiceTable.totalSum}');
     bool shouldExit = await GraphicalUI.confirmDialog(context,'Закрыть форму заказа?');
-    if ((shouldExit)&&(_invoiceTable.totalSum == null)) {
+    if ((shouldExit)&&(totalSum == null)) {
       return true;
     }
-    if ((shouldExit)&&(_invoiceTable.totalSum > 0)) {
-      bool mustSaved = await GraphicalUI.confirmDialog(context, 'Сохранить заказ?');
-      if (mustSaved) _saveOrder();
+    if ((shouldExit)&&(totalSum > 0)) {
+      bool mustBeSaved = await GraphicalUI.confirmDialog(context, 'Сохранить заказ?');
+      if (mustBeSaved) {
+        await _saveOrder();
+      }
+      //Navigator.push(context, MaterialPageRoute(builder: (context) => BuyordersJournal(), ));
+      return true;
     }
 
     return shouldExit;
   }
-
-  @override
-  double totalSum;
 
   @override
   Widget HeaderOfOrder() {
@@ -245,7 +266,8 @@ class _ReopenedBuyOrderState extends State implements BuyOrderState {
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: <Widget>[
         Row(
-          //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          //
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: <Widget>[
             Padding(
               padding: const EdgeInsets.all(3.0),
@@ -266,16 +288,18 @@ class _ReopenedBuyOrderState extends State implements BuyOrderState {
                 });
               },
             ),
-            Padding(
-                padding: const EdgeInsets.all(3.0),
-                child: Text('Сумма ${totalSum.toStringAsFixed(2)}', style: TextStyle(fontWeight: FontWeight.w700),)
-            ),
+
           ],
         ),
 
         Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Text('Дата создания ${_creationDateTime}'),
+            padding: const EdgeInsets.all(3.0),
+            child: Text('Сумма ${totalSum.toStringAsFixed(2)}', style: TextStyle(fontWeight: FontWeight.w700),)
+        ),
+
+        Padding(
+          padding: const EdgeInsets.all(3.0),
+          child: Text('Дата: ${_creationDateTime}'),
         )
       ],
 
@@ -283,10 +307,9 @@ class _ReopenedBuyOrderState extends State implements BuyOrderState {
       Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: <Widget>[
-            //const Text('Комментарий'),
-            Expanded(
+          Expanded(
               child: TextField(
-                decoration: InputDecoration(labelText: 'Комментарий', ),
+                decoration: InputDecoration(labelText: 'Комментарий: ', ),
                 controller: commentController,
               ),
             )
@@ -295,175 +318,3 @@ class _ReopenedBuyOrderState extends State implements BuyOrderState {
     );
   }
 }
-
-///// Part of buy order screen with ordered goods
-//class Invoice extends StatefulWidget {
-//  Map<String, TextEditingController> goodsControllers;
-//  List<Goods> goodsList;
-//
-//  InvoiceTable invoiceTable;
-//
-//  Invoice({
-//    Key key,
-//    @required this.goodsControllers,
-//    @required this.goodsList,
-//    @required this.invoiceTable
-//  }) :  super(key: key);
-//
-//   @override
-//   _InvoiceState createState() {
-//     return _InvoiceState(goodsControllers:goodsControllers, goodsList:goodsList, invoiceTable:invoiceTable);
-//   }
-//}
-//
-//class _InvoiceState extends State {
-//  Map<String, TextEditingController> goodsControllers;
-//  List<Goods> goodsList;
-//  InvoiceTable invoiceTable;
-//
-//  double _totalSum = 0;
-//  Map<String, double> goodsSum = {};
-//
-//  _InvoiceState({
-//    Key key,
-//    @required this.goodsControllers,
-//    @required this.goodsList,
-//    @required this.invoiceTable
-//  });
-//
-//  void totalSumRecalc(){
-//
-//      _totalSum = 0;
-//      goodsSum.forEach((id, sum){
-//        _totalSum += sum;
-//        print("$id=$sum");
-//      });
-//      invoiceTable.totalSum = _totalSum;
-//  }
-//
-//  @override
-//  Widget build(BuildContext context) {
-//    //List<DataRow> InvoiceRows = List();
-//    _totalSum = 0;
-//    //invoiceTable.totalSum = 0;
-//    invoiceTable.rows.clear();
-//    goodsControllers.forEach((id,_controller){
-//      //print("$id=${_controller.text}");
-//      var value;
-//      try {
-//        value = num.parse(_controller.text);
-//      } catch (e) {
-//        value = 0;
-//      }
-//      if (value>0) {
-//        Goods goods = goodsList.firstWhere((item)=> item.id==id);
-//        double sum = (num.parse(_controller.text)*goods.price);
-//        _totalSum += sum;
-//        DataRow newRow = DataRow(
-//            cells:[
-//              DataCell(Text("${goods.name}")),
-//              DataCell(Text("${goods.price.toStringAsFixed(2)}")),
-//              DataCell(TextField(
-//                controller: _controller,
-//                keyboardType: TextInputType.numberWithOptions(decimal: true,signed: false),
-//                onEditingComplete: (){print("onEditingComplete = ${_controller.text}");},
-//                onChanged: (text){
-//                  double amount = num.parse(text).toDouble();
-//                  double sum = amount*goods.price;
-//                  goodsSum[id] = sum;
-//
-//                  setState(() {
-//                    totalSumRecalc();
-//                  });
-//                },
-//                textAlign: TextAlign.end,
-//
-//              )),
-//              DataCell(Text("${goods.unit}")),
-//              //DataCell(Text("${goods.coef}")),
-//              DataCell(Text("${sum.toStringAsFixed(2)}")),
-//        ]);
-//        //newRow.cells.add(DataCell())
-//        //InvoiceRows.add(newRow);
-//        invoiceTable.rows.add(newRow);
-//      }
-//    });
-//    invoiceTable.totalSum = _totalSum;
-//
-//    return SingleChildScrollView(
-//        child: Column(
-//          children: <Widget>[
-//            Row(
-//              children: <Widget>[
-//                Container(
-//                    child: RichText(
-//                      text: TextSpan(text: "Итоговая сумма заказа:", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
-//                        children: <TextSpan>[
-//                          TextSpan(text: " ${_totalSum.toStringAsFixed(2)}", style: TextStyle(fontSize: 16.0),),
-//                        ],
-//                      ),
-//                      //text: TextSpan("Итоговая сумма заказа: $_totalSum", style: TextStyle(fontWeight: FontWeight.bold),),
-//                    ),
-//                  margin: EdgeInsets.all(10.0),
-//                ),
-//               ],
-//            ),
-//            SingleChildScrollView(
-//              scrollDirection: Axis.horizontal,
-//              child: Container(
-//                color: Colors.white,
-//                child: DataTable (
-//                  columnSpacing: 10,
-//                  columns: [
-//                    DataColumn(label: const Text('Товар'),),
-//                    DataColumn(label: const Text('Цена'), numeric: true,
-//                        tooltip: "Цена за базовую единицу",
-//                        ),
-//                    DataColumn(label: const Text('Количество'), numeric: true),
-//                    DataColumn(label: const Text('Ед. изм.'),   numeric: false),
-//                    //DataColumn(label: const Text('Коэф.'),      numeric: true),
-//                    DataColumn(label: const Text('Сумма'),      numeric: true),
-//                  ],
-//                  rows: invoiceTable.rows,
-////                  sortAscending: true,
-////                  sortColumnIndex: 0,
-//                ),
-//              ),
-//            )
-//          ],
-//
-//
-//        ),
-//      );
-//  }
-//}
-
-//class TreeList extends StatelessWidget {
-//
-//  final List<Entry> goodsWidget;
-//  final Map<String, TextEditingController> goodsControllers;
-//
-//  TreeList({
-//    Key key,
-//    @required this.goodsWidget,
-//    @required this.goodsControllers,
-//  });
-//
-//  @override
-//  Widget build(BuildContext context) {
-//    return ListView.builder(
-//      padding: EdgeInsets.all(3.0),
-//      itemCount: goodsWidget.length,
-//      itemBuilder: (BuildContext context, int index) {
-//        return EntryItem(goodsWidget[index], goodsControllers, this);
-//      },
-//    );
-//  }
-//}
-//
-//class InvoiceTable{
-//  double totalSum;
-//  List<DataRow> rows = [];
-//  InvoiceTable();
-//
-//}
