@@ -102,7 +102,7 @@ class BuyOrderState extends State {
                 //bottom: PreferredSizeWidget ,
                 actions: <Widget>[
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(0, 3, 35, 2),
+                    padding: const EdgeInsets.fromLTRB(0, 3, 35, 0),
                     child:
                       FlatButton(
                           child: Column(children: [
@@ -272,3 +272,23 @@ class BuyOrderState extends State {
   }
 }
 
+totalSumRecalc(summoner, goodsControllers){
+
+    List<Goods> goodsList = summoner.goodsList;
+    double totalSum = 0;
+    goodsControllers.forEach((id, controller){
+
+      try {
+        double amount = double.parse(controller.text);
+        Goods ware = goodsList.firstWhere((goods)=>goods.id==id);
+        double price = ware.price;
+        double coef = ware.coef;
+
+        totalSum += price*coef*amount;
+      }catch(e){}
+
+    });
+    summoner.setState(
+            ()=>summoner.totalSum = totalSum
+    );
+}

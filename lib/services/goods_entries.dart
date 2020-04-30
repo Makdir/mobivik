@@ -5,7 +5,7 @@ import '../models/goods_model.dart';
 
 /// One entry in the multilevel list displayed by this app.
 class Entry {
-//, [this.children = <Entry>[]]);
+
   final Goods item;
   String id;
   String parent_id;
@@ -51,7 +51,7 @@ class EntryItem extends StatelessWidget {
                         key: PageStorageKey(itemID),
                         controller: goodsControllers[itemID],
                         onChanged: (text){
-                          totalSumRecalc();
+                          totalSumRecalc(summoner, goodsControllers);
                           },
                         textAlign: TextAlign.end,
                         keyboardType: TextInputType.numberWithOptions(signed: false, decimal: true),
@@ -87,8 +87,6 @@ class EntryItem extends StatelessWidget {
             //backgroundColor: Colors.lightGreenAccent,
             children: root.children.map(buildTiles).toList(),
             leading: Icon(Icons.arrow_right),
-
-            //backgroundColor: Colors.orangeAccent[100],
           ),
         ),
       );
@@ -98,24 +96,6 @@ class EntryItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return buildTiles(entry);
-  }
-
-  totalSumRecalc(){
-
-    List<Goods> goodsList = summoner.goodsList;
-    double totalSum = 0;
-    goodsControllers.forEach((id, controller){
-
-      try {
-        double amount = double.parse(controller.text);
-        double price = goodsList.firstWhere((goods)=>goods.id==id).price;
-        totalSum += price*amount;
-      }catch(e){}
-
-    });
-    summoner.setState(
-            ()=>summoner.totalSum = totalSum
-    );
   }
 
 }

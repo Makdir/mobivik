@@ -42,43 +42,11 @@ class _InvoiceState extends State {
     @required this.summoner
   });
 
-//  void totalSumRecalc(){
-//
-//    _totalSum = 0;
-//    goodsSum.forEach((id, sum){
-//      _totalSum += sum;
-//
-//    });
-//    invoiceTable.totalSum = _totalSum;
-//    //summoner.totalSum = _totalSum;
-//    summoner.setState(()=>summoner.totalSum = _totalSum);
-//  }
-  totalSumRecalc(){
-
-    List<Goods> goodsList = summoner.goodsList;
-    double totalSum = 0;
-    goodsControllers.forEach((id, controller){
-
-      try {
-        double amount = double.parse(controller.text);
-        double price = goodsList.firstWhere((goods)=>goods.id==id).price;
-        totalSum += price*amount;
-      }catch(e){}
-
-    });
-    summoner.setState(
-            ()=>summoner.totalSum = totalSum
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
-    //List<DataRow> InvoiceRows = List();
     _totalSum = 0;
-    //invoiceTable.totalSum = 0;
     invoiceTable.rows.clear();
     goodsControllers.forEach((id,_controller){
-      //print("$id=${_controller.text}");
       var value;
       try {
         value = num.parse(_controller.text);
@@ -87,7 +55,7 @@ class _InvoiceState extends State {
       }
       if (value>0) {
         Goods goods = goodsList.firstWhere((item)=> item.id==id);
-        double sum = (num.parse(_controller.text)*goods.price);
+        double sum = (num.parse(_controller.text)*goods.price*goods.coef);
         _totalSum += sum;
         DataRow newRow = DataRow(
             cells:[
@@ -97,22 +65,18 @@ class _InvoiceState extends State {
                 controller: _controller,
                 keyboardType: TextInputType.numberWithOptions(decimal: true,signed: false),
                 onChanged: (text){
-                  double amount = num.parse(text).toDouble();
-                  double sum = amount*goods.price;
-                  goodsSum[id] = sum;
-
+//                  double amount = num.parse(text).toDouble();
+//                  double sum = amount*goods.price*goods.coef;
+//                  goodsSum[id] = sum;
                   setState(() {
-                    totalSumRecalc();
+                    totalSumRecalc(summoner, goodsControllers);
                   });
                 },
                 textAlign: TextAlign.end,
               )),
               DataCell(Text("${goods.unit}")),
-              //DataCell(Text("${goods.coef}")),
               DataCell(Text("${sum.toStringAsFixed(2)}")),
             ]);
-        //newRow.cells.add(DataCell())
-        //InvoiceRows.add(newRow);
         invoiceTable.rows.add(newRow);
       }
     });
@@ -130,7 +94,6 @@ class _InvoiceState extends State {
                       TextSpan(text: " ${_totalSum.toStringAsFixed(2)}", style: TextStyle(fontSize: 16.0),),
                     ],
                   ),
-                  //text: TextSpan("Итоговая сумма заказа: $_totalSum", style: TextStyle(fontWeight: FontWeight.bold),),
                 ),
                 margin: EdgeInsets.all(10.0),
               ),
@@ -153,14 +116,10 @@ class _InvoiceState extends State {
                   DataColumn(label: const Text('Сумма'),      numeric: true),
                 ],
                 rows: invoiceTable.rows,
-//                  sortAscending: true,
-//                  sortColumnIndex: 0,
               ),
             ),
           )
         ],
-
-
       ),
     );
   }

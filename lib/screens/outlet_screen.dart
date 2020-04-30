@@ -1,8 +1,10 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:mobivik/common/user_interface.dart';
 import 'package:mobivik/models/client_model.dart';
+import 'package:mobivik/screens/payment.dart';
 import 'package:mobivik/services/payments.dart';
 
 import 'buy_order.dart';
@@ -25,188 +27,81 @@ class _OutletScreenState extends State {
   final double _totalFontSize = 16;
 
   List debtlist = List();
-  Map<String, TextEditingController> _controllers = Map();
 
   _OutletScreenState(this.outlet);
 
-  void initState(){
+  void initState() {
     super.initState();
     debtlist = outlet.debtlist;
-    debtlist.forEach((item){
-      String docId = _getDocID(item);
-      _controllers[docId] = TextEditingController();
+    debtlist.forEach((item) {
       totalDebtSum += double.parse(item["debt"].toString());
-      //totalPaymentSum += double.parse(_controllers[docId].text);
     });
-    Payments.setPayment(_controllers);
-  }
-
-  void totalSumRecalc(){
-
-    totalPaymentSum = 0;
-    _controllers.forEach((id, controller){
-      totalPaymentSum += double.parse(controller.text);
-      //print("$id=$sum");
-    });
-    //invoiceTable.totalSum = _totalSum;
   }
 
   gotoNewBuyOrder() {
-
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => BuyOrder(outlet: outlet) ),
+      MaterialPageRoute(builder: (context) => BuyOrder(outlet: outlet)),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    if (debtlist.length==0)
-      return Scaffold(
-          appBar: AppBar(title: Text(outlet.name)),
-          body: Center(
-              child: Column(
-                children:[
-                  StandardButton(caption: "Новый заказ", onPressedAction: gotoNewBuyOrder),
-                  CreditInfo(outlet: outlet),
-                  Padding(
-                      padding: const EdgeInsets.fromLTRB(0, 10, 0, 5),
-                      child:   const Text("На данный момент у клиента нет долгов", style: TextStyle(fontWeight: FontWeight.bold),)
-                  ),
-                ]
-            )
-          )
-      );
-
-    return WillPopScope(
-      onWillPop: () {
-        _savePayments();
-        return Future(() => true);
-      },
-      child: Scaffold(
-          appBar: new AppBar(title: Text(outlet.name)),
-          body: Padding(
-            padding: EdgeInsets.all(8.0),
+    return Scaffold(
+        appBar: AppBar(title: Text(outlet.name)),
+        body: Center(
             child: Column(
-
                 children:[
                   StandardButton(caption: "Новый заказ", onPressedAction: gotoNewBuyOrder),
                   CreditInfo(outlet: outlet),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(0, 10, 0, 5),
-                    child: const Text("Долги и оплаты", style: TextStyle(fontWeight: FontWeight.bold),),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        Text("Долг:",     style: TextStyle(fontSize: _totalFontSize),),
-                        Text("$totalDebtSum. ",   style: TextStyle(fontSize: _totalFontSize+1, fontWeight: FontWeight.bold),),
-                        Text("Принято:",     style: TextStyle(fontSize: _totalFontSize),),
-                        Text("$totalPaymentSum. ", style: TextStyle(fontSize: _totalFontSize+1, fontWeight: FontWeight.bold),),
-                      ],
-                    ),
-                  ),
-                  Expanded(
-
-                      child: ListView.builder(
-                            itemCount: debtlist.length,
-                            itemBuilder: (BuildContext context, int index) {
-                              //String docId = debtlist[index]["date"]+"_"+debtlist[index]["docname"];
-
-                              return Container(
-                                decoration: BoxDecoration(
-                                  border: Border.all(width: 0.5, style: BorderStyle.solid),
-                                ),
-                                child: ListTile(
-                                  title: Text("Долг ${debtlist[index]["debt"]} (cумма заказа: ${debtlist[index]["summ"]})"),
-                                  subtitle: Text("${debtlist[index]["date"]} ${debtlist[index]["docname"]} №${debtlist[index]["number"]}"),
-
-                                  trailing: Container(
-                                    width: 100,
-                                    decoration: BoxDecoration(
-                                      border: Border.all(width: 0.5, style: BorderStyle.solid),
-                                    ),
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.end,
-                                      children: <Widget>[
-                                        Expanded(
-                                          //flex: 3,
-                                          child: TextField(
-                                            readOnly:   debtlist[index]["debt"]<0,
-                                            controller: _controllers[_getDocID(debtlist[index])],
-                                            textAlign:    TextAlign.end,
-                                            keyboardType: TextInputType.number,
-                                            decoration: InputDecoration(
-                                                hintText: "${debtlist[index]["debt"]}",
-                                                fillColor: Color.fromARGB(50, 200, 0,0),
-                                                filled: debtlist[index]["debt"]<0,
-                                                helperText: (debtlist[index]["debt"]<0) ? " переплата" : " введите оплату",
-                                                //helperMaxLines: 1,
-                                                helperStyle: TextStyle(),
-                                            ),
-                                            onChanged: (text){
-                                              //double amount = num.parse(text).toDouble();
-                                              setState(() {
-                                                totalSumRecalc();
-                                              });
-                                            },
-                                          ),
-                                        ),
-
-                                      ],
-                                    ),
-                                  )
-                                ),
-                              );
-                            },
-                          ),
-                  ),
-                ]),
-          ),
-      ),
-    );
+                  DebtInfo(),
+                  NewPaymentData()
+        ]
+    )));
   }
 
-  String _getDocID(debtDoc){
-    String result = '';
-    try{
-      result = debtDoc["date"] +"_"+ debtDoc["number"];
+  Widget DebtInfo() {
+    Widget debtText = Text('На данный момент у клиента нет долгов', style: TextStyle(fontWeight: FontWeight.bold, fontSize: _totalFontSize),);
+
+    if(totalDebtSum != 0){
+      debtText = RichText(
+        text: TextSpan(
+            text: ' Итоговая сумма взаиморасчетов по состоянию на время последней синхронизации: ',
+            style: TextStyle(
+                color: Colors.black, fontSize: 18),
+            children: <TextSpan>[
+              TextSpan(text: ' ${totalDebtSum.toStringAsFixed(2)} грн',
+                  style: TextStyle(
+                      color: Colors.indigo, fontSize: 18, fontWeight: FontWeight.bold),
+
+              )
+            ]
+        ),
+      );
+          //" ${totalDebtSum.toStringAsFixed(2)} грн  - итоговая сумма взаиморасчетов по состоянию на время последней синхронизации:");
+
+
+
     }
-    catch(e){}
-    return result;
+
+    return Padding(
+      padding: const EdgeInsets.all(10),
+      child: debtText,
+    );
+
   }
 
-  void _savePayments() {
-    List payments = List();
-     //String outletId = this.outlet.id.trim();
-     _controllers.forEach((docId, controller){
-        double value;
-        try {
-          value = num.parse(controller.text).toDouble();
-        }catch(e){
-          value = 0;
-        }
+  Widget NewPaymentData() {
 
-          Map item = this.debtlist.firstWhere(
-              ((entry)=> entry["date"]+"_"+entry["number"]==docId)
-          );
-
-          String payDate = DateTime.now().toIso8601String();
-
-          Map payment = {
-            'paydate': payDate,
-            'doc_id':     docId,
-            'date':       item["date"],
-            'number':     item["number"],
-            'docname':    item["docname"],
-            'sum': value
-          };
-          payments.add(payment);
-        //}
-    });
-    Payments.save(payments);
+    if(totalDebtSum != 0){
+      return StandardButton(caption: "Долги и оплата", onPressedAction: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => Payment(outlet: outlet)),
+        );
+      });
+    }
+    return const Text('');
 
   }
 }
@@ -224,10 +119,8 @@ class CreditInfo extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(9.0),
       decoration: BoxDecoration(
-        //color: Colors.purple,
         border: Border.all( width: 2.0 ),
         borderRadius: BorderRadius.all( Radius.circular(10.0) ),
-
       ),
       child: Column(
         children:[

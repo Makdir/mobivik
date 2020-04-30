@@ -65,12 +65,10 @@ class _ReopenedBuyOrderState extends State implements BuyOrderState {
 
   Future _getData() async{
     // Getting order data
-    List buyordersList = await BuyOrders.getBuyorderHeaders();
-    //print('_docId = $_docId');
+    List buyordersList = await BuyOrders.getHeaders();
+
     this.order = buyordersList.firstWhere((header)=>header['doc_id']==_docId, orElse: null);
     if(this.order==null) return;
-    //print('order = $order');
-    //_docId = order['doc_id'];
 
     _outlet = order['outlet'];
     _creationDateTime = order['date_time'];
@@ -232,12 +230,8 @@ class _ReopenedBuyOrderState extends State implements BuyOrderState {
     if (!shouldDelete) {
       return;
     }
-    print('========================================================================');
-    print('doc_id = ${_docId}');
 
     await BuyOrders.deleteBuyorderById(_docId);
-
-    //Navigator.push(context, MaterialPageRoute(builder: (context) => BuyordersJournal(), ));
     Navigator.of(context).pop();
   }
 

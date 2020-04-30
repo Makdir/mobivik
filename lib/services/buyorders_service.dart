@@ -34,7 +34,7 @@ class BuyOrders {
     openedFile.writeAsString(outputJson);
   }
 
-  static Future<List> getBuyorderHeaders() async {
+  static Future<List> getHeaders() async {
 
     File openedFile = await FileProvider.openAuxiliaryFile('boheaders');
     String fileContent = await openedFile.readAsString();
@@ -71,8 +71,6 @@ class BuyOrders {
 
   static deleteBuyorderById(String docId) async {
 
-//    List headers= await BuyOrders.getBuyorderHeaders();
-//    headers.removeWhere((item)=>item['doc_id']==docId);
     File openedFile = await FileProvider.openAuxiliaryFile('boheaders');
     String fileContent = await openedFile.readAsString();
     if(fileContent.isEmpty) fileContent = "[]";
@@ -81,9 +79,6 @@ class BuyOrders {
     String outputJson = json.encode(ordersList);
     openedFile.writeAsString(outputJson);
 
-
-//    List buyorders = await BuyOrders.getBuyorders();
-//    buyorders.removeWhere((item)=>item['doc_id']==docId);
     openedFile = await FileProvider.openOutputFile('buyorders');
     fileContent = await openedFile.readAsString();
     if(fileContent.isEmpty) fileContent = "[]";
@@ -91,7 +86,6 @@ class BuyOrders {
     ordersList.removeWhere((item) => item["doc_id"] == docId);
     outputJson = json.encode(ordersList);
     openedFile.writeAsString(outputJson);
-
 
   }
 

@@ -23,9 +23,7 @@ class _RouteScreenState extends State {
   }
 
   Future getData() async{
-
     List<Client> routeList = await RouteDAO().getItems();
-    //List<dynamic> jsonData = json.decode(textData);
     setState(() {
       route.addAll(routeList);
     });

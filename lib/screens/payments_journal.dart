@@ -1,18 +1,20 @@
 
 import 'package:flutter/material.dart';
 import 'package:mobivik/screens/reopened_buyorder.dart';
+import 'package:mobivik/screens/repayment.dart';
 import 'package:mobivik/services/buyorders_service.dart';
+import 'package:mobivik/services/payments.dart';
 
-class BuyordersJournal extends StatefulWidget {
+class PaymentsJournal extends StatefulWidget {
   @override
-  _BuyordersJournalState createState() {
-    return _BuyordersJournalState();
+  _PaymentsJournalState createState() {
+    return _PaymentsJournalState();
   }
 }
 
-class _BuyordersJournalState extends State {
+class _PaymentsJournalState extends State {
 
-  List buyorders = List();
+  List headers = List();
   double _totalSum = 0;
   String _sumRepresentation = '0.00';
   final double _totalFontSize = 16;
@@ -21,35 +23,32 @@ class _BuyordersJournalState extends State {
   void initState() {
     super.initState();
     getData();
-    //SchedulerBinding.instance.addPostFrameCallback((_) => afterLayoutWidgetBuild());
   }
 
   Future getData() async{
-    List buyordersList = await BuyOrders.getHeaders();
-    buyordersList.forEach((item){
-      double sum = double.parse(item["total_sum"].toString());
+    List paymentsList = await Payments.getHeaders();
+    paymentsList.forEach((item){
+      double sum = double.parse(item["sum"].toString());
       _totalSum += sum;
 
     });
 
     setState(() {
-      buyorders.addAll(buyordersList);
+      headers.addAll(paymentsList);
       _sumRepresentation = _totalSum.toStringAsFixed(2);
     });
   }
 
   Future reload() async {
-    buyorders.clear();
+    headers.clear();
     await getData();
   }
 
   @override
   Widget build(BuildContext context) {
-    //executeAfterBuild();
-    //_tempSum = 0;
     return Scaffold(
       backgroundColor: Colors.black,
-      appBar: AppBar(title: Text("Журнал заказов")),
+      appBar: AppBar(title: Text("Принятые оплаты")),
         body:Column(
           children: <Widget>[
               Container(
@@ -72,19 +71,19 @@ class _BuyordersJournalState extends State {
               Expanded(
                 child: ListView.builder(
                   padding: EdgeInsets.all(8.0),
-                  itemCount: buyorders.length,
+                  itemCount: headers.length,
                   itemBuilder: (BuildContext context, int index) {
-                    String orderSum = double.parse( buyorders[index]["total_sum"].toString() ).toStringAsFixed(2);
+                    String orderSum = double.parse( headers[index]["sum"].toString() ).toStringAsFixed(2);
                     return Card(
                           elevation: 3,
                           child: ListTile(
                             trailing: Icon(Icons.arrow_forward_ios),
-                            title: Text(buyorders[index]["outlet"].toString()),
+                            title: Text(headers[index]["outlet_name"].toString()),
                             subtitle: Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: <Widget>[
-                                  Text(buyorders[index]["date_time"].toString()),
-                                  Text(buyorders[index]["actype"].toString()),
+                                  Text(headers[index]["docname"].toString()),
+                                  //Text(buyorders[index]["actype"].toString()),
                                   Text(orderSum,
                                     style: TextStyle(
                                       fontSize: _totalFontSize,
@@ -96,7 +95,7 @@ class _BuyordersJournalState extends State {
                             ),
                             onTap: () async {
                                 //Navigator.push(context, MaterialPageRoute(builder: (context) => ReopenedBuyOrder(order: buyorders[index]), ), );
-                                await Navigator.push(context, MaterialPageRoute(builder: (context) => ReopenedBuyOrder(buyorders[index]["doc_id"]), ));
+                                await Navigator.push(context, MaterialPageRoute(builder: (context) => Repayment(paymentId: headers[index]["paydate"]), ));
                                 reload();
                               },
 

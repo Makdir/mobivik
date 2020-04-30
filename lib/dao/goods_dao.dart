@@ -3,7 +3,6 @@ import 'dart:io';
 
 import 'package:mobivik/models/goods_model.dart';
 import 'package:mobivik/common/file_provider.dart';
-//import "package:charcode/charcode.dart";
 
 class GoodsDAO{
   Future<List> getItems() async {
@@ -12,8 +11,6 @@ class GoodsDAO{
     //TODO Permission to storage access
     try {
       final File file = await FileProvider.openInputFile("goods");
-//      List<int> bytes = await file.readAsBytes();
-//      String fileContent = decodeCp1251(bytes);
 
       String fileContent = await file.readAsString();
 
@@ -22,13 +19,10 @@ class GoodsDAO{
       for(Map item in parsedJson){
         result.add(Goods.fromJson(item));
       }
-
     } catch (e){print("Еxception in goods loading = $e");}
-
 
     return result;
   }
-
 }
 
 //*************************************
