@@ -49,13 +49,12 @@ class GraphicalUI{
 /// @param onPressedAction - event of button clicking
 
 class StandardButton extends StatelessWidget {
-  String caption = "";
-
-  var onPressedAction;
+  final String text;
+  final onPressedAction;
 
   StandardButton({
     Key key,
-    this.caption,
+    this.text,
     this.onPressedAction
   }) : super(key: key);
 
@@ -63,7 +62,7 @@ class StandardButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialButton(
       minWidth: 200,
-      child: Text(caption, style: TextStyle(fontWeight: FontWeight.bold),),
+      child: Text(text, style: TextStyle(fontWeight: FontWeight.bold),),
       color: Colors.amber,
       //padding: EdgeInsets.fromLTRB(90, 9, 90, 10),
       shape: RoundedRectangleBorder(
@@ -77,5 +76,31 @@ class StandardButton extends StatelessWidget {
       elevation: 3,
       onPressed: onPressedAction,
     );
+  }
+}
+
+class OrderButton extends StatelessWidget {
+  final String text;
+  final onPressedAction;
+
+  const OrderButton({
+    Key key,
+    this.text,
+    this.onPressedAction
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+        padding: EdgeInsets.only(top: 25),
+        child: RaisedButton(
+          child: Text('$text'),
+          onPressed: onPressedAction,
+          shape: StadiumBorder(),
+          elevation: 5.0,
+        )
+
+    );
+
   }
 }

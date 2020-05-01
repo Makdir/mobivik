@@ -18,7 +18,7 @@ class Repayment extends StatefulWidget {
 
 class _RepaymentState extends State {
   final String paymentId;
-  final double _totalFontSize = 16;
+  final double _totalFontSize = 18;
 
   Map payment;
   
@@ -40,10 +40,7 @@ class _RepaymentState extends State {
   }
 
   Future _getData() async{
-    print("-----------------------------------------------=");
-    print("paymentId=" + paymentId);
     payment = await Payments.getById(paymentId);
-    print("payment==$payment");
     this.payDate = paymentId;
     this.outletName = payment['outlet_name'];
     _controller.text = payment['sum'].toString();
@@ -61,16 +58,44 @@ class _RepaymentState extends State {
             padding: EdgeInsets.all(8.0),
             child: Card(
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Text("Основание: ${payment['docname']} "),
-                    Text("Сумма заказа (начальная сумма долга): ${payment['start_sum']} "),
-                    Text("Долг (по состоянию на последнюю синхронизацию): ${payment['debt_sum']}"),
+                    Text("Основание: ${payment['docname']} ", style: TextStyle(fontSize: _totalFontSize)),
+                    Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children:[
+                          Text("Сумма заказа (начальная сумма долга): " , style: TextStyle(fontSize: _totalFontSize),),
+                          Text("${payment['start_sum']} ", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.indigo[900], fontSize: _totalFontSize),),
+                        ]
+                    ),
+                    Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children:[
+                          Text('Долг (на последнюю синхронизацию): ' , style: TextStyle(fontSize: _totalFontSize),),
+                          Text("${payment['debt_sum']} ", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red[900], fontSize: _totalFontSize),),
+                        ]
+                    ),
                     TextField(
                           controller: _controller,
                           textAlign:    TextAlign.end,
                           keyboardType: TextInputType.number,
                           decoration: InputDecoration( labelText: 'Сумма оплаты: ' ),
                         ),
+                    Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children:[
+                          RaisedButton(
+                            child: Text('Удалить'),
+                            onPressed: _delete,
+                            shape: StadiumBorder(),
+                            elevation: 5.0,
+                          ),
+                          OrderButton(text: 'Сохранить', onPressedAction: _save),
+                          OrderButton(text: 'Удалить',   onPressedAction: _delete),
+                          OrderButton(text: 'Выйти',     onPressedAction:(){Navigator.pop(context);}),
+                        ]
+
+                    ),
                   ],
                 )
             )
@@ -79,113 +104,20 @@ class _RepaymentState extends State {
         ),
     );
   }
-//  @override
-//  Widget build(BuildContext context) {
-//    return WillPopScope(
-//      onWillPop: _onExit,
-//      child: Scaffold(
-//        appBar: AppBar(title: Text(outletName)),
-//        body: Padding(
-//          padding: EdgeInsets.all(8.0),
-//          child: Column(
-//              children:[
-//                Padding(
-//                  padding: const EdgeInsets.fromLTRB(0, 10, 0, 5),
-//                  child: const Text("Долги и оплаты", style: TextStyle(fontWeight: FontWeight.bold),),
-//                ),
-//                Padding(
-//                  padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
-//                  child: Row(
-//                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//                    children: <Widget>[
-//                      Text("Долг:",     style: TextStyle(fontSize: _totalFontSize),),
-//                      Text("${totalDebtSum.toStringAsFixed(2)}. ",   style: TextStyle(fontSize: _totalFontSize+1, fontWeight: FontWeight.bold),),
-//                      Text("Принято:",     style: TextStyle(fontSize: _totalFontSize),),
-//                      Text("${totalPaymentSum.toStringAsFixed(2)}. ", style: TextStyle(fontSize: _totalFontSize+1, fontWeight: FontWeight.bold),),
-//                    ],
-//                  ),
-//                ),
-//                Expanded(
-//
-//                  child: ListView.builder(
-//                    itemCount: debtlist.length,
-//                    itemBuilder: (BuildContext context, int index) {
-//                      DateTime dateOfDebt = DateTime.parse(debtlist[index]["date"]);
-//                      String debtDate = DateFormat('dd.MM.yy').format(dateOfDebt);
-//                      return Container(
-//                        decoration: BoxDecoration(
-//                          border: Border.all(width: 0.5, style: BorderStyle.solid),
-//                        ),
-//                        child: ListTile(
-//                            title: Text("Долг ${debtlist[index]["debt"]} (cумма заказа: ${debtlist[index]["sum"]})"),
-//                            subtitle: Text("$debtDate ${debtlist[index]["docname"]} №${debtlist[index]["number"]}"),
-//
-//                            trailing: Container(
-//                              width: 100,
-//                              decoration: BoxDecoration(
-//                                border: Border.all(width: 0.5, style: BorderStyle.solid),
-//                              ),
-//                              child: Row(
-//                                mainAxisAlignment: MainAxisAlignment.end,
-//                                children: <Widget>[
-//                                  Expanded(
-//                                    //flex: 3,
-//                                    child: TextField(
-//                                      readOnly:   debtlist[index]["debt"]<0,
-//                                      controller: _controllers[_getDocID(debtlist[index])],
-//                                      textAlign:    TextAlign.end,
-//                                      keyboardType: TextInputType.number,
-//                                      decoration: InputDecoration(
-//                                        hintText: "${debtlist[index]["debt"]}",
-//                                        fillColor: Color.fromARGB(50, 200, 0,0),
-//                                        filled: debtlist[index]["debt"]<0,
-//                                        helperText: (debtlist[index]["debt"]<0) ? " переплата" : " введите оплату",
-//                                        //helperMaxLines: 1,
-//                                        helperStyle: TextStyle(),
-//                                      ),
-//                                      onChanged: (text){
-//                                        setState(() {
-//                                          totalSumRecalc();
-//                                        });
-//                                      },
-//                                    ),
-//                                  ),
-//
-//                                ],
-//                              ),
-//                            )
-//                        ),
-//                      );
-//                    },
-//                  ),
-//                ),
-//              ]),
-//        ),
-//      ),
-//    );
-//  }
 
-  String _getDocID(debtDoc){
-    String result = '';
-    try{
-      result = debtDoc["date"] +"_"+ debtDoc["number"];
-    }
-    catch(e){}
-    return result;
-  }
 
-  void _savePayments() {
-
+  void _save() {
+    //print("---------------------------------------");
     double value = 0;
     try {
       value = num.parse(_controller.text).toDouble();
     }catch(e){
       value = 0;
     }
-
+    print("value = $value");
     payment['sum'] = value;
     
-    List payments;
+    List payments = List();
     payments.add(payment);
 
     Payments.save(payments);
@@ -193,13 +125,16 @@ class _RepaymentState extends State {
   }
 
   void _delete() async{
+
     bool shouldDelete = await GraphicalUI.confirmDialog(context,'Удалить оплату?');
     if (!shouldDelete) {
       return;
     }
 
-//    await Payments.deleteById(payDate);
-//    Navigator.of(context).pop();
+
+    bool deleted = await Payments.deleteById(payDate);
+    print("deleted = $deleted");
+    if(deleted) Navigator.of(context).pop();
   }
 
 
@@ -211,10 +146,13 @@ class _RepaymentState extends State {
     }
     if ((shouldExit)&&(totalPaymentSum > 0)) {
       bool mustSaved = await GraphicalUI.confirmDialog(context, 'Сохранить оплату?');
-      if (mustSaved) _savePayments();
+      if (mustSaved) _save();
     }
 
     return shouldExit;
   }
 
+
+
 }
+

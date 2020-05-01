@@ -1,11 +1,7 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:mobivik/common/user_interface.dart';
 import 'package:mobivik/models/client_model.dart';
 import 'package:mobivik/screens/payment.dart';
-import 'package:mobivik/services/payments.dart';
 
 import 'buy_order.dart';
 
@@ -52,7 +48,7 @@ class _OutletScreenState extends State {
         body: Center(
             child: Column(
                 children:[
-                  StandardButton(caption: "Новый заказ", onPressedAction: gotoNewBuyOrder),
+                  StandardButton(text: "Новый заказ", onPressedAction: gotoNewBuyOrder),
                   CreditInfo(outlet: outlet),
                   DebtInfo(),
                   NewPaymentData()
@@ -94,7 +90,7 @@ class _OutletScreenState extends State {
   Widget NewPaymentData() {
 
     if(totalDebtSum != 0){
-      return StandardButton(caption: "Долги и оплата", onPressedAction: () {
+      return StandardButton(text: "Долги и оплата", onPressedAction: () {
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => Payment(outlet: outlet)),

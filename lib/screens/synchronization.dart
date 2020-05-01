@@ -40,7 +40,7 @@ class _SyncScreen extends State {
           child: Column(
 
             children: [
-              StandardButton(caption: "Синхронизировать", onPressedAction: _executeSync),
+              StandardButton(text: "Синхронизировать", onPressedAction: _executeSync),
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Text('Рабочая дата: ${DateFormat("dd.MM.yyyy").format(DateTime.now())}'),
@@ -68,7 +68,7 @@ class _SyncScreen extends State {
 
     //String workDateIso8601String = DateTime.now().toIso8601String();
     workDateString = DateFormat("yyyy-MM-dd").format(DateTime.now());
-    print('workDateString = $workDateString');
+    //print('workDateString = $workDateString');
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final serverAddress = prefs.getString("serverAddress").trim();
@@ -133,15 +133,15 @@ class _SyncScreen extends State {
       var responseStatusCode = response.statusCode;
 
       if(responseStatusCode == 200) {
-        print('******************************************');
-        print("${uri} Response body: ${response.body}");
+        //print('******************************************');
+        //print("${uri} Response body: ${response.body}");
         FileProvider.saveInputFile(command, response.body);
       }
       else{
         errorMessage = 'Ошибка соединения. Код статуса ответа = $responseStatusCode';
       }
     } catch (e) {
-      print('--------------------------------------------');
+      //print('--------------------------------------------');
       print(e);
       errorMessage = '$e';
     } finally {
@@ -181,46 +181,51 @@ class _SyncScreen extends State {
   _preparePayments() async {
 
       // Payments block
-      File file =  await FileProvider.openOutputFile("payments");
+      File file =  await FileProvider.openAuxiliaryFile("payments_db");
       String content = await file.readAsString();
       if (content.isEmpty) {
-        content = "{}";
-        FileProvider.saveInputFile('payments', content);
+        content = "[]]";
+        FileProvider.saveOutputFile('payments', content);
         return;
       }
 
-      Map payments = json.decode(content);
-      List paymentsKeys = payments.keys.toList();
-      int listSize = paymentsKeys.length;
-      for(int i = 0; i < listSize; i++) {
+      List payments = json.decode(content);
+      List<Map> outPayments = List();
+      //List paymentsKeys = payments.keys.toList();
+      //int listSize = paymentsKeys.length;
+      Map payment = Map();
+      for(payment in payments) {
         //paymentsKeys.forEach((key){
-        String key = paymentsKeys[i];
+        //String key = paymentsKeys[i];
 
-        String payDate = payments[key]['paydate'];
-        print('payDate = $payDate');
+        String payDate = payment['paydate'];
+        //print('payDate = $payDate');
         if ((payDate == null)||(payDate.isEmpty)) {
-          payments.remove(key);
+          payments.remove(payment);
           continue;
         }
 
         String paymentDate = DateFormat('yyyy-MM-dd').format(
             DateTime.parse(payDate));
 
-        print('paymentDate = $paymentDate');
-        print('workDateString.compareTo(paymentDate) = ${workDateString.compareTo(paymentDate)}');
+        //print('paymentDate = $paymentDate');
+        //print('workDateString.compareTo(paymentDate) = ${workDateString.compareTo(paymentDate)}');
 
         if (workDateString.compareTo(paymentDate) != 0) {
-          payments.remove(key);
+          payments.remove(payment);
           continue;
         }
 
-        var sum = payments[key]['sum'];
+        var sum = payment['sum'];
         if ((sum == 0) || (sum == '') || (sum is String)) {
-          payments.remove(key);
+          payments.remove(payment);
           continue;
         }
+
+
+
       }
-      String result = json.encode(payments);
+      String result = json.encode(outPayments);
       FileProvider.saveOutputFile('payments', result);
 
   }
@@ -282,7 +287,7 @@ class _SyncScreen extends State {
 
   }
 
-  void _dataPreparing() async {
+  _dataPreparing() async {
     await  _preparePayments();
     await  _prepareBuyOrders();
     await  _fixBOHeaders();

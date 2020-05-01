@@ -1,8 +1,6 @@
 
 import 'package:flutter/material.dart';
-import 'package:mobivik/screens/reopened_buyorder.dart';
 import 'package:mobivik/screens/repayment.dart';
-import 'package:mobivik/services/buyorders_service.dart';
 import 'package:mobivik/services/payments.dart';
 
 class PaymentsJournal extends StatefulWidget {

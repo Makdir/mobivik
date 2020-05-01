@@ -31,16 +31,18 @@ class Payments {
     for (Map payment in payments){
       if(payment['sum']==0) continue;
       Map filedPayment = parsedJson.firstWhere((pay)=> pay['paydate']==payment['paydate'], orElse: ()=>null);
+      print("filedPayment = $filedPayment");
       if (filedPayment != null) {
         parsedJson.remove(filedPayment);
+        print("removed");
       }
       parsedJson.add(payment);
     }
     String outputJson = json.encode(parsedJson);
     openedFile.writeAsString(outputJson);
 
-    //print("openedFile = " + openedFile.path);
-    //var outputFile = FileProvider.saveFile('payments');
+
+
   }
 
   static Future<List> getHeaders() async {
@@ -67,6 +69,25 @@ class Payments {
     }
 
     return payment;
+  }
+
+  static Future<bool> deleteById(String id) async {
+
+    File openedFile = await FileProvider.openAuxiliaryFile('payments_db');
+    String fileContent = await openedFile.readAsString();
+    if(fileContent.isEmpty) return null;
+
+    List paymentsList = json.decode(fileContent);
+
+    try {
+      paymentsList.removeWhere((item) => item["paydate"] == id);
+    } catch(e) {
+      return false;
+    }
+    String outputJson = json.encode(paymentsList);
+    openedFile.writeAsString(outputJson);
+
+    return true;
   }
 
   static Future<Map<String, TextEditingController>> setPayment( Map<String, TextEditingController> controllers) async {

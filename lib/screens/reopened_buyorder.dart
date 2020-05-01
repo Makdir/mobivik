@@ -13,7 +13,6 @@ import 'package:koukicons/flipboard2.dart';
 import 'package:mobivik/services/buyorders_service.dart';
 import 'package:mobivik/services/invoice_table.dart';
 
-import 'buyorders_journal.dart';
 
 
 class ReopenedBuyOrder extends StatefulWidget {
@@ -293,7 +292,7 @@ class _ReopenedBuyOrderState extends State implements BuyOrderState {
 
         Padding(
           padding: const EdgeInsets.all(3.0),
-          child: Text('Дата: ${_creationDateTime}'),
+          child: Text('Дата: $_creationDateTime'),
         )
       ],
 
