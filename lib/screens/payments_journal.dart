@@ -24,6 +24,7 @@ class _PaymentsJournalState extends State {
   }
 
   Future getData() async{
+    _totalSum = 0;
     List paymentsList = await Payments.getHeaders();
     paymentsList.forEach((item){
       double sum = double.parse(item["sum"].toString());

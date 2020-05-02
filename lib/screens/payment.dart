@@ -158,14 +158,15 @@ class _PaymentState extends State {
 
       String payDate = DateTime.now().toIso8601String();
       DateTime dateOfDebt = DateTime.parse(item["date"]);
-      String debtDate = DateFormat('dd.MM.yy').format(dateOfDebt);
+      String debtDate = DateFormat('dd.MM.yyyy').format(dateOfDebt);
 
       Map payment = {
         'paydate': payDate,
-        'doc_id':     docId,
-        'date':       item["date"],
-        'number':     item["number"],
-        'docname':    '${item["docname"]} ${item["number"]} $debtDate',
+        //'doc_id':  docId,
+        'date':      item["date"],
+        'number':    item["number"],
+        'docname':   '${item["docname"]} № ${item["number"]}',
+        'debt_date': '$debtDate',
         'sum': value,
         'outlet_name': outlet.name,
         'start_sum': item["sum"],

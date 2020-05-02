@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:intl/intl.dart';
 import 'package:mobivik/common/user_interface.dart';
 import 'package:mobivik/models/client_model.dart';
@@ -60,21 +61,34 @@ class _RepaymentState extends State {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Text("Основание: ${payment['docname']} ", style: TextStyle(fontSize: _totalFontSize)),
-                    Row(
+                    Padding(
+                       padding: EdgeInsets.all(3.0),
+                       child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children:[
+                            Text("Основание: ${payment['docname']} ", style: TextStyle(fontSize: _totalFontSize)),
+                            Text("${payment['debt_date']} ", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.indigo[900], fontSize: _totalFontSize),),
+                          ]
+                        )
+                    ),
+                    Padding(
+                        padding: EdgeInsets.all(3.0),
+                        child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children:[
                           Text("Сумма заказа (начальная сумма долга): " , style: TextStyle(fontSize: _totalFontSize),),
                           Text("${payment['start_sum']} ", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.indigo[900], fontSize: _totalFontSize),),
                         ]
-                    ),
-                    Row(
+                    )),
+                    Padding(
+                        padding: EdgeInsets.all(3.0),
+                        child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children:[
                           Text('Долг (на последнюю синхронизацию): ' , style: TextStyle(fontSize: _totalFontSize),),
                           Text("${payment['debt_sum']} ", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red[900], fontSize: _totalFontSize),),
                         ]
-                    ),
+                    )),
                     TextField(
                           controller: _controller,
                           textAlign:    TextAlign.end,
@@ -84,12 +98,6 @@ class _RepaymentState extends State {
                     Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children:[
-                          RaisedButton(
-                            child: Text('Удалить'),
-                            onPressed: _delete,
-                            shape: StadiumBorder(),
-                            elevation: 5.0,
-                          ),
                           OrderButton(text: 'Сохранить', onPressedAction: _save),
                           OrderButton(text: 'Удалить',   onPressedAction: _delete),
                           OrderButton(text: 'Выйти',     onPressedAction:(){Navigator.pop(context);}),

@@ -184,24 +184,23 @@ class _SyncScreen extends State {
       File file =  await FileProvider.openAuxiliaryFile("payments_db");
       String content = await file.readAsString();
       if (content.isEmpty) {
-        content = "[]]";
+        content = "[]";
         FileProvider.saveOutputFile('payments', content);
         return;
       }
 
-      List payments = json.decode(content);
-      List<Map> outPayments = List();
-      //List paymentsKeys = payments.keys.toList();
-      //int listSize = paymentsKeys.length;
+      List payments = await json.decode(content);
+      List fixedPayments = List();
+      fixedPayments.addAll(payments);
+      List outPayments = List();
+
       Map payment = Map();
       for(payment in payments) {
-        //paymentsKeys.forEach((key){
-        //String key = paymentsKeys[i];
 
-        String payDate = payment['paydate'];
+         String payDate = payment['paydate'];
         //print('payDate = $payDate');
         if ((payDate == null)||(payDate.isEmpty)) {
-          payments.remove(payment);
+          fixedPayments.remove(payment);
           continue;
         }
 
@@ -212,23 +211,32 @@ class _SyncScreen extends State {
         //print('workDateString.compareTo(paymentDate) = ${workDateString.compareTo(paymentDate)}');
 
         if (workDateString.compareTo(paymentDate) != 0) {
-          payments.remove(payment);
+          fixedPayments.remove(payment);
           continue;
         }
 
         var sum = payment['sum'];
         if ((sum == 0) || (sum == '') || (sum is String)) {
-          payments.remove(payment);
+          fixedPayments.remove(payment);
           continue;
         }
 
-
-
+        Map outPayment = Map();
+        outPayment['paydate'] = payDate;
+        outPayment['docname'] = payment['docname'];
+        outPayment['debtdate'] = payment['date'];
+        outPayment['number'] = payment['number'];
+        outPayment['sum'] = sum;
+        outPayments.add(outPayment);
       }
       String result = json.encode(outPayments);
       FileProvider.saveOutputFile('payments', result);
 
+
+      result = json.encode(fixedPayments);
+      FileProvider.saveAuxiliaryFile('payments_db', result);
   }
+
   _prepareBuyOrders() async {
 
     File file =  await FileProvider.openOutputFile("buyorders");

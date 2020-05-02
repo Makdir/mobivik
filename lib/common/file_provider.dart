@@ -126,6 +126,28 @@ class FileProvider {
     return outputFile;
   }
 
+  static saveAuxiliaryFile(String fileName, String content) async{
+    Directory tempDir = await getTemporaryDirectory();
+    String tempPath = tempDir.path;
+
+    Directory directory = Directory(tempPath+Platform.pathSeparator+"auxiliary");
+    bool isExist = await directory.exists();
+    if (isExist==false) {
+      await directory.create(recursive: true);
+    }
+
+    File file = File(directory.path+Platform.pathSeparator+"$fileName.mv");
+
+    isExist = await file.exists();
+    if (isExist==false) {
+      await file.create(recursive: true);
+    }
+
+    file.writeAsString(content);
+
+    return file;
+  }
+
   static saveOutputFile(String fileName, String content) async{
     Directory tempDir = await getTemporaryDirectory();
     String tempPath = tempDir.path;
