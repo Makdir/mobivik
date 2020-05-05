@@ -33,6 +33,7 @@ class _ReopenedBuyOrderState extends State implements BuyOrderState {
 
   Map order;
   String _outlet;
+  String _outletId;
   List<Goods> goodsList = List();
   List<Entry> _goodsWidget = List();
   List<Entry> _entries = List();
@@ -70,6 +71,7 @@ class _ReopenedBuyOrderState extends State implements BuyOrderState {
     if(this.order==null) return;
 
     _outlet = order['outlet'];
+    _outletId = order['outlet_id'];
     _creationDateTime = order['date_time'];
     totalSum = double.parse(order['total_sum'].toString());
     _invoiceTable.totalSum = totalSum;  // maybe _invoiceTable.totalSum is unused and it can be deleted
@@ -184,6 +186,7 @@ class _ReopenedBuyOrderState extends State implements BuyOrderState {
   Future _saveOrder() async {
     Map order = Map();
     order["doc_id"] = _docId;
+    order["outlet_id"] = _outletId;
     if(_selectedAT == 'УУ') {
       order["actype"] = 0;
     }
