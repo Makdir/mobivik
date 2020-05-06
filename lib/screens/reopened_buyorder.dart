@@ -72,6 +72,7 @@ class _ReopenedBuyOrderState extends State implements BuyOrderState {
 
     _outlet = order['outlet'];
     _outletId = order['outlet_id'];
+    //print('_outletId = $_outletId');
     _creationDateTime = order['date_time'];
     totalSum = double.parse(order['total_sum'].toString());
     _invoiceTable.totalSum = totalSum;  // maybe _invoiceTable.totalSum is unused and it can be deleted
@@ -185,7 +186,7 @@ class _ReopenedBuyOrderState extends State implements BuyOrderState {
 
   Future _saveOrder() async {
     totalSumRecalc(this, _goodsControllers);
-
+    //print('2 _outletId = $_outletId');
     Map order = Map();
     order["doc_id"] = _docId;
     order["outlet_id"] = _outletId;
@@ -215,11 +216,12 @@ class _ReopenedBuyOrderState extends State implements BuyOrderState {
     });
     order["table"] = docTable;
     BuyOrders.save(order);
-
+    //print('3 _outletId = $_outletId');
     // Data for journal
     Map header = Map();
     header["doc_id"] = _docId;
     header["outlet"] = _outlet;
+    header["outlet_id"] = _outletId;
     header["date_time"] = _creationDateTime.trim();
     header["actype"] = _selectedAT;
     header["total_sum"] = totalSum;

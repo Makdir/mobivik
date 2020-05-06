@@ -249,6 +249,7 @@ class BuyOrderState extends State {
     Map header = Map();
     header["doc_id"] = docId;
     header["outlet"] = _outlet.name;
+    header["outlet_id"] = _outlet.id;
     header["date_time"] = DateFormat('dd.MM.yyyy HH:mm').format(_creationDateTime);
     header["actype"] = _selectedAT;
     header["total_sum"] = totalSum;
