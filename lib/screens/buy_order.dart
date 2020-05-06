@@ -211,6 +211,8 @@ class BuyOrderState extends State {
   }
   
   void _saveOrder() async{
+    totalSumRecalc(this, _goodsControllers);
+
     String docId = _creationDateTime.toIso8601String();
 
     Map order = Map();

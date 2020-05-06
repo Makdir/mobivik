@@ -25,6 +25,7 @@ class _BuyordersJournalState extends State {
   }
 
   Future getData() async{
+    double _totalSum = 0;
     List buyordersList = await BuyOrders.getHeaders();
     buyordersList.forEach((item){
       double sum = double.parse(item["total_sum"].toString());

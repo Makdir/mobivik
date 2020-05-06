@@ -58,24 +58,23 @@ class _InvoiceState extends State {
         double sum = (num.parse(_controller.text)*goods.price*goods.coef);
         _totalSum += sum;
         DataRow newRow = DataRow(
+            //key: ,
             cells:[
               DataCell(Text("${goods.name}")),
               DataCell(Text("${goods.price.toStringAsFixed(2)}")),
               DataCell(TextField(
-                controller: _controller,
-                keyboardType: TextInputType.numberWithOptions(decimal: true,signed: false),
-                onChanged: (text){
-//                  double amount = num.parse(text).toDouble();
-//                  double sum = amount*goods.price*goods.coef;
-//                  goodsSum[id] = sum;
-                  setState(() {
-                    totalSumRecalc(summoner, goodsControllers);
-                  });
-                },
-                textAlign: TextAlign.end,
-              )),
+                  controller: _controller,
+                  keyboardType: TextInputType.numberWithOptions(decimal: true,signed: false),
+                  onEditingComplete: (){
+                    setState(() {
+                      totalSumRecalc(summoner, goodsControllers);
+                    });
+                  },
+                  textAlign: TextAlign.end,
+                )),
               DataCell(Text("${goods.unit}")),
               DataCell(Text("${sum.toStringAsFixed(2)}")),
+              //DataCell(IconButton(icon: Icon(Icons.clear), onPressed: _deleteRow,)),
             ]);
         invoiceTable.rows.add(newRow);
       }
@@ -113,7 +112,8 @@ class _InvoiceState extends State {
                   DataColumn(label: const Text('Количество'), numeric: true),
                   DataColumn(label: const Text('Ед. изм.'),   numeric: false),
                   //DataColumn(label: const Text('Коэф.'),      numeric: true),
-                  DataColumn(label: const Text('Сумма'),      numeric: true),
+                  DataColumn(label: const Text('Сумма'), numeric: true),
+                  //DataColumn(label: const Text(''),     numeric: true)
                 ],
                 rows: invoiceTable.rows,
               ),
@@ -123,7 +123,12 @@ class _InvoiceState extends State {
       ),
     );
   }
+
+//  void _deleteRow() {
+//
+//  }
 }
+
 
 class InvoiceTable{
   double totalSum;

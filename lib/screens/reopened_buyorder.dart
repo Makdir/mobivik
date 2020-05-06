@@ -184,6 +184,8 @@ class _ReopenedBuyOrderState extends State implements BuyOrderState {
   }
 
   Future _saveOrder() async {
+    totalSumRecalc(this, _goodsControllers);
+
     Map order = Map();
     order["doc_id"] = _docId;
     order["outlet_id"] = _outletId;
