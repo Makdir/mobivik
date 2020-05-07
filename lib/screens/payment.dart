@@ -36,12 +36,12 @@ class _PaymentState extends State {
       _controllers[docId] = TextEditingController();
       totalDebtSum += double.parse(item["debt"].toString());
     });
-    Payments.setPayment(_controllers);
+    //Payments.setPaymentControllers(_controllers);
   }
 
   void totalSumRecalc(){
     totalPaymentSum = 0;
-    _controllers.forEach((id, controller){
+    _controllers.forEach((docId, controller){
       totalPaymentSum += double.parse(controller.text);
     });
   }

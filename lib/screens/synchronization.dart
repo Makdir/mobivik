@@ -8,7 +8,7 @@ import 'package:intl/intl.dart';
 import 'package:mobivik/common/file_provider.dart';
 import 'package:mobivik/common/user_interface.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:simple_permissions/simple_permissions.dart';
+//import 'package:simple_permissions/simple_permissions.dart';
 
 
 class SyncScreen extends StatefulWidget {
@@ -104,19 +104,19 @@ class _SyncScreen extends State {
   }
 
 
-  Future parseResponseBody(String body) async{
-
-    if(body.isEmpty) return;
-    //File file = writeFile(body);
-    Map<String,dynamic> jsonBody = json.decode(body);
-
-    bool res = await SimplePermissions.checkPermission(Permission.WriteExternalStorage);
-    print('res = $res');
-    var permissionStatus;
-    if(res==false){permissionStatus = SimplePermissions.requestPermission(Permission.WriteExternalStorage);};
-
-
-  }
+//  Future parseResponseBody(String body) async{
+//
+//    if(body.isEmpty) return;
+//    //File file = writeFile(body);
+//    Map<String,dynamic> jsonBody = json.decode(body);
+//
+//    bool res = await SimplePermissions.checkPermission(Permission.WriteExternalStorage);
+//    print('res = $res');
+//    var permissionStatus;
+//    if(res==false){permissionStatus = SimplePermissions.requestPermission(Permission.WriteExternalStorage);};
+//
+//
+//  }
 
   _getData(String command, String serverAddress, String agentCode) async{
 

@@ -90,16 +90,17 @@ class Payments {
     return true;
   }
 
-  static Future<Map<String, TextEditingController>> setPayment( Map<String, TextEditingController> controllers) async {
+  static Future<Map<String, TextEditingController>> setPaymentControllers( Map<String, TextEditingController> controllers) async {
 
-    File openedFile = await FileProvider.openOutputFile('payments');
+    File openedFile = await FileProvider.openAuxiliaryFile('payments_db');
     String fileContent = await openedFile.readAsString();
-    if(fileContent.isEmpty) fileContent = "{}";
-    Map parsedJson = json.decode(fileContent);
+    if(fileContent.isEmpty) fileContent = "[]";
+    List parsedJson = json.decode(fileContent);
     //print("parsedJson is " + parsedJson.runtimeType.toString());
     controllers.forEach((docId, controller){
       try {
-        controller.text = parsedJson[docId]['sum'].toString();
+        Map payment = parsedJson.firstWhere((item)=>item['doc_id']==docId);
+        controller.text = payment['sum'].toString();
 
       } catch (e) {}
 
