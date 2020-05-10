@@ -129,7 +129,7 @@ class BuyOrderState extends State {
                               Tab(child: KoukiconsGenericSortingAsc() ),
                               Tab(child: KoukiconsFlipboard2() ),
                           ],
-                          ),
+                        ),
 
                         body: Container(
                           color: Colors.grey[300],

@@ -27,7 +27,7 @@ void main() {
           '/goods': (BuildContext context) => new GoodsScreen(),
           '/buyorders': (BuildContext context) => new BuyordersJournal(),
           '/payments': (BuildContext context) => new PaymentsJournal(),
-        },
+         },
       )
   );
 }
@@ -48,10 +48,11 @@ class MainScreen extends StatelessWidget {
           child: ListView(
               padding: const EdgeInsets.all(10.0),
               children: <Widget>[
-                button(Icons.sync,'Синхронизация',context,'/sync'),
-                button(Icons.list,'Маршрут',context,'/route'),
-                button(Icons.settings,'Журнал заказов',context,'/buyorders'),
-                button(Icons.payment,'Принятые оплаты',context,'/payments'),
+                button(Icons.sync,' Синхронизация',context,'/sync'),
+                button(Icons.storage,' Товары',context,'/goods'),
+                button(Icons.people_outline,' Маршрут',context,'/route'),
+                button(Icons.settings,' Журнал заказов',context,'/buyorders'),
+                button(Icons.payment,' Принятые оплаты',context,'/payments'),
                 //button(Icons.storage,'Товары',context,'/goods'),
               ],
         )

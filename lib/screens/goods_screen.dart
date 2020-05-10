@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mobivik/dao/goods_dao.dart';
 import 'package:mobivik/models/goods_model.dart';
+import 'package:mobivik/services/goods_entries.dart';
 
 class GoodsScreen extends StatefulWidget {
   @override
@@ -11,105 +12,136 @@ class GoodsScreen extends StatefulWidget {
 }
 
 class _GoodsScreenState extends State {
-  List goodsWidget = List();
-
+  List<Entry> _goodsWidget = List();
+  List<Goods> goodsList = List();
   List<Entry> entries = List();
 
   @override
   void initState() {
     super.initState();
-    getData();
+    _getData();
   }
 
-  Future getData() async{
+  Future _getData() async{
 
-    List<Goods> goodsList = await GoodsDAO().getItems();
+    goodsList = await GoodsDAO().getItems();
+    // Forming hierarchcal structure
+    goodsList.forEach((item){
+      Entry newEntry = Entry(item: item);
+      entries.add(newEntry);
+    });
 
-    Goods item;
-    for(item in goodsList){
-      String parentId = item.parentId.toString().trim();
-      if((parentId!="")||(parentId.isNotEmpty))
-      {
-        Entry parentEntry = entries.firstWhere((entry)=>entry.id==parentId);
-        parentEntry.children.add(Entry(item));
-      }else{
-        entries.add(Entry(item));
-      }
+    // Item can not have empty id. It is wrong.
+    entries.removeWhere((entry) => entry.id.isEmpty);
 
-    }
+    entries.forEach((item){
+      try {
+        String parentId = item.parent_id.toString().trim();
+        Entry parentEntry = entries.firstWhere((entry) => entry.id == parentId);
+        //print('${parentEntry.item.name}: ${parentEntry.level}');
+        parentEntry.children.add(item);
+        // calcing of level
+        try {
+          item.level = parentEntry.level + 1;
+          //print(' ${item.item.name}: ${item.level}');
+        } catch (e) {}
+
+      } catch (e) {}
+    });
+    // Deleting items without paren. (But also this may be due to wrong data.)
+    entries.removeWhere((entry) => entry.parent_id != "");
 
     setState(() {
-      goodsWidget.addAll(entries);
+      _goodsWidget.addAll(entries);
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
+    return Scaffold(
+        backgroundColor: Colors.black54,
         appBar: new AppBar(title: new Text("Каталог товаров")),
-        body:ListView.builder(
-          padding: EdgeInsets.all(8.0),
-          //itemExtent: 20.0,
-          itemCount: goodsWidget.length,
-          itemBuilder: (BuildContext context, int index) {
-            return EntryItem(goodsWidget[index]);
-          },
-        )
+        body: TreeList(goodsWidget: _goodsWidget,),
     );
   }
 }
 
-// One entry in the multilevel list displayed by this app.
-class Entry {
-//, [this.children = <Entry>[]]);
-  final Goods item;
-  String id;
-//  final String title;
-  final List<Entry> children = <Entry>[];
-
-  Entry(this.item){
-    this.id = this.item.id;
-  }
-
-}
-
-// Displays one Entry. If the entry has children then it's displayed
-// with an ExpansionTile.
 class EntryItem extends StatelessWidget {
-  const EntryItem(this.entry);
 
   final Entry entry;
 
-  Widget _buildTiles(Entry root) {
-    if (root.children.isEmpty)
-      return Container(
-        color: Colors.white30,
+  EntryItem(this.entry);
+
+  Widget buildTiles(Entry root) {
+    var itemID = root.id;
+    int isFolder = root.item.isFolder;
+    int level = root.level;
+    if ((root.children.isEmpty)&&(isFolder==0)){
+      double balance = root.item.balance;
+      return Card(
         child: ListTile(
-          title: Text(root.item.name),
-          subtitle: Text("Balance ${root.item.balance} ${root.item.unit}"),
-          leading: Icon(Icons.linear_scale),
+            title: Text(root.item.name),
+            //subtitle: Text("Цена ${root.item.price} грн. Остаток $balance ${root.item.unit}"),
+            trailing: Container(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text("Цена: ${root.item.price.toStringAsFixed(2)} грн."),
+                  Text("Остаток: $balance ${root.item.unit}"),
+                ],
+              ),
+            )
+        ),
+      );}
+    if (isFolder==1)
+      return Card(
+        color: Color.fromARGB(255-50*level, 230+2*level, 230+4*level, 230+8*level ),
+        elevation: 3,
+        child: Container(
+          decoration: BoxDecoration(
+            border: Border.all(width: 0.5, style: BorderStyle.solid),
+            borderRadius: BorderRadius.all( Radius.circular(3.0)),
+          ),
+          child: ExpansionTile(
+            key: PageStorageKey<Entry>(root),
+            title: Text("${root.item.name}", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black)),
+            children: root.children.map(buildTiles).toList(),
+            leading: Icon(Icons.arrow_right),
+          ),
         ),
       );
-    return Card(
-      elevation: 3,
-      child: Container(
-        decoration: BoxDecoration(
-          border: Border.all(width: 0.5, style: BorderStyle.solid),
-          borderRadius: BorderRadius.all( Radius.circular(3.0)),
-        ),
-        child: ExpansionTile(
-          key: PageStorageKey<Entry>(root),
-          title: Text(root.item.name, style: TextStyle(fontWeight: FontWeight.bold),),
-          children: root.children.map(_buildTiles).toList(),
-          leading: Icon(Icons.folder_open),
-          backgroundColor: Colors.black38,
-        ),
-      ),
-    );
+    return const Text('');
   }
 
   @override
   Widget build(BuildContext context) {
-    return _buildTiles(entry);
+    return buildTiles(entry);
+  }
+
+}
+
+class TreeList extends StatelessWidget {
+
+  final List<Entry> goodsWidget;
+  //final Map<String, TextEditingController> goodsControllers;
+  //BuyOrderState summoner;
+
+  TreeList({
+    Key key,
+    @required this.goodsWidget,
+    //@required this.goodsControllers,
+    //@required this.summoner,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+      padding: EdgeInsets.all(3.0),
+      itemCount: goodsWidget.length,
+      itemBuilder: (BuildContext context, int index) {
+        return EntryItem(goodsWidget[index]);
+      },
+    );
   }
 }

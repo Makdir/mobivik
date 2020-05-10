@@ -7,9 +7,13 @@ import '../models/goods_model.dart';
 class Entry {
 
   final Goods item;
+  final List<Entry> children = <Entry>[];
+
   String id;
   String parent_id;
-  final List<Entry> children = <Entry>[];
+  // non-essential, needed only for decoration
+  int level = 0;
+
 
   Entry({this.item}){
     this.id = this.item.id;
@@ -36,11 +40,11 @@ class EntryItem extends StatelessWidget {
       return Card(
         child: ListTile(
             title: Text(root.item.name),
-            subtitle: Text("Цена ${root.item.price} грн. Остаток $balance ${root.item.unit}"),
+            subtitle: Text("Цена ${root.item.price.toStringAsFixed(2)} грн. Остаток $balance ${root.item.unit}"),
             trailing: Container(
               width: 75,
               decoration: BoxDecoration(
-                border: Border.all(width: 0.5, style: BorderStyle.solid),
+                border: Border.all(width: 0.1, style: BorderStyle.solid),
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
@@ -77,7 +81,7 @@ class EntryItem extends StatelessWidget {
       return Card(
         elevation: 3,
         child: Container(
-          decoration: new BoxDecoration(
+          decoration: BoxDecoration(
             border: Border.all(width: 0.5, style: BorderStyle.solid),
             borderRadius: BorderRadius.all( Radius.circular(3.0)),
           ),
