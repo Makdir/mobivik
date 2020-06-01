@@ -7,6 +7,7 @@ import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:mobivik/common/file_provider.dart';
 import 'package:mobivik/common/user_interface.dart';
+import 'package:package_info/package_info.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 //import 'package:simple_permissions/simple_permissions.dart';
 
@@ -30,6 +31,22 @@ class _SyncScreen extends State {
   String progressMessage = '';
   String errorMessage = '';
 
+  String version = "0";
+  String buildNumber = "0";
+
+  @override
+  void initState() {
+    super.initState();
+    PackageInfo.fromPlatform().then(
+        (PackageInfo packageInfo){
+          setState(() {
+            version = packageInfo.version;
+            buildNumber = packageInfo.buildNumber;
+          });
+        }
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
 
@@ -51,6 +68,13 @@ class _SyncScreen extends State {
                 child: Text(progressMessage, style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold),),
               ),
               Text(errorMessage, style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),),
+              Expanded(
+                child: Column(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: <Widget>[
+                            Text('Версия: $version ($buildNumber)')
+                          ],),
+              )
             ]
           ),
         )
@@ -102,21 +126,6 @@ class _SyncScreen extends State {
     //setState(() {indicatorValue = 0.1;});
 
   }
-
-
-//  Future parseResponseBody(String body) async{
-//
-//    if(body.isEmpty) return;
-//    //File file = writeFile(body);
-//    Map<String,dynamic> jsonBody = json.decode(body);
-//
-//    bool res = await SimplePermissions.checkPermission(Permission.WriteExternalStorage);
-//    print('res = $res');
-//    var permissionStatus;
-//    if(res==false){permissionStatus = SimplePermissions.requestPermission(Permission.WriteExternalStorage);};
-//
-//
-//  }
 
   _getData(String command, String serverAddress, String agentCode) async{
 
