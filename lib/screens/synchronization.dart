@@ -72,8 +72,16 @@ class _SyncScreen extends State {
                 child: Column(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: <Widget>[
-                            Text('Версия: $version ($buildNumber)')
-                          ],),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: <Widget>[
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Text('Версия: $version ($buildNumber)'),
+                                )
+                              ],)
+                          ],
+                ),
               )
             ]
           ),

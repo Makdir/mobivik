@@ -74,10 +74,6 @@ class _OutletScreenState extends State {
             ]
         ),
       );
-          //" ${totalDebtSum.toStringAsFixed(2)} грн  - итоговая сумма взаиморасчетов по состоянию на время последней синхронизации:");
-
-
-
     }
 
     return Padding(

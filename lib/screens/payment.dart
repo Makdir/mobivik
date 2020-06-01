@@ -42,7 +42,8 @@ class _PaymentState extends State {
   void totalSumRecalc(){
     totalPaymentSum = 0;
     _controllers.forEach((docId, controller){
-      totalPaymentSum += double.parse(controller.text);
+      double currentValue = (controller.text.isEmpty) ? 0 : double.parse(controller.text); // empty string ("") is not cast ot 0
+      totalPaymentSum += currentValue;
     });
   }
 
@@ -51,7 +52,7 @@ class _PaymentState extends State {
     return WillPopScope(
       onWillPop: _onExit,
       child: Scaffold(
-        appBar: new AppBar(title: Text(outlet.name)),
+        appBar: AppBar(title: Text(outlet.name)),
         body: Padding(
           padding: EdgeInsets.all(8.0),
           child: Column(
