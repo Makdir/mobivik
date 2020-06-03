@@ -7,7 +7,7 @@ description: Mobivik, mobile assistant
 # Both the version and the builder number may be overridden in flutter
 # build by specifying --build-name and --build-number, respectively.
 # Read more about versioning at semver.org.
-version: 0.6.1
+version: 0.6.2
 
 environment:
   sdk: ">=2.1.0 <3.0.0"
@@ -23,6 +23,7 @@ dependencies:
   cupertino_icons: ^0.1.2
   intl: ^0.16.0
   package_info: ^0.4.0+18
+  flutter_svg: ^0.15.0
   koukicons: ^2.0.2
 
 dev_dependencies:
