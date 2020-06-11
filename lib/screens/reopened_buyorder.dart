@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:koukicons/error.dart';
+
 import 'package:mobivik/common/user_interface.dart';
 
 import 'package:mobivik/dao/goods_dao.dart';
@@ -10,6 +10,8 @@ import 'package:mobivik/models/goods_model.dart';
 import 'package:koukicons/save.dart';
 import 'package:koukicons/genericSortingAsc.dart';
 import 'package:koukicons/flipboard2.dart';
+import 'package:koukicons/error.dart';
+
 import 'package:mobivik/services/buyorders_service.dart';
 import 'package:mobivik/services/invoice_table.dart';
 
@@ -76,6 +78,8 @@ class _ReopenedBuyOrderState extends State implements BuyOrderState {
     _creationDateTime = order['date_time'];
     totalSum = double.parse(order['total_sum'].toString());
     _invoiceTable.totalSum = totalSum;  // maybe _invoiceTable.totalSum is unused and it can be deleted
+    //commentController.text = 'comment';
+    commentController.text = order['comment'].toString().trim();
 
     Map buyorder = await BuyOrders.getBuyorderById(_docId);
     List rows = buyorder['table'];
@@ -226,6 +230,7 @@ class _ReopenedBuyOrderState extends State implements BuyOrderState {
     header["actype"] = _selectedAT;
     header["total_sum"] = totalSum;
     header["can_be_changed"] = 1;
+    header["comment"] = commentController.text;
     await BuyOrders.saveHeader(header);
 
     GraphicalUI.showSnackBar(scaffoldKey: _scaffoldKey, context: context, actionLabel:"", resultMessage: "Заказ сохранен");
@@ -252,7 +257,6 @@ class _ReopenedBuyOrderState extends State implements BuyOrderState {
       if (mustBeSaved) {
         await _saveOrder();
       }
-      //Navigator.push(context, MaterialPageRoute(builder: (context) => BuyordersJournal(), ));
       return true;
     }
 

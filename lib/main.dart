@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:koukicons/engineering.dart';
 import 'package:mobivik/screens/buyorders_journal.dart';
 import 'package:mobivik/screens/goods_screen.dart';
@@ -8,9 +9,11 @@ import 'package:mobivik/screens/route_screen.dart';
 import 'package:mobivik/screens/settings.dart';
 import 'package:mobivik/screens/synchronization.dart';
 
+//import 'package:flutter/services.dart' show rootBundle;
+
 void main() {
   runApp(
-      new MaterialApp(
+      MaterialApp(
 
         title: 'Mobivik',
         theme:  new ThemeData(
@@ -33,17 +36,28 @@ void main() {
 }
 
 class MainScreen extends StatelessWidget {
+
+  final Widget settingsIcon = SvgPicture.asset(
+    'assets/svg/settings.svg',
+    semanticsLabel: 'Settings',
+  );
+
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
+
+    return Scaffold(
         //backgroundColor: Colors.black54,
-        appBar: new AppBar(title: const Text(""), actions: <Widget>[
-            IconButton(
-              icon: KoukiconsEngineering(),//Icon(Icons.settings_applications),
-              onPressed: () {
-                Navigator.of(context).pushNamed("/settings");
-              },
-        ),],),
+        appBar: AppBar(title: const Text(""),
+          actions: <Widget>[
+              IconButton(
+                //icon: KoukiconsEngineering(),//Icon(Icons.settings_applications),
+                icon: settingsIcon,
+                onPressed: () {
+                  Navigator.of(context).pushNamed("/settings");
+                },
+              ),
+            ],
+        ),
         body: Container(
           child: ListView(
               padding: const EdgeInsets.all(10.0),
@@ -53,7 +67,6 @@ class MainScreen extends StatelessWidget {
                 button(Icons.people_outline,' Маршрут',context,'/route'),
                 button(Icons.settings,' Журнал заказов',context,'/buyorders'),
                 button(Icons.payment,' Принятые оплаты',context,'/payments'),
-                //button(Icons.storage,'Товары',context,'/goods'),
               ],
         )
 

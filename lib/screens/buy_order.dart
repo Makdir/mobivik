@@ -254,6 +254,7 @@ class BuyOrderState extends State {
     header["actype"] = _selectedAT;
     header["total_sum"] = totalSum;
     header["can_be_changed"] = 1;
+    header["comment"] = commentController.text;
     await BuyOrders.saveHeader(header);
 
     GraphicalUI.showSnackBar(scaffoldKey: _scaffoldKey, context: context, actionLabel:"", resultMessage: "Заказ сохранен");
