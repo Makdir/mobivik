@@ -7,15 +7,10 @@ import 'package:mobivik/screens/buy_order.dart';
 import 'package:mobivik/services/goods_entries.dart';
 import 'package:mobivik/models/goods_model.dart';
 
-import 'package:koukicons/save.dart';
-import 'package:koukicons/genericSortingAsc.dart';
-import 'package:koukicons/flipboard2.dart';
-import 'package:koukicons/error.dart';
-
 import 'package:mobivik/services/buyorders_service.dart';
 import 'package:mobivik/services/invoice_table.dart';
 
-
+import 'package:mobivik/common/project_icons.dart';
 
 class ReopenedBuyOrder extends StatefulWidget {
   //final Map order;
@@ -74,11 +69,9 @@ class _ReopenedBuyOrderState extends State implements BuyOrderState {
 
     _outlet = order['outlet'];
     _outletId = order['outlet_id'];
-    //print('_outletId = $_outletId');
     _creationDateTime = order['date_time'];
     totalSum = double.parse(order['total_sum'].toString());
     _invoiceTable.totalSum = totalSum;  // maybe _invoiceTable.totalSum is unused and it can be deleted
-    //commentController.text = 'comment';
     commentController.text = order['comment'].toString().trim();
 
     Map buyorder = await BuyOrders.getBuyorderById(_docId);
@@ -116,7 +109,6 @@ class _ReopenedBuyOrderState extends State implements BuyOrderState {
 
   }
 
-
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -128,27 +120,36 @@ class _ReopenedBuyOrderState extends State implements BuyOrderState {
                 //bottom: PreferredSizeWidget ,
                 actions: <Widget>[
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(0, 0, 5, 0),
+                    padding: const EdgeInsets.fromLTRB(0, 3, 5, 0),
                     child:
                       FlatButton(
-                          child: Column(children: [
-                            KoukiconsSave(height: 35.0),
-                            const Text("Save"),
-                          ]),
+                          child: Column(
+                              children: [
+                                Container(
+                                  height: 35,
+                                  child: ProjectIcons.save,
+                                ),
+                                const Text("Save"),
+                              ]
+                          ),
                           onPressed: _saveOrder,
                       ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(5, 0, 35, 0),
-                    child:
-                    FlatButton(
-                      child: Column(children: [
-                        KoukiconsError(height: 35.0),
-                        const Text("Delete"),
-                      ]),
-                      onPressed: _deleteOrder,
-                    ),
-                  ),
+                    padding: const EdgeInsets.fromLTRB(5, 3, 20, 0),
+                    child: FlatButton(
+                          child: Column(
+                              children: [
+                                Container(
+                                  height: 35,
+                                  child: ProjectIcons.trash,
+                                ),
+                                const Text("Delete"),
+                              ]
+                          ),
+                  onPressed: _deleteOrder,
+                ),
+              ),
                 ],
             ),
             body:Column(
@@ -164,8 +165,8 @@ class _ReopenedBuyOrderState extends State implements BuyOrderState {
                           indicatorColor: Colors.orange,
                           //onTap: onTabTap,
                           tabs: [
-                              Tab(child: KoukiconsGenericSortingAsc() ),
-                              Tab(child: KoukiconsFlipboard2() ),
+                              Tab(child: ProjectIcons.goodsList,),
+                              Tab(child:  ProjectIcons.invoice,),
                           ],
                         ),
 

@@ -22,8 +22,8 @@ dependencies:
   cupertino_icons: ^0.1.2
   intl: ^0.16.0
   package_info: ^0.4.0+18
-  flutter_svg: ^0.15.0
-  koukicons: ^2.0.2
+  flutter_svg: ^0.17.4
+  # koukicons: ^2.0.2
 
 dev_dependencies:
   flutter_test:

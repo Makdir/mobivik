@@ -1,13 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
-import 'package:koukicons/engineering.dart';
 import 'package:mobivik/screens/buyorders_journal.dart';
 import 'package:mobivik/screens/goods_screen.dart';
 import 'package:mobivik/screens/payments_journal.dart';
 import 'package:mobivik/screens/route_screen.dart';
 import 'package:mobivik/screens/settings.dart';
 import 'package:mobivik/screens/synchronization.dart';
+
+import 'common/project_icons.dart';
 
 //import 'package:flutter/services.dart' show rootBundle;
 
@@ -37,10 +37,10 @@ void main() {
 
 class MainScreen extends StatelessWidget {
 
-  final Widget settingsIcon = SvgPicture.asset(
-    'assets/svg/settings.svg',
-    semanticsLabel: 'Settings',
-  );
+//  final Widget settingsIcon = SvgPicture.asset(
+//    'assets/svg/settings.svg',
+//    semanticsLabel: 'Settings',
+//  );
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +51,7 @@ class MainScreen extends StatelessWidget {
           actions: <Widget>[
               IconButton(
                 //icon: KoukiconsEngineering(),//Icon(Icons.settings_applications),
-                icon: settingsIcon,
+                icon: ProjectIcons.settingsIcon,
                 onPressed: () {
                   Navigator.of(context).pushNamed("/settings");
                 },

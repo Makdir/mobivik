@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:mobivik/common/project_icons.dart';
 import 'package:mobivik/common/user_interface.dart';
 
 import 'package:mobivik/dao/goods_dao.dart';
@@ -7,10 +8,6 @@ import 'package:mobivik/models/client_model.dart';
 import 'package:mobivik/services/goods_entries.dart';
 import 'package:mobivik/services/invoice_table.dart';
 import 'package:mobivik/models/goods_model.dart';
-
-import 'package:koukicons/save.dart';
-import 'package:koukicons/genericSortingAsc.dart';
-import 'package:koukicons/flipboard2.dart';
 import 'package:mobivik/services/buyorders_service.dart';
 
 
@@ -104,10 +101,14 @@ class BuyOrderState extends State {
                     padding: const EdgeInsets.fromLTRB(0, 3, 35, 0),
                     child:
                       FlatButton(
-                          child: Column(children: [
-                            KoukiconsSave(height: 35.0),
-                            const Text("Save"),
-                          ]),
+                          child: Column(
+                              children: [Container(
+                                height: 35,
+                                child: ProjectIcons.save,
+                              ),
+                                const Text("Save"),
+                          ]
+                          ),
                           onPressed: _saveOrder,
                       ),
                   ),
@@ -126,8 +127,8 @@ class BuyOrderState extends State {
                           indicatorColor: Colors.orange,
                           //onTap: onTabTap,
                           tabs: [
-                              Tab(child: KoukiconsGenericSortingAsc() ),
-                              Tab(child: KoukiconsFlipboard2() ),
+                            Tab(child: ProjectIcons.goodsList,),
+                            Tab(child:  ProjectIcons.invoice,),
                           ],
                         ),
 
