@@ -8,7 +8,7 @@ import 'package:mobivik/services/goods_entries.dart';
 import 'package:mobivik/models/goods_model.dart';
 
 import 'package:mobivik/services/buyorders_service.dart';
-import 'package:mobivik/services/invoice_table.dart';
+import 'package:mobivik/fragments/invoice_table.dart';
 
 import 'package:mobivik/common/project_icons.dart';
 

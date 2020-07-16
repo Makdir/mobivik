@@ -28,4 +28,9 @@ class ProjectIcons{
     semanticsLabel: 'Trash',
   );
 
+  static final Widget bohistory = SvgPicture.asset(
+    'assets/svg/buyorders_history.svg',
+    semanticsLabel: 'BOHistory',
+  );
+
 }

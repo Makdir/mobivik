@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+
 import 'package:mobivik/common/project_icons.dart';
 import 'package:mobivik/common/user_interface.dart';
-
 import 'package:mobivik/dao/goods_dao.dart';
 import 'package:mobivik/models/client_model.dart';
 import 'package:mobivik/services/goods_entries.dart';
-import 'package:mobivik/services/invoice_table.dart';
+import 'package:mobivik/fragments/invoice_table.dart';
+import 'package:mobivik/fragments/sales_history.dart';
 import 'package:mobivik/models/goods_model.dart';
 import 'package:mobivik/services/buyorders_service.dart';
 
@@ -119,7 +120,7 @@ class BuyOrderState extends State {
                 HeaderOfOrder(),
                 Expanded(
                     child:DefaultTabController(
-                      length: 2,
+                      length: 3,
                       child: Scaffold(
                         appBar: TabBar(
                           labelColor: Colors.black,
@@ -129,6 +130,7 @@ class BuyOrderState extends State {
                           tabs: [
                             Tab(child: ProjectIcons.goodsList,),
                             Tab(child:  ProjectIcons.invoice,),
+                            Tab(child:  ProjectIcons.bohistory,),
                           ],
                         ),
 
@@ -138,6 +140,7 @@ class BuyOrderState extends State {
                             children: [
                               TreeList(goodsWidget: _goodsWidget, goodsControllers:_goodsControllers, summoner: this),
                               Invoice(goodsControllers: _goodsControllers, goodsList: goodsList, invoiceTable: _invoiceTable, summoner: this),
+                              SalesHistoryFragment(outlet: _outlet),
                             ]
                           ),
                         ),
@@ -275,6 +278,8 @@ class BuyOrderState extends State {
     return shouldExit;
   }
 }
+
+
 
 totalSumRecalc(summoner, goodsControllers){
 

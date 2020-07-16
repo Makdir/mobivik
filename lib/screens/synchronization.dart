@@ -16,7 +16,6 @@ class SyncScreen extends StatefulWidget {
 
   @override
   _SyncScreen createState() {
-    // TODO: implement createState
     return _SyncScreen();
   }
 
@@ -112,7 +111,8 @@ class _SyncScreen extends State {
     await _getData("goods", serverAddress, agentCode);
     _indicatorRefreshing('Загрузка маршрута');
     await _getData("route", serverAddress, agentCode);
-
+    _indicatorRefreshing('Загрузка истории продаж');
+    await _getData("sales", serverAddress, agentCode);
     _indicatorRefreshing('Подготовка данных');
     await _dataPreparing();
 

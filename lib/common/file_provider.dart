@@ -66,7 +66,7 @@ class FileProvider {
     return outputFile;
   }
 
-  static openInputFile(String fileName) async{
+  static Future<File> openInputFile(String fileName) async{
     Directory tempDir = await getTemporaryDirectory();
     String tempPath = tempDir.path;
 
