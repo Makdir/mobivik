@@ -164,12 +164,13 @@ class _PaymentState extends State {
       Map payment = {
         'paydate': payDate,
         //'doc_id':  docId,
-        'date':      item["date"],
-        'number':    item["number"],
-        'docname':   '${item["docname"]} № ${item["number"]}',
+        'date':    item["date"],
+        'number':  item["number"],
+        'docname': '${item["docname"]}}',
         'debt_date': '$debtDate',
         'sum': value,
         'outlet_name': outlet.name,
+        'outlet_id': outlet.id,
         'start_sum': item["sum"],
         'debt_sum': item["debt"]
       };

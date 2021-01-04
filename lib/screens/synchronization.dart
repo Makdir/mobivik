@@ -213,7 +213,7 @@ class _SyncScreen extends State {
 
       Map payment = Map();
       for(payment in payments) {
-
+         String outlet_id = payment['outlet_id'];
          String payDate = payment['paydate'];
         //print('payDate = $payDate');
         if ((payDate == null)||(payDate.isEmpty)) {
@@ -239,6 +239,7 @@ class _SyncScreen extends State {
         }
 
         Map outPayment = Map();
+        outPayment['outlet_id'] = outlet_id;
         outPayment['paydate'] = payDate;
         outPayment['docname'] = payment['docname'];
         outPayment['debtdate'] = payment['date'];
