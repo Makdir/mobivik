@@ -166,7 +166,7 @@ class _PaymentState extends State {
         //'doc_id':  docId,
         'date':    item["date"],
         'number':  item["number"],
-        'docname': '${item["docname"]}}',
+        'docname': '${item["docname"]}',
         'debt_date': '$debtDate',
         'sum': value,
         'outlet_name': outlet.name,
