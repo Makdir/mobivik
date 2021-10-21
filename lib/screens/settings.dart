@@ -12,8 +12,9 @@ class SettingsScreen extends StatefulWidget {
 class _SettingsScreenState extends State<SettingsScreen> {
   // Create a text controller. We will use it to retrieve the current value
   // of the TextField!
-  final controllerServerAddress = TextEditingController();
-  final controllerAgentCode = TextEditingController();
+  final _controllerServerAddress = TextEditingController();
+  final _controllerAgentCode = TextEditingController();
+  final _controllerOrganization = TextEditingController();
 
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -30,10 +31,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final _serverAddress = prefs.getString("serverAddress");
     final _agentCode = prefs.getString("agentCode");
+    final _organization = prefs.getString("organization");
 
     setState(() {
-      controllerServerAddress.text = _serverAddress;
-      controllerAgentCode.text = _agentCode;
+      _controllerServerAddress.text = _serverAddress;
+      _controllerAgentCode.text = _agentCode;
+      _controllerOrganization.text = _organization;
     });
   }
 
@@ -51,7 +54,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
             TextField(
               decoration: InputDecoration(labelText: 'Server address:' ),
-              controller: controllerServerAddress,
+              controller: _controllerServerAddress,
             ),
             RaisedButton(
               onPressed: _testConnection,
@@ -59,7 +62,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
             TextField(
               decoration: InputDecoration(labelText: 'Agent code:' ),
-              controller: controllerAgentCode,
+              controller: _controllerAgentCode,
+            ),
+            TextField(
+              decoration: InputDecoration(labelText: 'Organization:' ),
+              controller: _controllerOrganization,
             ),
             Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children:[
@@ -73,22 +80,19 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ),
             ]),
           ],
-
         ),
-
       ),
-
     );
   }
 
   _testConnection() async {
-    String requestURL = "http://" + controllerServerAddress.text.trim()+"/test";
+    String requestURL = "http://" + _controllerServerAddress.text.trim()+"/test";
     print("requestURL = $requestURL");
     var response;
     try {
        response = await http.get(
               requestURL,
-              headers: {'agent-code':controllerAgentCode.text.trim()}
+              headers: {'agent-code':_controllerAgentCode.text.trim()}
           );
     } catch (e) {
       GraphicalUI.showSnackBar(scaffoldKey: _scaffoldKey, context: context, actionLabel:"Close settings", resultMessage: "Error: ${e.toString()}");
@@ -107,8 +111,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   _saveData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString("serverAddress", controllerServerAddress.text);
-    prefs.setString("agentCode",     controllerAgentCode.text);
+    prefs.setString("serverAddress", _controllerServerAddress.text);
+    prefs.setString("agentCode",     _controllerAgentCode.text);
+    prefs.setString("organization",  _controllerOrganization.text.trim());
 
     GraphicalUI.showSnackBar(scaffoldKey: _scaffoldKey, context: context, actionLabel:"Close settings", resultMessage: "Settings was saved");
   }

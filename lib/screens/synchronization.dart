@@ -167,23 +167,26 @@ class _SyncScreen extends State {
 
   }
 
-  _sendData(String dataType, String serverAddress, String agentCode) async{
+  _sendData(String dataType, String serverAddress, String _agentCode) async{
     String uri = "http://" + serverAddress.trim() + Platform.pathSeparator + dataType;
 
     File file =  await FileProvider.openOutputFile(dataType);
     String body = await file.readAsString();
     if (body.isEmpty) body = "{}";
+    
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String _organization = prefs.getString("organization");
 
-    var client = http.Client();
-
+    http.Client client = http.Client();
     try {
       var response = await client.post(uri,
             body: body,
             headers: {
-              "agent-code": agentCode
+              "agent-code": _agentCode,
+              "organization": _organization
             }
       );
-      var responseStatusCode = response.statusCode;
+      int responseStatusCode = response.statusCode;
 
       if(responseStatusCode == 200) {
         print("$dataType response body is ${response.body}");
