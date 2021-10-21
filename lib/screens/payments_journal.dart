@@ -12,7 +12,7 @@ class PaymentsJournal extends StatefulWidget {
 
 class _PaymentsJournalState extends State {
 
-  List headers = List();
+  List headers = [];
   double _totalSum = 0;
   String _sumRepresentation = '0.00';
   final double _totalFontSize = 16;

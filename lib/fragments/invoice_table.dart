@@ -6,10 +6,10 @@ import 'package:mobivik/screens/buy_order.dart';
 
 /// Part of buy order screen with ordered goods
 class Invoice extends StatefulWidget {
-  Map<String, TextEditingController> goodsControllers;
-  List<Goods> goodsList;
-  InvoiceTable invoiceTable;
-  BuyOrderState summoner;
+  final Map<String, TextEditingController> goodsControllers;
+  final List<Goods> goodsList;
+  final InvoiceTable invoiceTable;
+  final BuyOrderState summoner;
 
   Invoice({
     Key key,
@@ -35,7 +35,6 @@ class _InvoiceState extends State {
   Map<String, double> goodsSum = {};
 
   _InvoiceState({
-    Key key,
     @required this.goodsControllers,
     @required this.goodsList,
     @required this.invoiceTable,
@@ -124,9 +123,6 @@ class _InvoiceState extends State {
     );
   }
 
-//  void _deleteRow() {
-//
-//  }
 }
 
 
@@ -134,5 +130,4 @@ class InvoiceTable{
   double totalSum;
   List<DataRow> rows = [];
   InvoiceTable();
-
 }

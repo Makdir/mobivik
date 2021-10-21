@@ -24,15 +24,13 @@ class BuyOrder extends StatefulWidget {
 
 }
 
-/// _goodsList is all goods available for salling
-///
-///
+/// _goodsList is all goods available for sailing
 ///
 class BuyOrderState extends State {
   final Client _outlet;
-  List<Goods> goodsList = List();
-  List<Entry> _goodsWidget = List();
-  List<Entry> _entries = List();
+  List<Goods> goodsList = [];
+  List<Entry> _goodsWidget = [];
+  List<Entry> _entries = [];
 
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -74,13 +72,13 @@ class BuyOrderState extends State {
 
     _entries.forEach((item){
       try {
-        String parentId = item.parent_id.toString().trim();
+        String parentId = item.parentId.toString().trim();
         Entry parentEntry = _entries.firstWhere((entry) => entry.id == parentId);
         parentEntry.children.add(item);
       } catch (e) {}
     });
     // Deleting items without paren. (But also this may be due to wrong data.)
-    _entries.removeWhere((entry) => entry.parent_id != "");
+    _entries.removeWhere((entry) => entry.parentId != "");
 
     setState(() {
       _goodsWidget.addAll(_entries);
@@ -117,7 +115,7 @@ class BuyOrderState extends State {
             ),
             body:Column(
               children: <Widget>[
-                HeaderOfOrder(),
+                headerOfOrder(),
                 Expanded(
                     child:DefaultTabController(
                       length: 3,
@@ -153,7 +151,7 @@ class BuyOrderState extends State {
     );
   }
 
-  Widget HeaderOfOrder(){
+  Widget headerOfOrder(){
     return Column(
       children: <Widget>[
         Row(
@@ -229,7 +227,7 @@ class BuyOrderState extends State {
       order["actype"] = 1;
     }
     order["comment"] = commentController.text;
-    List<Map> docTable = List();
+    List<Map> docTable = [];
 
     _goodsControllers.forEach((id,_controller){
         var value;
@@ -278,8 +276,6 @@ class BuyOrderState extends State {
     return shouldExit;
   }
 }
-
-
 
 totalSumRecalc(summoner, goodsControllers){
 

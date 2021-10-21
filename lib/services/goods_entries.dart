@@ -10,14 +10,13 @@ class Entry {
   final List<Entry> children = <Entry>[];
 
   String id;
-  String parent_id;
+  String parentId;
   // non-essential, needed only for decoration
   int level = 0;
 
-
   Entry({this.item}){
     this.id = this.item.id;
-    this.parent_id = this.item.parentId;
+    this.parentId = this.item.parentId;
   }
 
 }
@@ -28,7 +27,7 @@ class EntryItem extends StatelessWidget {
 
   final Entry entry;
   final Map<String, TextEditingController> goodsControllers;
-  BuyOrderState summoner;
+  final BuyOrderState summoner;
 
   EntryItem(this.entry, this.goodsControllers, this.summoner);
 
@@ -108,7 +107,7 @@ class TreeList extends StatelessWidget {
 
   final List<Entry> goodsWidget;
   final Map<String, TextEditingController> goodsControllers;
-  BuyOrderState summoner;
+  final BuyOrderState summoner;
 
   TreeList({
     Key key,

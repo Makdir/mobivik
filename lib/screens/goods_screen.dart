@@ -12,9 +12,9 @@ class GoodsScreen extends StatefulWidget {
 }
 
 class _GoodsScreenState extends State {
-  List<Entry> _goodsWidget = List();
-  List<Goods> goodsList = List();
-  List<Entry> entries = List();
+  List<Entry> _goodsWidget = [];
+  List<Goods> goodsList = [];
+  List<Entry> entries = [];
 
   @override
   void initState() {
@@ -36,7 +36,7 @@ class _GoodsScreenState extends State {
 
     entries.forEach((item){
       try {
-        String parentId = item.parent_id.toString().trim();
+        String parentId = item.parentId.toString().trim();
         Entry parentEntry = entries.firstWhere((entry) => entry.id == parentId);
         //print('${parentEntry.item.name}: ${parentEntry.level}');
         parentEntry.children.add(item);
@@ -49,7 +49,7 @@ class _GoodsScreenState extends State {
       } catch (e) {}
     });
     // Deleting items without paren. (But also this may be due to wrong data.)
-    entries.removeWhere((entry) => entry.parent_id != "");
+    entries.removeWhere((entry) => entry.parentId != "");
 
     setState(() {
       _goodsWidget.addAll(entries);
@@ -73,7 +73,7 @@ class EntryItem extends StatelessWidget {
   EntryItem(this.entry);
 
   Widget buildTiles(Entry root) {
-    var itemID = root.id;
+
     int isFolder = root.item.isFolder;
     int level = root.level;
     if ((root.children.isEmpty)&&(isFolder==0)){

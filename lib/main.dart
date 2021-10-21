@@ -46,12 +46,10 @@ class MainScreen extends StatelessWidget {
   Widget build(BuildContext context) {
 
     return Scaffold(
-        //backgroundColor: Colors.black54,
         appBar: AppBar(title: const Text(""),
           actions: <Widget>[
               IconButton(
-                //icon: KoukiconsEngineering(),//Icon(Icons.settings_applications),
-                icon: ProjectIcons.settingsIcon,
+                 icon: ProjectIcons.settingsIcon,
                 onPressed: () {
                   Navigator.of(context).pushNamed("/settings");
                 },
@@ -62,11 +60,11 @@ class MainScreen extends StatelessWidget {
           child: ListView(
               padding: const EdgeInsets.all(10.0),
               children: <Widget>[
-                button(Icons.sync,' Синхронизация',context,'/sync'),
-                button(Icons.storage,' Товары',context,'/goods'),
-                button(Icons.people_outline,' Маршрут',context,'/route'),
-                button(Icons.settings,' Журнал заказов',context,'/buyorders'),
-                button(Icons.payment,' Принятые оплаты',context,'/payments'),
+                button(Icons.sync,' Синхронизация', context, '/sync'),
+                button(Icons.storage,' Товары', context, '/goods'),
+                button(Icons.people_outline,' Маршрут', context, '/route'),
+                button(Icons.settings,' Журнал заказов', context, '/buyorders'),
+                button(Icons.payment,' Принятые оплаты', context, '/payments'),
               ],
         )
 
@@ -97,9 +95,6 @@ class MainScreen extends StatelessWidget {
                           topRight: Radius.circular(3.0)),
         ),
         splashColor: Colors.limeAccent,
-
-
-
       ),
     );
   }

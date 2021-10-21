@@ -14,7 +14,7 @@ class RouteScreen extends StatefulWidget {
 
 class _RouteScreenState extends State {
 
-  List<Client> route = List();
+  List<Client> route = [];
 
   @override
   void initState() {

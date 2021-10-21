@@ -23,7 +23,7 @@ class _PaymentState extends State {
   double totalPaymentSum = 0;
   final double _totalFontSize = 16;
 
-  List debtlist = List();
+  List debtlist = [];
   Map<String, TextEditingController> _controllers = Map();
 
   _PaymentState(this.outlet);
@@ -143,7 +143,7 @@ class _PaymentState extends State {
   }
 
   void _savePayments() {
-    List payments = List();
+    List payments = [];
     //String outletId = this.outlet.id.trim();
     _controllers.forEach((docId, controller){
       double value;

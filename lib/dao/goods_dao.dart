@@ -6,7 +6,7 @@ import 'package:mobivik/common/file_provider.dart';
 
 class GoodsDAO{
   Future<List> getItems() async {
-    List<Goods> result = List<Goods>();
+    List<Goods> result = [];
 
     //TODO Permission to storage access
     try {
@@ -24,6 +24,4 @@ class GoodsDAO{
     return result;
   }
 }
-
-//*************************************
 

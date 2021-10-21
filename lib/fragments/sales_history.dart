@@ -4,7 +4,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:mobivik/common/file_provider.dart';
 import 'package:mobivik/models/client_model.dart';
-import 'package:mobivik/screens/buy_order.dart';
 
 class SalesHistoryFragment extends StatefulWidget{
   final Client outlet;
@@ -41,14 +40,9 @@ class _SalesHistoryFragmentState extends State{
     }catch (e) {
         print('Wrong content of sales history.');
     }
-    //print('salesList =  $salesList');
     String outletId = outlet.id;
     salesList =  salesList.where((element) => element['id']==outletId).toList();
-    //print('2 salesList =  $salesList');
-    setState(() {
-
-    });
-
+    setState(() { });
   }
 
   @override
@@ -61,14 +55,14 @@ class _SalesHistoryFragmentState extends State{
         return Card(
           child: ListTile(
             title:Text(salesList[index]['doc']),
-            subtitle: HistorySalesTable(salesList[index]['table']),
+            subtitle: _historySalesTable(salesList[index]['table']),
           ),
         );
       },
     );
   }
 
-  Widget HistorySalesTable(List saleDoc){
+  Widget _historySalesTable(List saleDoc){
     TextStyle headerTextStyle = TextStyle(color: Colors.black, fontWeight: FontWeight.w500);
     TextStyle rowTextStyle = TextStyle(color: Colors.black);
     List<TableRow> sales = [];
@@ -104,7 +98,4 @@ class _SalesHistoryFragmentState extends State{
       children: sales,
     );
   }
-
-
 }
-

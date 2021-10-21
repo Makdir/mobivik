@@ -2,9 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:intl/intl.dart';
 import 'package:mobivik/common/user_interface.dart';
-import 'package:mobivik/models/client_model.dart';
 import 'package:mobivik/services/payments.dart';
 
 class Repayment extends StatefulWidget {
@@ -30,7 +28,7 @@ class _RepaymentState extends State {
   double totalPaymentSum = 0;
 
 
-  List debtlist = List();
+  List debtlist = [];
   TextEditingController _controller = TextEditingController();
 
   _RepaymentState(this.paymentId);
@@ -125,7 +123,7 @@ class _RepaymentState extends State {
     print("value = $value");
     payment['sum'] = value;
     
-    List payments = List();
+    List payments = [];
     payments.add(payment);
 
     Payments.save(payments);

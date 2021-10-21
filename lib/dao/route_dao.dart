@@ -8,7 +8,7 @@ import 'package:mobivik/common/file_provider.dart';
 class RouteDAO {
 
   Future<List> getItems() async {
-    List<Client> result = List<Client>();
+    List<Client> result = [];
     try {
       final File file = await FileProvider.openInputFile("route");
       String fileContent = await file.readAsString();

@@ -22,7 +22,7 @@ class _OutletScreenState extends State {
   double totalPaymentSum = 0;
   final double _totalFontSize = 16;
 
-  List debtlist = List();
+  List debtlist = [];
 
   _OutletScreenState(this.outlet);
 
@@ -50,13 +50,13 @@ class _OutletScreenState extends State {
                 children:[
                   StandardButton(text: "Новый заказ", onPressedAction: gotoNewBuyOrder),
                   CreditInfo(outlet: outlet),
-                  DebtInfo(),
-                  NewPaymentData()
+                  _debtInfo(),
+                  _newPaymentData()
         ]
     )));
   }
 
-  Widget DebtInfo() {
+  Widget _debtInfo() {
     Widget debtText = Text('На данный момент у клиента нет долгов', style: TextStyle(fontWeight: FontWeight.bold, fontSize: _totalFontSize),);
 
     if(totalDebtSum != 0){
@@ -83,7 +83,7 @@ class _OutletScreenState extends State {
 
   }
 
-  Widget NewPaymentData() {
+  Widget _newPaymentData() {
 
     if(totalDebtSum != 0){
       return StandardButton(text: "Долги и оплата", onPressedAction: () {

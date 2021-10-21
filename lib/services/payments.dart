@@ -1,29 +1,16 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:flutter/src/widgets/editable_text.dart';
+import 'package:flutter/widgets.dart';
 import 'package:mobivik/common/file_provider.dart';
-import 'package:mobivik/models/client_model.dart';
-
 
 class Payments {
 
   static save(List payments) async {
-    //print("payment=$payments");
+
     if(payments.isEmpty) return;
 
-//    File openedFile = await FileProvider.openOutputFile('payments');
-//    String fileContent = await openedFile.readAsString();
-//    if(fileContent.isEmpty) fileContent = "{}";
-//    Map parsedJson = json.decode(fileContent);
-//    payments.forEach((entry){
-//      parsedJson[entry["doc_id"]]=entry;
-//
-//    });
-//    String outputJson = json.encode(parsedJson);
-//    openedFile.writeAsString(outputJson);
-
-    // TODO payments_db can be a single file for payments (data to export can be formed while synchronizing)
+    // TODO payments_db can be a single file for payments (the data of export can be formed while synchronizing)
     File openedFile = await FileProvider.openAuxiliaryFile('payments_db');
     String fileContent = await openedFile.readAsString();
     if(fileContent.isEmpty) fileContent = "[]";
@@ -31,18 +18,13 @@ class Payments {
     for (Map payment in payments){
       if(payment['sum']==0) continue;
       Map filedPayment = parsedJson.firstWhere((pay)=> pay['paydate']==payment['paydate'], orElse: ()=>null);
-      print("filedPayment = $filedPayment");
       if (filedPayment != null) {
         parsedJson.remove(filedPayment);
-        print("removed");
       }
       parsedJson.add(payment);
     }
     String outputJson = json.encode(parsedJson);
     openedFile.writeAsString(outputJson);
-
-
-
   }
 
   static Future<List> getHeaders() async {
@@ -96,24 +78,14 @@ class Payments {
     String fileContent = await openedFile.readAsString();
     if(fileContent.isEmpty) fileContent = "[]";
     List parsedJson = json.decode(fileContent);
-    //print("parsedJson is " + parsedJson.runtimeType.toString());
     controllers.forEach((docId, controller){
       try {
         Map payment = parsedJson.firstWhere((item)=>item['doc_id']==docId);
         controller.text = payment['sum'].toString();
-
       } catch (e) {}
-
     });
 
     return controllers;
   }
-
-//  }
-
-
-
-
-
 }
 

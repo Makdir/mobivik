@@ -207,13 +207,13 @@ class _SyncScreen extends State {
       }
 
       List payments = await json.decode(content);
-      List fixedPayments = List();
+      List fixedPayments = [];
       fixedPayments.addAll(payments);
-      List outPayments = List();
+      List outPayments = [];
 
       Map payment = Map();
       for(payment in payments) {
-         String outlet_id = payment['outlet_id'];
+         String outletId = payment['outlet_id'];
          String payDate = payment['paydate'];
         //print('payDate = $payDate');
         if ((payDate == null)||(payDate.isEmpty)) {
@@ -239,7 +239,7 @@ class _SyncScreen extends State {
         }
 
         Map outPayment = Map();
-        outPayment['outlet_id'] = outlet_id;
+        outPayment['outlet_id'] = outletId;
         outPayment['paydate'] = payDate;
         outPayment['docname'] = payment['docname'];
         outPayment['debtdate'] = payment['date'];

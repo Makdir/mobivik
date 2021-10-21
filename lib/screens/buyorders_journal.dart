@@ -12,8 +12,7 @@ class BuyordersJournal extends StatefulWidget {
 
 class _BuyordersJournalState extends State {
 
-  List buyorders = List();
-  double _totalSum = 0;
+  List buyorders = [];
   String _sumRepresentation = '0.00';
   final double _totalFontSize = 16;
 
